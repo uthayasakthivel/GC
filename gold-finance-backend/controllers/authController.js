@@ -28,7 +28,7 @@ export const signup = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: userRole,
+      role: undefined,
       isApproved: false,
     });
 
@@ -88,7 +88,7 @@ export const googleLogin = async (req, res) => {
       name,
       email,
       googleId,
-      role: "employee",
+      role: undefined,
       isApproved: false,
     });
 
@@ -170,38 +170,5 @@ export const resetPassword = async (req, res) => {
     res.json({ message: "Password reset successful" });
   } catch {
     res.status(500).json({ message: "Password reset failed" });
-  }
-};
-
-export const listUsers = async (req, res) => {
-  try {
-    const { role } = req.query;
-
-    if (!["employee", "manager"].includes(role))
-      return res.status(400).json({ message: "Invalid role" });
-
-    const users = await User.find({ role });
-
-    res.json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-export const approveUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    user.isApproved = true;
-    await user.save();
-
-    res.json({ message: "User approved successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
   }
 };

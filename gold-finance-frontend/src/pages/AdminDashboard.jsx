@@ -1,33 +1,69 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
+import PendingApprovals from "../components/PendingApprovals";
 import UserList from "../components/UserList";
-import PendingApprovals from "./PendingApprovals";
+import axios from "../api/axiosInstance";
 
 export default function AdminDashboard() {
-  const [users, setUsers] = useState([]);
+  const [pendingUsers, setPendingUsers] = useState([]);
+  const [managers, setManagers] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      // Pending users (status: pending)
+      const pendingRes = await axios.get("/admin/users", {
+        params: { status: "pending" },
+      });
+      setPendingUsers(pendingRes.data);
+
+      // Approved managers
+      const managersRes = await axios.get("/admin/users", {
+        params: { role: "manager", status: "approved" },
+      });
+      setManagers(managersRes.data);
+
+      // Approved employees
+      const employeesRes = await axios.get("/admin/users", {
+        params: { role: "employee", status: "approved" },
+      });
+      setEmployees(employeesRes.data);
+
+      setError(null);
+    } catch (err) {
+      setError("Failed to load users.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/users");
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
-  const managers = users.filter((u) => u.role === "manager");
-  const employees = users.filter((u) => u.role === "employee");
+  // Refresh lists after approve/delete actions
+  const handleRefresh = () => fetchUsers();
+
+  if (loading) return <div className="p-4">Loading users...</div>;
+  if (error) return <div className="p-4 text-red-600">{error}</div>;
 
   return (
     <DashboardLayout role="admin">
-      <PendingApprovals />
-      <UserList users={managers} title="All Managers" />
-      <UserList users={employees} title="All Employees" />
+      <PendingApprovals users={pendingUsers} onActionComplete={handleRefresh} />
+      <UserList
+        users={managers}
+        title="All Managers"
+        onActionComplete={handleRefresh}
+      />
+      <UserList
+        users={employees}
+        title="All Employees"
+        onActionComplete={handleRefresh}
+      />
     </DashboardLayout>
   );
 }

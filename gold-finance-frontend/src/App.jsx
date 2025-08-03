@@ -22,6 +22,7 @@ import loadingSpinner from "./assets/Coin_rotating.json";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import BuyingSheet from "./pages/BuyingSheet";
 import ResetPassword from "./pages/ResetPassword";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
@@ -114,14 +115,18 @@ function AppRoutes() {
 }
 
 function App() {
+  const queryClient = new QueryClient();
+
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </ToastProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </ToastProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
