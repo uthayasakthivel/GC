@@ -3,6 +3,9 @@ import DashboardLayout from "../components/DashboardLayout";
 import PendingApprovals from "../components/PendingApprovals";
 import UserList from "../components/UserList";
 import axios from "../api/axiosInstance";
+import BranchManagement from "../components/BranchManagement";
+import RateSetter from "../components/RateSetter";
+import OpeningBalanceForm from "../components/OpeningBalanceForm";
 
 export default function AdminDashboard() {
   const [pendingUsers, setPendingUsers] = useState([]);
@@ -14,28 +17,22 @@ export default function AdminDashboard() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      // Pending users (status: pending)
-      const pendingRes = await axios.get("/admin/users", {
-        params: { status: "pending" },
-      });
+      const [pendingRes, managersRes, employeesRes] = await Promise.all([
+        axios.get("/admin/users", { params: { status: "pending" } }),
+        axios.get("/admin/users", {
+          params: { role: "manager", status: "approved" },
+        }),
+        axios.get("/admin/users", {
+          params: { role: "employee", status: "approved" },
+        }),
+      ]);
       setPendingUsers(pendingRes.data);
-
-      // Approved managers
-      const managersRes = await axios.get("/admin/users", {
-        params: { role: "manager", status: "approved" },
-      });
       setManagers(managersRes.data);
-
-      // Approved employees
-      const employeesRes = await axios.get("/admin/users", {
-        params: { role: "employee", status: "approved" },
-      });
       setEmployees(employeesRes.data);
-
       setError(null);
     } catch (err) {
-      setError("Failed to load users.");
       console.error(err);
+      setError("Failed to load users.");
     } finally {
       setLoading(false);
     }
@@ -45,7 +42,6 @@ export default function AdminDashboard() {
     fetchUsers();
   }, []);
 
-  // Refresh lists after approve/delete actions
   const handleRefresh = () => fetchUsers();
 
   if (loading) return <div className="p-4">Loading users...</div>;
@@ -53,6 +49,7 @@ export default function AdminDashboard() {
 
   return (
     <DashboardLayout role="admin">
+      {/* Existing user lists */}
       <PendingApprovals users={pendingUsers} onActionComplete={handleRefresh} />
       <UserList
         users={managers}
@@ -64,6 +61,11 @@ export default function AdminDashboard() {
         title="All Employees"
         onActionComplete={handleRefresh}
       />
+
+      {/* Admin-only features */}
+      <BranchManagement onBranchesUpdated={handleRefresh} />
+      <RateSetter />
+      <OpeningBalanceForm onBalanceUpdated={handleRefresh} />
     </DashboardLayout>
   );
 }

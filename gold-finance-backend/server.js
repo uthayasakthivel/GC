@@ -5,11 +5,15 @@ import cors from "cors";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import buyingSheetRoutes from "./routes/BuyingSheetRoutes.js";
+import adminConfigRoutes from "./routes/admin/adminConfigRoutes.js";
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.json()); // Parse JSON body
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded form body
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -18,6 +22,8 @@ mongoose
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/admin/config", adminConfigRoutes);
+app.use("/api/admin/sheet", buyingSheetRoutes);
 
 app.get("/", (req, res) => res.send("API running"));
 
