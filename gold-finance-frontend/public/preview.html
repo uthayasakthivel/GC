@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gold Buying Sheet Preview</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      .row {
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.25rem;
+      }
+      .label {
+        font-weight: 600;
+      }
+      .value {
+        color: #333;
+      }
+      button.print-btn {
+        margin-top: 2rem;
+        display: block;
+        width: 100%;
+        padding: 12px 0;
+        font-size: 16px;
+        background-color: #007bff;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button.print-btn:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Gold Buying Sheet Preview</h1>
+    <div id="content"></div>
+    <button class="print-btn" onclick="window.print()">Print</button>
+
+    <script>
+      // Get data from localStorage
+      const data = JSON.parse(localStorage.getItem("buyingSheetData"));
+
+      if (!data) {
+        document.getElementById("content").innerHTML =
+          "<p>No data found for preview.</p>";
+      } else {
+        const contentDiv = document.getElementById("content");
+        contentDiv.innerHTML = `
+        <div class="row"><span class="label">Date:</span><span class="value">${
+          data.date
+        }</span></div>
+        <div class="row"><span class="label">Branch:</span><span class="value">${
+          data.branch
+        }</span></div>
+        <div class="row"><span class="label">Sheet No:</span><span class="value">${
+          data.sheetNo
+        }</span></div>
+        <div class="row"><span class="label">Customer Name:</span><span class="value">${
+          data.customerName
+        }</span></div>
+        <div class="row"><span class="label">Phone:</span><span class="value">${
+          data.phone
+        }</span></div>
+        <div class="row"><span class="label">Gross Weight:</span><span class="value">${
+          data.grossWeight
+        }</span></div>
+        <div class="row"><span class="label">Stone Weight:</span><span class="value">${
+          data.stoneWeight
+        }</span></div>
+        <div class="row"><span class="label">Net Weight:</span><span class="value">${
+          data.netWeight
+        }</span></div>
+        <div class="row"><span class="label">Is 916 HM:</span><span class="value">${
+          data.is916HM ? "Yes" : "No"
+        }</span></div>
+        <div class="row"><span class="label">Purity:</span><span class="value">${
+          data.purity
+        }</span></div>
+        <div class="row"><span class="label">Buying Rate:</span><span class="value">${
+          data.buyingRate
+        }</span></div>
+        <div class="row"><span class="label">Net Amount:</span><span class="value">${
+          data.netAmount
+        }</span></div>
+        <div class="row"><span class="label">Mode:</span><span class="value">${
+          data.mode
+        }</span></div>
+        <div class="row"><span class="label">Reference Name:</span><span class="value">${
+          data.refName
+        }</span></div>
+        <div class="row"><span class="label">Reference Mobile:</span><span class="value">${
+          data.refMobile
+        }</span></div>
+        <div class="row"><span class="label">Commission Percent:</span><span class="value">${
+          data.commissionPercent
+        }%</span></div>
+        <div class="row"><span class="label">Commission:</span><span class="value">${
+          data.commission
+        }</span></div>
+        <div class="row"><span class="label">Misc:</span><span class="value">${
+          data.misc
+        }</span></div>
+        <div class="row"><span class="label">Total Amount:</span><span class="value">${
+          data.totalAmount
+        }</span></div>
+        <div class="row"><span class="label">Prepared By:</span><span class="value">${
+          data.preparedBy
+        }</span></div>
+      `;
+      }
+    </script>
+  </body>
+</html>

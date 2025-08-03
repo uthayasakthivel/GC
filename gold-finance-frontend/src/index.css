@@ -1,0 +1,101 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+}
+
+@theme {
+  /* 🎨 Color Variables */
+  --color-bar-color: #001220;
+  --color-light-color: #ff000024;
+  --color-dark-color: #183a4a;
+  --color-black: #48464c;
+  --color-white: #ffffff;
+  --color-highlight: #dd5471;
+  --color-btn-gradient-top: #ffc107;
+  --color-btn-gradient-bottom: #fd7e14;
+  --color-line-color: #b4592e;
+  --color-shadow-color: #193a4b;
+
+  /* 🔠 Font Families */
+  --font-family-base: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --font-family-heading: "Poppins", "Helvetica Neue", Arial, sans-serif;
+
+  /* 🧱 Font Sizes (Responsive) */
+  --font-hero: clamp(2.5rem, 5vw + 1rem, 4rem); /* Hero banners */
+  --font-h1: clamp(2rem, 4vw + 0.5rem, 3rem); /* Main headings */
+  --font-h2: clamp(1.5rem, 2.5vw + 0.5rem, 2.25rem); /* Section headers */
+  --font-h3: clamp(1.25rem, 1.5vw + 0.3rem, 1.75rem); /* Subheadings */
+  --font-body: clamp(1rem, 1vw + 0.25rem, 1.125rem); /* Paragraph text */
+  --font-small: clamp(0.875rem, 0.5vw + 0.25rem, 1rem); /* Labels/buttons */
+  --font-tiny: clamp(0.75rem, 0.3vw + 0.2rem, 0.875rem); /* Footnotes */
+
+  /* 📏 Line Heights */
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* 🏋️ Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* 🔡 Letter Spacing */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+}
+
+.slick-dots .slick-active div {
+  background-color: red;
+  opacity: 1;
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes bounceScale {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.9);
+  }
+}
+
+.hover-bounce-scale:hover {
+  animation: bounceScale 0.6s ease-in-out forwards;
+}
