@@ -1,4 +1,4 @@
-import AboutUs from "../components/aboutUs";
+import AboutUs from "../pages/aboutUs";
 import BannerCarousel from "../components/BannerCarousel";
 import Footer from "../components/Footer";
 import GetInTouch from "../components/GetInTouch";
