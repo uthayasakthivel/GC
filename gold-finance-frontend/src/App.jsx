@@ -6,7 +6,6 @@ import AdminDashboard from "./pages/AdminDashboard";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import PrivateRoute from "./routes/PrivateRoute";
 import { ToastProvider } from "./components/ToastContext";
-import About from "./pages/About";
 import HomePage from "./pages/HomePage";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
