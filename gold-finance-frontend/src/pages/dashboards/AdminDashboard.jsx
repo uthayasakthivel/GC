@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import DashboardLayout from "../components/DashboardLayout";
-import PendingApprovals from "../components/PendingApprovals";
-import UserList from "../components/UserList";
-import axios from "../api/axiosInstance";
-import BranchManagement from "../components/BranchManagement";
-import RateSetter from "../components/RateSetter";
-import OpeningBalanceForm from "../components/OpeningBalanceForm";
+import DashboardLayout from "../../components/pageLayouts/DashboardLayout";
+import PendingApprovals from "../../components/PendingApprovals";
+import UserList from "../../components/UserList";
+import axios from "../../api/axiosInstance";
+import BranchManagement from "../../components/BranchManagement";
+import RateSetter from "../../components/RateSetter";
+import OpeningBalanceForm from "../../components/OpeningBalanceForm";
 
 export default function AdminDashboard() {
   const [pendingUsers, setPendingUsers] = useState([]);

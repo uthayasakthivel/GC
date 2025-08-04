@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import DashboardLayout from "../components/DashboardLayout";
-import RatesSection from "../components/RatesSection";
-import NavigationTree from "../components/NavigationTree";
-import BalanceSection from "../components/BalanceSection";
-import axiosInstance from "../api/axiosInstance";
-import endpoints from "../api/endpoints";
+import DashboardLayout from "../../components/pageLayouts/DashboardLayout";
+import RatesSection from "../../components/RatesSection";
+import NavigationTree from "../../components/NavigationTree";
+import BalanceSection from "../../components/BalanceSection";
+import axiosInstance from "../../api/axiosInstance";
+import endpoints from "../../api/endpoints";
 
 export default function EmployeeDashboard() {
   const [todayRates, setTodayRates] = useState(null);

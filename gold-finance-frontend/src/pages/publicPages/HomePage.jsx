@@ -1,10 +1,10 @@
-import AboutUs from "../pages/aboutUs";
-import BannerCarousel from "../components/BannerCarousel";
-import Footer from "../components/Footer";
-import GetInTouch from "../components/GetInTouch";
-import Header from "../components/Header";
-import Services from "../components/Services";
-import TodayRate from "../components/TodayRate";
+import AboutUs from "../../sections/AboutUs";
+import BannerCarousel from "../../sections/BannerCarousel";
+import Footer from "../../sections/Footer";
+import GetInTouch from "../../sections/GetInTouch";
+import Header from "../../sections/Header";
+import Services from "../../sections/Services";
+import TodayRate from "../../sections/TodayRate";
 
 export default function HomePage() {
   return (

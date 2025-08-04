@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useToast } from "../components/ToastContext";
+import { useToast } from "../../components/ToastContext";
 
 export default function ResetPassword() {
   const { token } = useParams();

@@ -1,16 +1,15 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
-import Login from "./pages/Login";
-import AdminDashboard from "./pages/AdminDashboard";
-import EmployeeDashboard from "./pages/EmployeeDashboard";
+import Login from "./pages/publicPages/Login";
+import AdminDashboard from "./pages/dashboards/AdminDashboard";
+import ManagerDashboard from "./pages/dashboards/ManagerDashboard";
+import EmployeeDashboard from "./pages/dashboards/EmployeeDashboard";
 import PrivateRoute from "./routes/PrivateRoute";
 import { ToastProvider } from "./components/ToastContext";
-import HomePage from "./pages/HomePage";
-import Services from "./pages/Services";
-import Contact from "./pages/Contact";
-import SignUp from "./pages/SignUp";
-import ForgotPassword from "./pages/ForgotPassword";
+import HomePage from "./pages/publicPages/HomePage";
+import SignUp from "./pages/publicPages/SignUp";
+import ForgotPassword from "./pages/publicPages/ForgotPassword";
 import { useEffect, useState } from "react";
 
 import "slick-carousel/slick/slick.css";
@@ -18,9 +17,8 @@ import "slick-carousel/slick/slick-theme.css";
 
 import Lottie from "lottie-react";
 import loadingSpinner from "./assets/Coin_rotating.json";
-import ManagerDashboard from "./pages/ManagerDashboard";
-import BuyingSheet from "./pages/BuyingSheet";
-import ResetPassword from "./pages/ResetPassword";
+import BuyingSheet from "./pages/sheets/BuyingSheet";
+import ResetPassword from "./pages/publicPages/ResetPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function AppRoutes() {

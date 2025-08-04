@@ -1,4 +1,4 @@
-import TabView from "./TabView";
+import TabView from "../components/TabView";
 
 const Services = () => {
   return (

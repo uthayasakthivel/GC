@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../components/ToastContext";
-import { useAuth } from "../auth/AuthContext";
-import AuthPageLayout from "../components/AuthPageLayout";
-import loginImage from "../assets/loginImage.png";
+import { useToast } from "../../components/ToastContext";
+import { useAuth } from "../../auth/AuthContext";
+import AuthPageLayout from "../../components/pageLayouts/AuthPageLayout";
+import loginImage from "../../assets/loginImage.png";
 import { GoogleLogin } from "@react-oauth/google";
 
 export default function Login() {

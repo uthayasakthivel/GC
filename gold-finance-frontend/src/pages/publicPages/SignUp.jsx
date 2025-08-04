@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../components/ToastContext";
-import AuthPageLayout from "../components/AuthPageLayout";
-import signupImage from "../assets/signupImage.jpg";
+import { useToast } from "../../components/ToastContext";
+import AuthPageLayout from "../../components/pageLayouts/AuthPageLayout";
+import signupImage from "../../assets/signupImage.jpg";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");

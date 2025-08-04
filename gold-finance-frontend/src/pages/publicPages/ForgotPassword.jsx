@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useToast } from "../components/ToastContext";
+import { useToast } from "../../components/ToastContext";
 import { useNavigate } from "react-router-dom";
-import forgotPasswordImage from "../assets/forgotPasswordImage.png";
+import forgotPasswordImage from "../../assets/forgotPasswordImage.png";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
