@@ -19,11 +19,12 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
-
+// Serve images statically
+app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/config", adminConfigRoutes);
-app.use("/api/admin/sheet", buyingSheetRoutes);
+app.use("/api/sheet", buyingSheetRoutes);
 
 app.get("/", (req, res) => res.send("API running"));
 

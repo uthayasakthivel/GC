@@ -1,38 +1,35 @@
 import mongoose from "mongoose";
 
-const BuyingSheetSchema = new mongoose.Schema(
-  {
-    branchId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Branch",
-      required: true,
-    },
-    date: { type: Date, default: Date.now },
-
-    goldDetails: {
-      grossWeight: Number,
-      purity: Number, // karats or percentage
-      netWeight: Number,
-    },
-
-    buyingRate: Number, // per gram or per unit
-    commission: Number, // as amount or percentage
-    deductions: Number, // any other deductions
-
-    netAmount: Number, // calculated field (netWeight * buyingRate - commission - deductions)
-    totalPayable: Number,
-
-    // files: [String], // array of file URLs or paths
-
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    notes: String,
+const buyingSheetSchema = new mongoose.Schema({
+  branchId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Branch",
+    required: true,
   },
-  { timestamps: true }
-);
+  sheetNumber: String, // ✅ This line is fine if the one above has a comma
+  date: Date,
+  customerName: String,
+  phoneNumber: String,
+  goldDetails: {
+    grossWeight: Number,
+    stoneWeight: Number,
+    netWeight: Number,
+    purity: Number,
+    is916HM: Boolean,
+  },
+  buyingRate: Number,
+  netAmount: Number,
+  amountDisbursed: String, // "cash", "account", or "both"
+  commission: {
+    name: String,
+    phone: String,
+    fixed: Number,
+  },
+  miscellaneousAmount: Number,
+  totalAmountSpend: Number,
+  preparedBy: String,
+  createdBy: String, // user ID
+  images: [String], // array of image file paths
+});
 
-export default mongoose.models.BuyingSheet ||
-  mongoose.model("BuyingSheet", BuyingSheetSchema);
+export default mongoose.model("BuyingSheet", buyingSheetSchema);
