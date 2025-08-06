@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import BuyingSheet from "../models/BuyingSheet.js";
+import { updateClosingBalance } from "./adminConfigController.js";
 import { getNextSheetNumber } from "../utils/getNextSheetNumber.js";
 
 export const createBuyingSheet = async (req, res) => {
@@ -79,7 +80,16 @@ export const createBuyingSheet = async (req, res) => {
     });
 
     const savedSheet = await buyingSheet.save();
-    res.status(201).json(savedSheet);
+    const closingBalance = await updateClosingBalance(
+      totalAmountSpend,
+      netWeight
+    );
+
+    res.status(201).json({
+      message: "Sheet created successfully",
+      sheet: savedSheet,
+      closingBalance, // comes from updateClosingBalance()
+    });
   } catch (error) {
     console.error("Buying sheet creation error:", error);
     res.status(500).json({ message: "Failed to create buying sheet" });

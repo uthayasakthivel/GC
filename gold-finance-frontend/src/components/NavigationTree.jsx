@@ -1,64 +1,173 @@
-import { useNavigate } from "react-router-dom";
-import logo from "../assets/guruchanra-logo-header.png";
+import { useState } from "react";
+import LatestSubmittedSheets from "./LatestSubmittedSheets";
+import SellingSheet from "../pages/sheets/SellingSheet";
+import MeltingSheet from "../pages/sheets/MeltingSheet";
+import FinanceSheet from "../pages/sheets/FinanceSheet";
 
-export default function NavigationTree() {
-  const navigate = useNavigate();
+export default function GoldTabs({ role }) {
+  // Main Tabs
+  const [mainTab, setMainTab] = useState("sales");
+  // Sub Tabs
+  const [subTab, setSubTab] = useState("buying");
 
   return (
-    <div className="flex flex-col items-center mb-12">
-      <div className="flex flex-col items-center">
-        <img
-          src={logo}
-          alt="Guruchanra Logo"
-          className="w-40 h-auto mb-3 drop-shadow-lg rounded-lg bg-white p-2 border border-slate-200"
-          style={{ objectFit: "contain" }}
-        />
-        <h1 className="text-3xl font-extrabold mb-8 text-amber-900 tracking-wide drop-shadow">
-          Guruchanra
-        </h1>
+    <div className="w-full">
+      {/* Main Tabs */}
+      <div className="flex border-b border-gray-300 mb-4">
+        <button
+          className={`px-6 py-2 ${
+            mainTab === "sales"
+              ? "border-b-2 border-amber-500 font-semibold"
+              : "text-gray-500"
+          }`}
+          onClick={() => {
+            setMainTab("sales");
+            setSubTab("");
+          }}
+        >
+          Gold Sales
+        </button>
+        <button
+          className={`px-6 py-2 ${
+            mainTab === "finance"
+              ? "border-b-2 border-amber-500 font-semibold"
+              : "text-gray-500"
+          }`}
+          onClick={() => {
+            setMainTab("finance");
+            setSubTab("");
+          }}
+        >
+          Gold Finance
+        </button>
+        <button
+          className={`px-6 py-2 ${
+            mainTab === "loan"
+              ? "border-b-2 border-amber-500 font-semibold"
+              : "text-gray-500"
+          }`}
+          onClick={() => {
+            setMainTab("loan");
+            setSubTab("");
+          }}
+        >
+          Gold Loan
+        </button>
       </div>
-      <div className="flex flex-row gap-14 w-full justify-center">
-        {/* Gold Sales */}
-        <div className="flex flex-col items-center">
-          <div className="font-semibold text-amber-700 mb-3 text-lg">
-            Gold Sales
+
+      {/* Sub Tabs + Content */}
+      {mainTab === "sales" && (
+        <div>
+          {/* Sub Tabs */}
+          <div className="flex border-b border-gray-200 mb-3">
+            <button
+              className={`px-4 py-1 ${
+                subTab === "buying"
+                  ? "border-b-2 border-amber-500 font-semibold"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setSubTab("buying")}
+            >
+              Buying Sheet
+            </button>
+            {(role === "admin" || role === "manager") && (
+              <>
+                <button
+                  className={`px-4 py-1 ${
+                    subTab === "selling"
+                      ? "border-b-2 border-amber-500 font-semibold"
+                      : "text-gray-500"
+                  }`}
+                  onClick={() => setSubTab("selling")}
+                >
+                  Selling Sheet
+                </button>
+                <button
+                  className={`px-4 py-1 ${
+                    subTab === "melting"
+                      ? "border-b-2 border-amber-500 font-semibold"
+                      : "text-gray-500"
+                  }`}
+                  onClick={() => setSubTab("melting")}
+                >
+                  Melting Sheet
+                </button>
+              </>
+            )}
           </div>
-          <select
-            className="border border-slate-300 rounded-lg px-5 py-2 mb-2 bg-white shadow focus:ring-2 focus:ring-amber-400 transition"
-            onChange={(e) => {
-              if (e.target.value) navigate(e.target.value);
-              console.log(e.target.value);
-            }}
-            defaultValue=""
-          >
-            <option value="" disabled>
-              Select Sheet
-            </option>
-            <option value="/buying-sheet">Buying Sheet</option>
-            <option value="/selling-sheet">Selling Sheet</option>
-            <option value="/melting-sheet">Melting Sheet</option>
-          </select>
-        </div>
-        {/* Gold Finance */}
-        <div className="flex flex-col items-center">
-          <div className="font-semibold text-amber-700 mb-3 text-lg">
-            Gold Finance
+
+          {/* Content */}
+          <div className="p-4 bg-white shadow rounded-lg">
+            {subTab === "buying" && <LatestSubmittedSheets role={role} />}
+            {subTab === "selling" &&
+              (role === "admin" || role === "manager") && <SellingSheet />}
+            {subTab === "melting" &&
+              (role === "admin" || role === "manager") && <MeltingSheet />}
+            {!subTab && <div>Please select a sheet above.</div>}
           </div>
-          <button
-            onClick={() => navigate("/gold-finance-sheet")}
-            className="border border-slate-300 rounded-lg px-5 py-2 bg-amber-50 hover:bg-amber-100 shadow transition"
-          >
-            Gold Finance Sheet
-          </button>
         </div>
-        {/* Gold Loan */}
-        <div className="flex flex-col items-center">
-          <div className="font-semibold text-amber-700 mb-3 text-lg">
-            Gold Loan
+      )}
+
+      {mainTab === "finance" && (
+        <div>
+          {/* Sub Tabs */}
+          <div className="flex border-b border-gray-200 mb-3">
+            <button
+              className={`px-4 py-1 ${
+                subTab === "finance-sheet"
+                  ? "border-b-2 border-amber-500 font-semibold"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setSubTab("finance-sheet")}
+            >
+              Finance Sheet
+            </button>
           </div>
-          <div className="text-slate-400 italic">Coming soon</div>
+
+          {/* Content */}
+          <div className="p-4 bg-white shadow rounded-lg">
+            {subTab === "finance-sheet" && <FinanceSheet />}
+            {!subTab && <div>Please select a sheet above.</div>}
+          </div>
         </div>
-      </div>
+      )}
+
+      {mainTab === "loan" && (
+        <div>
+          {/* Sub Tabs */}
+          <div className="flex border-b border-gray-200 mb-3">
+            <button
+              className={`px-4 py-1 ${
+                subTab === "loan1"
+                  ? "border-b-2 border-amber-500 font-semibold"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setSubTab("loan1")}
+            >
+              Loan Tab 1
+            </button>
+            <button
+              className={`px-4 py-1 ${
+                subTab === "loan2"
+                  ? "border-b-2 border-amber-500 font-semibold"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setSubTab("loan2")}
+            >
+              Loan Tab 2
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="p-4 bg-white shadow rounded-lg">
+            {subTab === "loan1" && <div>Loan feature coming soon...</div>}
+            {subTab === "loan2" && (
+              <div>Another loan feature coming soon...</div>
+            )}
+            {!subTab && <div>Please select a tab above.</div>}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

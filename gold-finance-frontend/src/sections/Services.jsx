@@ -1,4 +1,4 @@
-import TabView from "../components/TabView";
+import TabViewForServices from "../components/TabViewForServices";
 
 const Services = () => {
   return (
@@ -9,7 +9,7 @@ const Services = () => {
       <h2 className="text-2xl md:text-4xl mb-8 font-bold leading-snug text-[#1e293b] text-center">
         Services
       </h2>
-      <TabView />
+      <TabViewForServices />
     </div>
   );
 };

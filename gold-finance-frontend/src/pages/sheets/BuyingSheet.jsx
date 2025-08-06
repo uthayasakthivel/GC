@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
+import { useDashboardData } from "../../hooks/useDashboardData";
 
 const BuyingSheet = () => {
   const [formData, setFormData] = useState({
@@ -7,6 +8,7 @@ const BuyingSheet = () => {
     sheetNumber: "",
     customerName: "",
     phoneNumber: "",
+    articleId: "",
     grossWeight: "",
     stoneWeight: "",
     is916HM: false,
@@ -20,10 +22,13 @@ const BuyingSheet = () => {
     preparedBy: "",
   });
 
+  const { refetch } = useDashboardData();
+
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
 
   const [branches, setBranches] = useState([]);
+  const [articles, setArticles] = useState([]);
   const [nextSheetNumber, setNextSheetNumber] = useState("");
 
   useEffect(() => {
@@ -37,8 +42,14 @@ const BuyingSheet = () => {
       setNextSheetNumber(res.data.next);
     };
 
+    const fetchArticles = async () => {
+      const res = await axiosInstance.get("/admin/config/jewellery");
+      setArticles(res.data);
+    };
+
     fetchBranches();
     fetchNextSheetNumber();
+    fetchArticles();
   }, []);
 
   useEffect(() => {
@@ -117,6 +128,8 @@ const BuyingSheet = () => {
       console.log("Sheet submitted:", res.data);
 
       alert("Sheet created successfully!");
+      // ✅ Refresh balances instantly
+      await refetch();
     } catch (error) {
       console.error("Error:", error);
       alert("❌ Error occurred. Check console for more details.");
@@ -153,6 +166,20 @@ const BuyingSheet = () => {
           {branches.map((branch) => (
             <option key={branch._id} value={branch._id}>
               {branch.name}
+            </option>
+          ))}
+        </select>
+        <select
+          name="articleId"
+          value={formData.articleId}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select Article</option>
+          {console.log(articles)}
+          {articles.map((article) => (
+            <option key={article._id} value={article._id}>
+              {article.jewelleryName}
             </option>
           ))}
         </select>

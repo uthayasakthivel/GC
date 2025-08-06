@@ -11,6 +11,7 @@ import HomePage from "./pages/publicPages/HomePage";
 import SignUp from "./pages/publicPages/SignUp";
 import ForgotPassword from "./pages/publicPages/ForgotPassword";
 import { useEffect, useState } from "react";
+import Dashboard from "./components/Dashboard";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -71,7 +72,7 @@ function AppRoutes() {
         path="/admin"
         element={
           <PrivateRoute allowedRoles={["admin"]}>
-            <AdminDashboard />
+            <Dashboard role="admin" />
           </PrivateRoute>
         }
       />
@@ -109,7 +110,7 @@ function AppRoutes() {
         path="/manager"
         element={
           <PrivateRoute allowedRoles={["manager"]}>
-            <ManagerDashboard />
+            <Dashboard role="manager" />
           </PrivateRoute>
         }
       />
@@ -119,7 +120,7 @@ function AppRoutes() {
         path="/employee"
         element={
           <PrivateRoute allowedRoles={["employee"]}>
-            <EmployeeDashboard />
+            <Dashboard role="employee" />
           </PrivateRoute>
         }
       />

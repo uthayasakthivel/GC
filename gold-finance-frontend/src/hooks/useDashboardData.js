@@ -17,6 +17,7 @@ export function useDashboardData() {
           axios.get("/admin/config/rates/today"),
           axios.get("/admin/config/rates/buying"),
           axios.get("/admin/config/opening-balance"),
+          axios.get("/admin/config/closing-balance"),
         ]);
       console.log(todayRatesRes, "mm");
       setTodayRates(todayRatesRes.data);

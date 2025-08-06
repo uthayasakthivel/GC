@@ -1,7 +1,7 @@
 import { useState } from "react";
 import sellGoldImage from "../assets/sell_gold_image.png";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-const TabView = () => {
+const TabViewForServices = () => {
   const tabs = ["Gold Loan", "Gold Sales", "Gold Finance"];
   const [activeTab, setActiveTab] = useState("Gold Loan");
 
@@ -104,4 +104,4 @@ const TabView = () => {
   );
 };
 
-export default TabView;
+export default TabViewForServices;

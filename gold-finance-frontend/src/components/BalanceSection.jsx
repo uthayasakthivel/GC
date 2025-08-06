@@ -1,4 +1,4 @@
-export default function BalanceSection({ balance }) {
+export default function BalanceSection({ balance, closingBalance }) {
   const cash = balance?.cash ?? 0;
   const goldGrams = balance?.goldGrams ?? 0;
 
@@ -30,29 +30,21 @@ export default function BalanceSection({ balance }) {
           <span className="font-semibold w-44 text-slate-700">
             Closing Balance:
           </span>
-          <span className="text-slate-900 ml-2">₹0.00</span>
+          <span className="text-slate-900 ml-2">{closingBalance.cash}</span>
         </div>
         <div className="mb-5 flex items-center">
           <span className="font-semibold w-44 text-slate-700">
             Closing Cash:
           </span>
-          <span className="text-slate-900 ml-2">₹0.00</span>
+          <span className="text-slate-900 ml-2">{closingBalance.cash}</span>
         </div>
         <div className="mb-5 flex items-center">
           <span className="font-semibold w-44 text-slate-700">
             Closing Gold:
           </span>
-          <span className="text-slate-900 ml-2">0 gm</span>
-        </div>
-        <div className="mb-5 flex items-center">
-          <span className="font-semibold w-44 text-slate-700">
-            Outstanding Balance:
+          <span className="text-slate-900 ml-2">
+            {closingBalance.goldGrams}
           </span>
-          <span className="text-slate-900 ml-2">₹0.00</span>
-        </div>
-        <div className="flex items-center">
-          <span className="font-semibold w-44 text-slate-700">Cash:</span>
-          <span className="text-slate-900 ml-2">₹0.00</span>
         </div>
       </div>
     </div>
