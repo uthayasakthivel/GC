@@ -12,7 +12,6 @@ export default function GoldTabs({ role }) {
 
   return (
     <div className="w-full">
-      {/* Main Tabs */}
       <div className="flex border-b border-gray-300 mb-4">
         <button
           className={`px-6 py-2 ${
@@ -55,10 +54,9 @@ export default function GoldTabs({ role }) {
         </button>
       </div>
 
-      {/* Sub Tabs + Content */}
+      {/* Sales Section */}
       {mainTab === "sales" && (
         <div>
-          {/* Sub Tabs */}
           <div className="flex border-b border-gray-200 mb-3">
             <button
               className={`px-4 py-1 ${
@@ -95,8 +93,6 @@ export default function GoldTabs({ role }) {
               </>
             )}
           </div>
-
-          {/* Content */}
           <div className="p-4 bg-white shadow rounded-lg">
             {subTab === "buying" && <LatestSubmittedSheets role={role} />}
             {subTab === "selling" &&
@@ -108,9 +104,9 @@ export default function GoldTabs({ role }) {
         </div>
       )}
 
+      {/* Finance Section */}
       {mainTab === "finance" && (
         <div>
-          {/* Sub Tabs */}
           <div className="flex border-b border-gray-200 mb-3">
             <button
               className={`px-4 py-1 ${
@@ -123,8 +119,6 @@ export default function GoldTabs({ role }) {
               Finance Sheet
             </button>
           </div>
-
-          {/* Content */}
           <div className="p-4 bg-white shadow rounded-lg">
             {subTab === "finance-sheet" && <FinanceSheet />}
             {!subTab && <div>Please select a sheet above.</div>}
@@ -132,9 +126,9 @@ export default function GoldTabs({ role }) {
         </div>
       )}
 
+      {/* Loan Section */}
       {mainTab === "loan" && (
         <div>
-          {/* Sub Tabs */}
           <div className="flex border-b border-gray-200 mb-3">
             <button
               className={`px-4 py-1 ${
@@ -157,8 +151,6 @@ export default function GoldTabs({ role }) {
               Loan Tab 2
             </button>
           </div>
-
-          {/* Content */}
           <div className="p-4 bg-white shadow rounded-lg">
             {subTab === "loan1" && <div>Loan feature coming soon...</div>}
             {subTab === "loan2" && (

@@ -17,18 +17,19 @@ export default function DashboardLayout({ role, children }) {
   else if (role === "employee") dashboardTitle = "Employee Dashboard";
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">{dashboardTitle}</h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="flex justify-between items-center bg-gradient-to-r from-amber-400 to-yellow-500 p-4 shadow">
+        <h1 className="text-2xl font-bold text-white drop-shadow-lg">
+          {dashboardTitle}
+        </h1>
         <button
           onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+          className="bg-white text-amber-600 px-4 py-2 rounded-lg shadow hover:bg-amber-100 transition"
         >
           Logout
         </button>
       </div>
-
-      <div className="space-y-4">{children}</div>
+      <div className="p-6">{children}</div>
     </div>
   );
 }

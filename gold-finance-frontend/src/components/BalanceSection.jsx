@@ -25,7 +25,6 @@ export default function BalanceSection({ balance, closingBalance }) {
         </div>
       </div>
       <div>
-        {/* Placeholder for future: closing balance, etc */}
         <div className="mb-5 flex items-center">
           <span className="font-semibold w-44 text-slate-700">
             Closing Balance:
