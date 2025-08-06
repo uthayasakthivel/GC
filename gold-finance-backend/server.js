@@ -1,5 +1,6 @@
 // auth-backend/server.js
 import express from "express";
+import path from "path";
 import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -20,7 +21,8 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 // Serve images statically
-app.use("/uploads", express.static("uploads"));
+console.log("Serving uploads from:", path.join(process.cwd(), "uploads"));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/config", adminConfigRoutes);

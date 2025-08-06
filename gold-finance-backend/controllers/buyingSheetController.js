@@ -85,3 +85,35 @@ export const createBuyingSheet = async (req, res) => {
     res.status(500).json({ message: "Failed to create buying sheet" });
   }
 };
+
+export const getAllBuyingSheets = async (req, res) => {
+  try {
+    const sheets = await BuyingSheet.find()
+      .sort({ date: -1 }) // recent first
+      .select("sheetNumber customerName date totalAmountSpend"); // select only needed fields for list
+
+    res.json(sheets);
+  } catch (error) {
+    console.error("Error fetching buying sheets:", error);
+    res.status(500).json({ message: "Failed to fetch buying sheets" });
+  }
+};
+
+export const getBuyingSheetById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sheet = await BuyingSheet.findById(id)
+      .populate("branchId", "name location") // Optional: get branch details
+      .lean();
+
+    if (!sheet) {
+      return res.status(404).json({ message: "Sheet not found" });
+    }
+
+    res.json(sheet);
+  } catch (error) {
+    console.error("Error fetching sheet by ID:", error);
+    res.status(500).json({ message: "Failed to fetch sheet" });
+  }
+};

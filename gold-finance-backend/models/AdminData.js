@@ -18,6 +18,16 @@ const adminDataSchema = new mongoose.Schema(
       cash: { type: Number, default: 0 },
       goldGrams: { type: Number, default: 0 },
     },
+    closingBalance: {
+      cash: {
+        type: Number,
+        default: 0,
+      },
+      goldGrams: {
+        type: Number,
+        default: 0,
+      },
+    },
   },
   { timestamps: true }
 );

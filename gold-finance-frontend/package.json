@@ -17,6 +17,7 @@
     "axios": "^1.11.0",
     "dayjs": "^1.11.13",
     "dom-to-image-more": "^3.6.0",
+    "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
     "lottie-react": "^2.4.1",
     "postcss": "^8.5.6",
@@ -25,6 +26,7 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.3",
     "react-slick": "^0.30.3",
+    "react-to-print": "^3.1.1",
     "slick-carousel": "^1.8.1",
     "tailwindcss": "^4.1.11"
   },

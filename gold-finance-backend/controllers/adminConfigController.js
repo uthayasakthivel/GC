@@ -196,30 +196,3 @@ export const addToOpeningBalance = async (req, res) => {
     res.status(400).json({ error: "Failed to add to opening balance" });
   }
 };
-
-export const deductFromOpeningBalance = async (req, res) => {
-  try {
-    const data = await getAdminData();
-    const cashToDeduct = Number(req.body.cash) || 0;
-    const goldToDeduct = Number(req.body.goldGrams) || 0;
-
-    if (
-      cashToDeduct > data.openingBalance.cash ||
-      goldToDeduct > data.openingBalance.goldGrams
-    ) {
-      return res.status(400).json({ error: "Insufficient balance to deduct" });
-    }
-
-    data.openingBalance.cash -= cashToDeduct;
-    data.openingBalance.goldGrams -= goldToDeduct;
-
-    await data.save();
-
-    res.json({
-      message: "Opening balance deducted",
-      openingBalance: data.openingBalance,
-    });
-  } catch (err) {
-    res.status(400).json({ error: "Failed to deduct from opening balance" });
-  }
-};

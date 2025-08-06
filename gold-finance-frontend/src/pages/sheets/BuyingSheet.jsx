@@ -109,14 +109,17 @@ const BuyingSheet = () => {
     });
 
     try {
+      // Step 1: Submit the sheet
       const res = await axiosInstance.post("/sheet/buying-sheet", payload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("Success:", res.data);
+
+      console.log("Sheet submitted:", res.data);
+
       alert("Sheet created successfully!");
     } catch (error) {
-      console.error("Error creating sheet:", error);
-      alert("Error occurred. Check console.");
+      console.error("Error:", error);
+      alert("❌ Error occurred. Check console for more details.");
     }
   };
 

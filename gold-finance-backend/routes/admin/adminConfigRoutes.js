@@ -10,7 +10,6 @@ import {
   getBuyingRates,
   setBuyingRates,
   getOpeningBalance,
-  deductFromOpeningBalance,
   addToOpeningBalance,
 } from "../../controllers/adminConfigController.js";
 
@@ -35,5 +34,5 @@ router.post("/rates/buying", verifyToken, isAdmin, setBuyingRates);
 // Opening balance
 router.get("/opening-balance", verifyToken, getOpeningBalance);
 router.post("/opening-balance/add", verifyToken, isAdmin, addToOpeningBalance);
-router.post("/opening-balance/deduct", verifyToken, deductFromOpeningBalance);
+
 export default router;

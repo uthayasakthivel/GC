@@ -2,9 +2,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import Login from "./pages/publicPages/Login";
-import AdminDashboard from "./pages/dashboards/AdminDashboard";
-import ManagerDashboard from "./pages/dashboards/ManagerDashboard";
-import EmployeeDashboard from "./pages/dashboards/EmployeeDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ManagerDashboard from "./pages/manager/ManagerDashboard";
+import EmployeeDashboard from "./pages/Employee/EmployeeDashboard";
 import PrivateRoute from "./routes/PrivateRoute";
 import { ToastProvider } from "./components/ToastContext";
 import HomePage from "./pages/publicPages/HomePage";
@@ -20,13 +20,15 @@ import loadingSpinner from "./assets/Coin_rotating.json";
 import BuyingSheet from "./pages/sheets/BuyingSheet";
 import ResetPassword from "./pages/publicPages/ResetPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AdminSheetPreview from "./pages/admin/AdminSheetPreview";
+import AllBuyingSheets from "./pages/admin/AllBuyingSheets";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
   const [fakeLoading, setFakeLoading] = useState(true);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setFakeLoading(false), 3000);
+    const timeout = setTimeout(() => setFakeLoading(false), 500);
     return () => clearTimeout(timeout);
   }, []);
 
@@ -74,6 +76,34 @@ function AppRoutes() {
         }
       />
 
+      <Route
+        path="/admin/sheets/:id"
+        element={
+          <PrivateRoute allowedRoles={["admin"]}>
+            <AdminSheetPreview />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/admin/buying-sheets"
+        element={
+          <PrivateRoute allowedRoles={["admin"]}>
+            <AllBuyingSheets />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Buying Sheet route (protected for Admin) */}
+      <Route
+        path="/buying-sheet"
+        element={
+          <PrivateRoute allowedRoles={["admin", "employee"]}>
+            <BuyingSheet />
+          </PrivateRoute>
+        }
+      />
+
       {/* Manager dashboard protected */}
       <Route
         path="/manager"
@@ -90,17 +120,6 @@ function AppRoutes() {
         element={
           <PrivateRoute allowedRoles={["employee"]}>
             <EmployeeDashboard />
-          </PrivateRoute>
-        }
-      />
-
-      {/* Buying Sheet route (protected for employee) */}
-
-      <Route
-        path="/buying-sheet"
-        element={
-          <PrivateRoute allowedRoles={["employee"]}>
-            <BuyingSheet />
           </PrivateRoute>
         }
       />
