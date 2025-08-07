@@ -16,7 +16,7 @@ export const useImageUploader = (maxImages = 4) => {
     const newUrls = newFiles.map((file) => URL.createObjectURL(file));
 
     setImages((prev) => [...prev, ...newFiles]);
-    setPreviewUrls((prev) => [...prev, ...newUrls]);
+    setPreviewUrls((prev) => [...prev, ...newUrls]); // ✅ Needed for preview
   };
 
   const handleRemoveImage = (indexToRemove) => {

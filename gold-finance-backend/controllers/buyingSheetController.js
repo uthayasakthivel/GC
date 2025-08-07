@@ -127,3 +127,52 @@ export const getBuyingSheetById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch sheet" });
   }
 };
+
+export const deleteBuyingSheetById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedSheet = await BuyingSheet.findByIdAndDelete(id);
+
+    if (!deletedSheet) {
+      return res.status(404).json({ message: "Buying sheet not found" });
+    }
+
+    res.json({ message: "Buying sheet deleted successfully", deletedSheet });
+  } catch (error) {
+    console.error("Error deleting sheet by ID:", error);
+    res.status(500).json({ message: "Failed to delete buying sheet" });
+  }
+};
+
+export const deleteSelectedBuyingSheets = async (req, res) => {
+  try {
+    const { ids } = req.body; // Expects: { ids: ["id1", "id2", ...] }
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: "No IDs provided" });
+    }
+
+    const result = await BuyingSheet.deleteMany({ _id: { $in: ids } });
+
+    res.json({
+      message: `${result.deletedCount} sheet(s) deleted successfully`,
+    });
+  } catch (error) {
+    console.error("Error deleting selected sheets:", error);
+    res.status(500).json({ message: "Failed to delete selected sheets" });
+  }
+};
+
+export const deleteAllBuyingSheets = async (req, res) => {
+  try {
+    const result = await BuyingSheet.deleteMany({});
+
+    res.json({
+      message: `${result.deletedCount} sheet(s) deleted successfully (all sheets)`,
+    });
+  } catch (error) {
+    console.error("Error deleting all sheets:", error);
+    res.status(500).json({ message: "Failed to delete all buying sheets" });
+  }
+};

@@ -4,6 +4,9 @@ import {
   createBuyingSheet,
   getAllBuyingSheets,
   getBuyingSheetById,
+  deleteAllBuyingSheets,
+  deleteBuyingSheetById,
+  deleteSelectedBuyingSheets,
 } from "../controllers/buyingSheetController.js";
 
 import { isAdmin, verifyToken } from "../middlewares/authMiddleware.js";
@@ -28,7 +31,13 @@ router.post(
 );
 
 router.get("/buying-sheet", verifyToken, isAdmin, getAllBuyingSheets);
-
 router.get("/buying-sheet/:id", verifyToken, isAdmin, getBuyingSheetById);
-
+router.delete("/buying-sheet/:id", verifyToken, isAdmin, deleteBuyingSheetById);
+router.post(
+  "/buying-sheet/delete-selected",
+  verifyToken,
+  isAdmin,
+  deleteSelectedBuyingSheets
+);
+router.delete("/buying-sheet", verifyToken, isAdmin, deleteAllBuyingSheets);
 export default router;
