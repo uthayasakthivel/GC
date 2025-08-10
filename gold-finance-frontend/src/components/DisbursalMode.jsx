@@ -1,7 +1,7 @@
 const DisbursalMode = ({
-  disbursalMode,
-  onlineAmount,
-  offlineAmount,
+  amountDisbursedMethod,
+  amountFromOnline,
+  amountFromOffline,
   onChange,
 }) => (
   <div className="mt-4">
@@ -10,9 +10,9 @@ const DisbursalMode = ({
       <label>
         <input
           type="radio"
-          name="disbursalMode"
+          name="amountDisbursedMethod"
           value="online"
-          checked={disbursalMode === "online"}
+          checked={amountDisbursedMethod === "online"}
           onChange={onChange}
         />{" "}
         Online Only
@@ -20,9 +20,9 @@ const DisbursalMode = ({
       <label>
         <input
           type="radio"
-          name="disbursalMode"
+          name="amountDisbursedMethod"
           value="offline"
-          checked={disbursalMode === "offline"}
+          checked={amountDisbursedMethod === "offline"}
           onChange={onChange}
         />{" "}
         Offline Only
@@ -30,32 +30,34 @@ const DisbursalMode = ({
       <label>
         <input
           type="radio"
-          name="disbursalMode"
+          name="amountDisbursedMethod"
           value="both"
-          checked={disbursalMode === "both"}
+          checked={amountDisbursedMethod === "both"}
           onChange={onChange}
         />{" "}
         Both
       </label>
     </div>
 
-    {(disbursalMode === "online" || disbursalMode === "both") && (
+    {(amountDisbursedMethod === "online" ||
+      amountDisbursedMethod === "both") && (
       <input
         type="number"
-        name="onlineAmount"
+        name="amountFromOnline"
         placeholder="Online Amount"
-        value={onlineAmount || ""}
+        value={amountFromOnline || ""}
         onChange={onChange}
         className="mt-2 w-full border p-2"
       />
     )}
 
-    {(disbursalMode === "offline" || disbursalMode === "both") && (
+    {(amountDisbursedMethod === "offline" ||
+      amountDisbursedMethod === "both") && (
       <input
         type="number"
-        name="offlineAmount"
+        name="amountFromOffline"
         placeholder="Offline Amount"
-        value={offlineAmount || ""}
+        value={amountFromOffline || ""}
         onChange={onChange}
         className="mt-2 w-full border p-2"
       />

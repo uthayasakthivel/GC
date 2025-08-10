@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "../api/axiosInstance";
-import endpoints from "../api/endpoints";
 
 export function useDashboardData() {
   const [todayRates, setTodayRates] = useState(null);
@@ -48,8 +47,12 @@ export function useDashboardData() {
     ...buyingRates,
   };
 
+  console.log(combinedRates, "Rates combined");
+
   return {
     combinedRates,
+    todayRates,
+    buyingRates,
     balance,
     closingBalance,
     loadingDashboardData,

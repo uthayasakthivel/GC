@@ -28,7 +28,9 @@ const BuyingSheet = () => {
     is916HM: false,
     purity: "",
     buyingRate: "",
-    amountDisbursed: "",
+    amountDisbursedMethod: "",
+    amountFromOnline: "",
+    amountFromOffline: "",
     commissionPersonName: "",
     commissionPhone: "",
     commissionFixed: "",
@@ -44,7 +46,7 @@ const BuyingSheet = () => {
   // ✅ Replace old API calls with hooks
   const { branches } = useBranches();
   const { articles } = useArticles();
-  const { nextSheetNumber } = useNextSheetNumber();
+  const { nextSheetNumber } = useNextSheetNumber("BuyingSheet");
   const { rate: buyingRate, purity } = useBuyingRate(formData.is916HM);
   const { images, previewUrls, handleImageChange, handleRemoveImage } =
     useImageUploader(4);
@@ -73,6 +75,7 @@ const BuyingSheet = () => {
     e.preventDefault();
 
     const payload = new FormData();
+    console.log(payload, "data send from buying sheet creation");
     // Append text fields
     Object.entries(formData).forEach(([key, value]) => {
       payload.append(key, value);
@@ -180,9 +183,9 @@ const BuyingSheet = () => {
         />
 
         <DisbursalMode
-          disbursalMode={formData.disbursalMode}
-          onlineAmount={formData.onlineAmount}
-          offlineAmount={formData.offlineAmount}
+          amountDisbursedMethod={formData.amountDisbursedMethod}
+          amountFromOnline={formData.amountFromOnline}
+          amountFromOffline={formData.amountFromOffline}
           onChange={handleChange}
         />
 

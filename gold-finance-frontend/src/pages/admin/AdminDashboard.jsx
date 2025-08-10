@@ -11,6 +11,8 @@ import { useAdminUsers } from "../../hooks/useAdminUsers";
 import JewelleryManagement from "../../components/JewelleryManagement";
 
 export default function AdminDashboard({
+  todayRates,
+  buyingRates,
   combinedRates,
   balance,
   closingBalance,
@@ -29,6 +31,8 @@ export default function AdminDashboard({
       <DashboardHeader
         role="admin"
         combinedRates={combinedRates}
+        todayRates={todayRates}
+        buyingRates={buyingRates}
         balance={balance}
         closingBalance={closingBalance}
         loadingDashboardData={loadingDashboardData}

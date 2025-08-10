@@ -9,12 +9,16 @@ import {
   deleteSelectedBuyingSheets,
 } from "../controllers/buyingSheetController.js";
 
-import { isAdmin, verifyToken } from "../middlewares/authMiddleware.js";
+import {
+  isAdmin,
+  isManager,
+  verifyToken,
+} from "../middlewares/authMiddleware.js";
 import { upload } from "../middlewares/upload.js";
 import { getNextSheetNumber } from "../utils/getNextSheetNumber.js";
 
 const router = express.Router();
-router.get("/buying-sheet/next-number", async (req, res) => {
+router.get("/buying-sheet/next-number", verifyToken, async (req, res) => {
   try {
     const next = await getNextSheetNumber();
     res.json({ next });

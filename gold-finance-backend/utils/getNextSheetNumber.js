@@ -15,5 +15,5 @@ export const getNextSheetNumber = async () => {
     next++;
   }
 
-  return `GS-${String(next).padStart(3, "0")}`;
+  return `GB-${String(next).padStart(3, "0")}`;
 };

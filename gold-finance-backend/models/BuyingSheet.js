@@ -1,15 +1,26 @@
 import mongoose from "mongoose";
 
 const buyingSheetSchema = new mongoose.Schema({
+  sheetNumber: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  customerName: String,
+  phoneNumber: String,
+  articleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Jewellery", // ✅ Matches the model name exactly
+    required: true,
+  },
   branchId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Branch",
     required: true,
   },
-  sheetNumber: String, // ✅ This line is fine if the one above has a comma
-  date: Date,
-  customerName: String,
-  phoneNumber: String,
   goldDetails: {
     grossWeight: Number,
     stoneWeight: Number,
@@ -19,7 +30,9 @@ const buyingSheetSchema = new mongoose.Schema({
   },
   buyingRate: Number,
   netAmount: Number,
-  amountDisbursed: String, // "cash", "account", or "both"
+  amountDisbursedMethod: String, // "cash", "account", or "both"
+  amountFromOnline: Number,
+  amountFromOffline: Number,
   commission: {
     name: String,
     phone: String,

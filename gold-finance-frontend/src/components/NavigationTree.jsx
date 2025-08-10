@@ -94,11 +94,18 @@ export default function GoldTabs({ role }) {
             )}
           </div>
           <div className="p-4 bg-white shadow rounded-lg">
-            {subTab === "buying" && <LatestSubmittedSheets role={role} />}
+            {subTab === "buying" && (
+              <LatestSubmittedSheets role={role} sheetType="buying" />
+            )}
             {subTab === "selling" &&
-              (role === "admin" || role === "manager") && <SellingSheet />}
+              (role === "admin" || role === "manager") && (
+                <LatestSubmittedSheets role={role} sheetType="selling" />
+              )}
             {subTab === "melting" &&
-              (role === "admin" || role === "manager") && <MeltingSheet />}
+              (role === "admin" || role === "manager") && (
+                <LatestSubmittedSheets role={role} sheetType="melting" />
+              )}
+
             {!subTab && <div>Please select a sheet above.</div>}
           </div>
         </div>

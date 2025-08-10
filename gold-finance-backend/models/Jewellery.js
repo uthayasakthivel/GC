@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const branchSchema = new mongoose.Schema({
+const jewellerySchema = new mongoose.Schema({
   jewelleryName: {
     type: String,
     unique: true,
@@ -8,6 +8,6 @@ const branchSchema = new mongoose.Schema({
   },
 });
 
-const Jewellery = mongoose.model("Jewellery", branchSchema);
+const Jewellery = mongoose.model("Jewellery", jewellerySchema);
 
 export default Jewellery;

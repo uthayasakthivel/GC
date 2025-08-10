@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import buyingSheetRoutes from "./routes/BuyingSheetRoutes.js";
+import sellingSheetRoutes from "./routes/SellingSheetRoutes.js";
 import adminConfigRoutes from "./routes/admin/adminConfigRoutes.js";
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/config", adminConfigRoutes);
 app.use("/api/sheet", buyingSheetRoutes);
+app.use("/api/sheet", sellingSheetRoutes);
 
 app.get("/", (req, res) => res.send("API running"));
 

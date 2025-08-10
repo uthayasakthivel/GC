@@ -10,12 +10,15 @@ export const createBuyingSheet = async (req, res) => {
       branchId,
       customerName,
       phoneNumber,
+      articleId,
       grossWeight,
       stoneWeight,
       is916HM,
       purity,
       buyingRate,
-      amountDisbursed,
+      amountDisbursedMethod,
+      amountFromOnline,
+      amountFromOffline,
       commissionPersonName,
       commissionPhone,
       commissionFixed,
@@ -28,9 +31,15 @@ export const createBuyingSheet = async (req, res) => {
     const branchObjectId = mongoose.Types.ObjectId.isValid(branchId)
       ? new mongoose.Types.ObjectId(branchId)
       : null;
+    const articleObjectId = mongoose.Types.ObjectId.isValid(branchId)
+      ? new mongoose.Types.ObjectId(branchId)
+      : null;
 
     if (!branchObjectId) {
       return res.status(400).json({ message: "Invalid branchId" });
+    }
+    if (!articleObjectId) {
+      return res.status(400).json({ message: "Invalid objectId" });
     }
 
     // Derived calculations
@@ -67,10 +76,13 @@ export const createBuyingSheet = async (req, res) => {
       date: new Date(), // today's date
       customerName,
       phoneNumber,
+      articleId,
       goldDetails,
       buyingRate: parseFloat(buyingRate),
       netAmount,
-      amountDisbursed,
+      amountDisbursedMethod,
+      amountFromOnline,
+      amountFromOffline,
       commission: commissionDetails,
       miscellaneousAmount: parseFloat(miscellaneousAmount),
       totalAmountSpend,
@@ -78,6 +90,8 @@ export const createBuyingSheet = async (req, res) => {
       createdBy: req.user.id,
       images: imagePaths,
     });
+
+    console.log(buyingSheet, "created Buying sheet data");
 
     const savedSheet = await buyingSheet.save();
     const closingBalance = await updateClosingBalance(
@@ -114,12 +128,14 @@ export const getBuyingSheetById = async (req, res) => {
     const { id } = req.params;
 
     const sheet = await BuyingSheet.findById(id)
-      .populate("branchId", "name location") // Optional: get branch details
+      .populate("branchId", "name location")
+      .populate("articleId", "jewelleryName") // ✅ ADD THIS
       .lean();
 
     if (!sheet) {
       return res.status(404).json({ message: "Sheet not found" });
     }
+    console.log(sheet, "buying sheet");
 
     res.json(sheet);
   } catch (error) {

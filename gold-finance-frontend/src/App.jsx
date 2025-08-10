@@ -21,8 +21,11 @@ import loadingSpinner from "./assets/Coin_rotating.json";
 import BuyingSheet from "./pages/sheets/BuyingSheet";
 import ResetPassword from "./pages/publicPages/ResetPassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import AdminSheetPreview from "./pages/admin/AdminSheetPreview";
-import AllBuyingSheets from "./pages/admin/AllBuyingSheets";
+import BuyingSheetPreview from "./pages/admin/BuyingSheetPreview";
+import SellingSheetPreview from "./pages/admin/SellingSheetPreview";
+// import AllBuyingSheets from "./pages/admin/AllBuyingSheets";
+import SellingSheet from "./pages/sheets/SellingSheet";
+import AllSheets from "./pages/admin/AllSheets";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
@@ -78,10 +81,19 @@ function AppRoutes() {
       />
 
       <Route
-        path="/admin/sheets/:id"
+        path="/admin/sheets/buying/:id"
         element={
           <PrivateRoute allowedRoles={["admin"]}>
-            <AdminSheetPreview />
+            <BuyingSheetPreview sheetType="buying" />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/admin/sheets/selling/:id"
+        element={
+          <PrivateRoute allowedRoles={["admin"]}>
+            <SellingSheetPreview sheetType="selling" />
           </PrivateRoute>
         }
       />
@@ -90,10 +102,28 @@ function AppRoutes() {
         path="/admin/buying-sheets"
         element={
           <PrivateRoute allowedRoles={["admin"]}>
-            <AllBuyingSheets />
+            <AllSheets sheetType="buying" />
           </PrivateRoute>
         }
       />
+
+      <Route
+        path="/admin/selling-sheets"
+        element={
+          <PrivateRoute allowedRoles={["admin"]}>
+            <AllSheets sheetType="selling" />
+          </PrivateRoute>
+        }
+      />
+
+      {/* <Route
+        path="/admin/selling-sheets"
+        element={
+          <PrivateRoute allowedRoles={["admin"]}>
+            <AllSellingSheets />
+          </PrivateRoute>
+        }
+      /> */}
 
       {/* Buying Sheet route (protected for Admin) */}
       <Route
@@ -101,6 +131,15 @@ function AppRoutes() {
         element={
           <PrivateRoute allowedRoles={["admin", "employee"]}>
             <BuyingSheet />
+          </PrivateRoute>
+        }
+      />
+      {/* Selling Sheet route (protected for Admin) */}
+      <Route
+        path="/selling-sheet"
+        element={
+          <PrivateRoute allowedRoles={["admin", "employee"]}>
+            <SellingSheet />
           </PrivateRoute>
         }
       />

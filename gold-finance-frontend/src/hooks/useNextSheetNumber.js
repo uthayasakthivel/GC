@@ -1,14 +1,19 @@
-// hooks/useNextSheetNumber.js
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axiosInstance";
 
-export const useNextSheetNumber = () => {
+export const useNextSheetNumber = (TypeOfSheet = "BuyingSheet") => {
   const [nextSheetNumber, setNextSheetNumber] = useState("");
   const [loading, setLoading] = useState(true);
 
   const fetchNextSheetNumber = async () => {
     try {
-      const res = await axiosInstance.get("/sheet/buying-sheet/next-number");
+      const endpoint =
+        TypeOfSheet === "BuyingSheet"
+          ? "/sheet/buying-sheet/next-number"
+          : "/sheet/selling-sheet/next-number";
+      console.log(endpoint, "endpoint");
+      const res = await axiosInstance.get(endpoint);
+      console.log(res);
       setNextSheetNumber(res.data.next);
     } catch (err) {
       console.error("Error fetching next sheet number:", err);
@@ -19,7 +24,7 @@ export const useNextSheetNumber = () => {
 
   useEffect(() => {
     fetchNextSheetNumber();
-  }, []);
+  }, [TypeOfSheet]);
 
   return { nextSheetNumber, loading, refetchNextNumber: fetchNextSheetNumber };
 };

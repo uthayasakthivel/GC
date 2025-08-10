@@ -210,6 +210,27 @@ export const updateClosingBalance = async (totalAmountSpend, netWeight) => {
   return adminData.closingBalance;
 };
 
+export const updateClosingBalanceAfterSelling = async (
+  netAmountReceived,
+  grossWeight
+) => {
+  const adminData = await getAdminData();
+
+  const newClosingCash =
+    parseFloat(adminData.openingBalance.cash) + parseFloat(netAmountReceived);
+  const newClosingGold =
+    parseFloat(adminData.openingBalance.goldGrams) - parseFloat(grossWeight);
+
+  adminData.closingBalance = {
+    cash: newClosingCash,
+    goldGrams: newClosingGold,
+  };
+
+  await adminData.save();
+
+  return adminData.closingBalance;
+};
+
 // Create Jewellery Type
 export const createJewellery = async (req, res) => {
   try {

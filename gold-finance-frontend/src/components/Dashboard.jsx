@@ -5,11 +5,19 @@ import ManagerDashboard from "../pages/manager/ManagerDashboard";
 import EmployeeDashboard from "../pages/Employee/EmployeeDashboard";
 
 export default function Dashboard({ role }) {
-  const { combinedRates, balance, closingBalance, loadingDashboardData } =
-    useDashboardData();
+  const {
+    combinedRates,
+    todayRates,
+    buyingRates,
+    balance,
+    closingBalance,
+    loadingDashboardData,
+  } = useDashboardData();
 
   const dashboardProps = {
     combinedRates,
+    todayRates,
+    buyingRates,
     balance,
     closingBalance,
     loadingDashboardData,

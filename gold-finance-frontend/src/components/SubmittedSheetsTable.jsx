@@ -47,7 +47,7 @@ const IndeterminateCheckbox = React.forwardRef(
   }
 );
 
-export default function SubmittedSheetsTable({ data }) {
+export default function SubmittedSheetsTable({ data, sheetType }) {
   const navigate = useNavigate();
 
   const columns = useMemo(
@@ -85,7 +85,9 @@ export default function SubmittedSheetsTable({ data }) {
         disableSortBy: true,
         Cell: ({ row }) => (
           <button
-            onClick={() => navigate(`/admin/sheets/${row.original._id}`)}
+            onClick={() =>
+              navigate(`/admin/sheets/${sheetType}/${row.original._id}`)
+            }
             className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
           >
             Preview
@@ -159,7 +161,7 @@ export default function SubmittedSheetsTable({ data }) {
       return;
 
     try {
-      await axios.post("/sheet/buying-sheet/delete-selected", {
+      await axios.post(`/sheet/${sheetType}-sheet/delete-selected`, {
         ids: selectedIds,
       });
       window.location.reload();
@@ -173,7 +175,7 @@ export default function SubmittedSheetsTable({ data }) {
     if (!window.confirm("Are you sure you want to delete ALL sheets?")) return;
 
     try {
-      await axios.delete("/sheet/buying-sheet");
+      await axios.delete(`/sheet/${sheetType}-sheet`);
       window.location.reload();
     } catch (err) {
       console.error("Failed to delete all sheets:", err);

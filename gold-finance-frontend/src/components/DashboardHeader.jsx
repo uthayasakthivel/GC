@@ -6,6 +6,8 @@ import BalanceSection from "./BalanceSection";
 export default function DashboardHeader({
   role,
   combinedRates,
+  todayRates,
+  buyingRates,
   balance,
   closingBalance,
   loadingDashboardData,
@@ -16,7 +18,11 @@ export default function DashboardHeader({
   console.log(role, "role in DashboardHeader");
   return (
     <>
-      <RatesSection rates={combinedRates} />
+      <RatesSection
+        rates={combinedRates}
+        todayRates={todayRates}
+        buyingRates={buyingRates}
+      />
       {role === "admin" && (
         <BalanceSection balance={balance} closingBalance={closingBalance} />
       )}
