@@ -68,7 +68,9 @@ export default function LatestSubmittedSheets({ role, sheetType }) {
               <thead className="bg-gray-100">
                 <tr>
                   <th className="border p-2 text-left">Sheet No</th>
-                  <th className="border p-2 text-left">Customer Name</th>
+                  {sheetType !== "melting" && (
+                    <th className="border p-2 text-left">Customer Name</th>
+                  )}
                   <th className="border p-2 text-left">Date</th>
                   <th className="border p-2 text-left">Action</th>
                 </tr>
@@ -77,7 +79,9 @@ export default function LatestSubmittedSheets({ role, sheetType }) {
                 {sheets.map((sheet) => (
                   <tr key={sheet._id} className="hover:bg-gray-50">
                     <td className="border p-2">{sheet.sheetNumber}</td>
-                    <td className="border p-2">{sheet.customerName}</td>
+                    {sheetType !== "melting" && (
+                      <td className="border p-2">{sheet.customerName}</td>
+                    )}
                     <td className="border p-2">
                       {sheet.date
                         ? new Date(sheet.date).toLocaleDateString()

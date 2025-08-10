@@ -91,8 +91,6 @@ export const createBuyingSheet = async (req, res) => {
       images: imagePaths,
     });
 
-    console.log(buyingSheet, "created Buying sheet data");
-
     const savedSheet = await buyingSheet.save();
     const closingBalance = await updateClosingBalance(
       totalAmountSpend,
