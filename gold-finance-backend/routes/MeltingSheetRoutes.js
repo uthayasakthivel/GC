@@ -14,6 +14,7 @@ import {
   updateMeltingSheet,
 } from "../controllers/meltingSheetController.js";
 import { getNextMeltingSheetNumber } from "../utils/getNextMeltingSheetNumber.js";
+import { upload } from "../middlewares/upload.js";
 const router = express.Router();
 
 // Get next sheet number (Manager+)
@@ -32,7 +33,18 @@ router.get(
 );
 
 // Create melting sheet (Manager+)
-router.post("/melting-sheet", verifyToken, isManager, createMeltingSheet);
+router.post(
+  "/melting-sheet",
+  verifyToken,
+
+  upload.array("images", 2),
+  (req, res, next) => {
+    console.log("Files received:", req.files);
+    next();
+  },
+  isManager,
+  createMeltingSheet
+);
 
 // List all melting sheets (Admin only)
 router.get("/melting-sheet", verifyToken, isAdmin, getMeltingSheets);

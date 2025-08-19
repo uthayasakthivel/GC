@@ -7,6 +7,8 @@ import NavigationTree from "../../components/NavigationTree";
 import DashboardHeader from "../../components/DashboardHeader";
 
 export default function EmployeeDashboard({
+  todayRates,
+  buyingRates,
   combinedRates,
   balance,
   closingBalance,
@@ -18,6 +20,8 @@ export default function EmployeeDashboard({
       <DashboardHeader
         role="employee"
         combinedRates={combinedRates}
+        todayRates={todayRates}
+        buyingRates={buyingRates}
         balance={balance}
         closingBalance={closingBalance}
         loadingDashboardData={loadingDashboardData}

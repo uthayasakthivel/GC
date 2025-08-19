@@ -3,6 +3,119 @@ import MeltingSheet from "../models/MeltingSheet.js";
 import { getNextMeltingSheetNumber } from "../utils/getNextMeltingSheetNumber.js";
 import BuyingSheet from "../models/BuyingSheet.js";
 
+// export const createMeltingSheet = async (req, res) => {
+//   try {
+//     const {
+//       buyingSheetId,
+//       meltingCenter,
+//       meltingPlace,
+//       meltingRefPerson,
+//       grossWeight,
+//       afterStone,
+//       afterMelting,
+//       kacchaPurity,
+//       sellingRate,
+//       totalAmountRecieved,
+//       amountDisbursedMethod,
+//       amountFromOnline,
+//       amountFromOffline,
+//       preparedBy,
+//     } = req.body;
+
+//     // Validate required fields
+//     if (
+//       !buyingSheetId ||
+//       !meltingCenter ||
+//       !meltingPlace ||
+//       !meltingRefPerson ||
+//       !grossWeight ||
+//       !afterStone ||
+//       !afterMelting ||
+//       !kacchaPurity ||
+//       !sellingRate ||
+//       !totalAmountRecieved ||
+//       !preparedBy
+//     ) {
+//       return res.status(400).json({ message: "Missing required fields" });
+//     }
+
+//     // Get next sheet number
+//     const sheetNumber = await getNextMeltingSheetNumber();
+
+//     // Fetch buying sheet for articleId and buying rate
+//     const buyingSheet = await BuyingSheet.findById(buyingSheetId).lean();
+//     if (!buyingSheet) {
+//       return res.status(404).json({ message: "Buying sheet not found" });
+//     }
+
+//     const articleId = buyingSheet.articleId;
+//     const buyingRate = buyingSheet.totalAmountSpend;
+
+//     // Convert string inputs to numbers safely
+//     const grossWeightNum = parseFloat(grossWeight);
+//     const afterStoneNum = parseFloat(afterStone);
+//     const afterMeltingNum = parseFloat(afterMelting);
+//     const kacchaPurityNum = parseFloat(kacchaPurity);
+//     const buyingRateNum = parseFloat(buyingRate) || 0;
+//     const sellingRateNum = parseFloat(sellingRate);
+//     const totalAmountRecievedNum = parseFloat(totalAmountRecieved);
+//     const amountOnlineNum = parseFloat(amountFromOnline) || 0;
+//     const amountOfflineNum = parseFloat(amountFromOffline) || 0;
+
+//     // Calculate net profit
+//     const netProfit = totalAmountRecievedNum - buyingSheet.netAmount; // Example formula
+
+//     // Prepare nested objects according to schema
+//     const goldDetails = {
+//       grossWeight: grossWeightNum,
+//       afterStone: afterStoneNum,
+//       afterMelting: afterMeltingNum,
+//       kacchaPurity: kacchaPurityNum,
+//     };
+
+//     const rateDetails = {
+//       buyingRate: buyingRateNum,
+//       sellingRate: sellingRateNum,
+//       totalAmountRecieved: totalAmountRecievedNum,
+//       amountDisbursedMethod,
+//       amountFromOnline: amountOnlineNum,
+//       amountFromOffline: amountOfflineNum,
+//       netProfit,
+//     };
+
+//     const imagePaths =
+//       req.files?.map((file) => {
+//         return `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
+//       }) || [];
+
+//     // Create new melting sheet
+//     const meltingSheet = new MeltingSheet({
+//       sheetNumber,
+//       date: new Date(),
+//       meltingCenter,
+//       meltingPlace,
+//       meltingRefPerson,
+//       articleId,
+//       buyingSheetId,
+//       goldDetails,
+//       rateDetails,
+//       preparedBy,
+//       createdBy: req.user.id, // from verifyToken
+//       images: imagePaths,
+//     });
+
+//     const savedSheet = await meltingSheet.save();
+
+//     res.status(201).json({
+//       message: "Melting sheet created successfully",
+//       sheet: savedSheet,
+//     });
+//   } catch (error) {
+//     console.error("Melting sheet creation error:", error);
+//     res.status(500).json({ message: "Failed to create melting sheet" });
+//   }
+// };
+
 export const createMeltingSheet = async (req, res) => {
   try {
     const {
@@ -14,7 +127,6 @@ export const createMeltingSheet = async (req, res) => {
       afterStone,
       afterMelting,
       kacchaPurity,
-      buyingRate,
       sellingRate,
       totalAmountRecieved,
       amountDisbursedMethod,
@@ -43,15 +155,19 @@ export const createMeltingSheet = async (req, res) => {
     // Get next sheet number
     const sheetNumber = await getNextMeltingSheetNumber();
 
-    // Fetch buying sheet for articleId and buying rate
-    const buyingSheet = await BuyingSheet.findById(buyingSheetId).lean();
+    // Fetch buying sheet for reference data
+    const buyingSheet = await BuyingSheet.findById(buyingSheetId)
+      .populate("articleId")
+      .lean();
     if (!buyingSheet) {
       return res.status(404).json({ message: "Buying sheet not found" });
     }
 
-    const articleId = buyingSheet.articleId;
+    const articleId = buyingSheet.articleId?._id;
+    const buyingRate = buyingSheet.totalAmountSpend;
+    const buyingNetAmount = buyingSheet.netAmount;
 
-    // Convert string inputs to numbers safely
+    // Convert inputs to numbers
     const grossWeightNum = parseFloat(grossWeight);
     const afterStoneNum = parseFloat(afterStone);
     const afterMeltingNum = parseFloat(afterMelting);
@@ -63,7 +179,7 @@ export const createMeltingSheet = async (req, res) => {
     const amountOfflineNum = parseFloat(amountFromOffline) || 0;
 
     // Calculate net profit
-    const netProfit = totalAmountRecievedNum - buyingSheet.netAmount; // Example formula
+    const netProfit = totalAmountRecievedNum - buyingNetAmount;
 
     // Prepare nested objects according to schema
     const goldDetails = {
@@ -88,7 +204,7 @@ export const createMeltingSheet = async (req, res) => {
         return `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
       }) || [];
 
-    // Create new melting sheet
+    // Create new melting sheet with extra fields from buying sheet
     const meltingSheet = new MeltingSheet({
       sheetNumber,
       date: new Date(),
@@ -96,7 +212,12 @@ export const createMeltingSheet = async (req, res) => {
       meltingPlace,
       meltingRefPerson,
       articleId,
-      buyingSheetId,
+      buyingSheetId, // still store the reference if needed
+      buyingSheetNumber: buyingSheet.sheetNumber,
+      buyingCustomerName: buyingSheet.customerName,
+      buyingArticleName:
+        buyingSheet.articleId?.jewelleryName || buyingSheet.articleName,
+      buyingNetAmount,
       goldDetails,
       rateDetails,
       preparedBy,
@@ -105,10 +226,15 @@ export const createMeltingSheet = async (req, res) => {
     });
 
     const savedSheet = await meltingSheet.save();
+    const populatedSheet = await MeltingSheet.findById(savedSheet._id)
+      .populate("createdBy", "name") // populate with 'name' field from User
+      .lean();
+    // Delete the buying sheet after saving melting sheet
+    await BuyingSheet.findByIdAndDelete(buyingSheetId);
 
     res.status(201).json({
       message: "Melting sheet created successfully",
-      sheet: savedSheet,
+      sheet: populatedSheet,
     });
   } catch (error) {
     console.error("Melting sheet creation error:", error);

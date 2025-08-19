@@ -21,6 +21,15 @@ const buyingSheetSchema = new mongoose.Schema({
     ref: "Branch",
     required: true,
   },
+  sold: {
+    type: Boolean,
+    default: false,
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   goldDetails: {
     grossWeight: Number,
     stoneWeight: Number,

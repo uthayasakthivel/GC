@@ -34,9 +34,9 @@ router.post(
   createBuyingSheet
 );
 
-router.get("/buying-sheet", verifyToken, isAdmin, getAllBuyingSheets);
-router.get("/buying-sheet/:id", verifyToken, isAdmin, getBuyingSheetById);
-router.delete("/buying-sheet/:id", verifyToken, isAdmin, deleteBuyingSheetById);
+router.get("/buying-sheet", verifyToken, isManager, getAllBuyingSheets);
+router.get("/buying-sheet/:id", verifyToken, isManager, getBuyingSheetById);
+router.delete("/buying-sheet/:id", verifyToken, deleteBuyingSheetById);
 router.post(
   "/buying-sheet/delete-selected",
   verifyToken,

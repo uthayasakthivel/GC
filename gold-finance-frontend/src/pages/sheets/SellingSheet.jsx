@@ -30,7 +30,7 @@ const SellingSheet = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { refetch } = useDashboardData();
-  const { buyingSheets } = useBuyingSheets();
+  const { buyingSheets, refetch: refetchBuyingSheets } = useBuyingSheets();
   const { nextSheetNumber } = useNextSheetNumber("SellingSheet");
 
   useEffect(() => {
@@ -69,11 +69,22 @@ const SellingSheet = () => {
     };
 
     try {
-      const res = await axiosInstance.post("/sheet/selling-sheet", payload);
+      // 1️⃣ Create Selling Sheet
+      await axiosInstance.post("/sheet/selling-sheet", payload);
       alert("Selling Sheet created successfully!");
 
-      await refetch(); // Update closing balances, etc.
+      // // 2️⃣ Delete the selected Buying Sheet
+      // if (formData.buyingSheetId) {
+      //   await axiosInstance.delete(
+      //     `/sheet/buying-sheet/${formData.buyingSheetId}`
+      //   );
+      //   console.log(`Buying sheet ${formData.buyingSheetId} deleted ✅`);
+      // }
 
+      // 3️⃣ Refresh dashboard and buying sheet dropdown
+      await Promise.all([refetch(), refetchBuyingSheets()]);
+
+      // 4️⃣ Redirect based on role
       const role = user?.role;
       if (role === "admin") navigate("/admin");
       else if (role === "manager") navigate("/manager");

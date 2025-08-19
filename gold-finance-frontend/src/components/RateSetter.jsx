@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../api/axiosInstance";
+import { useDashboardData } from "../hooks/useDashboardData";
 
 export default function RateSetter() {
   const [todayRates, setTodayRates] = useState({
@@ -15,6 +16,7 @@ export default function RateSetter() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const { refetch } = useDashboardData();
 
   const fetchRates = async () => {
     setLoading(true);
@@ -25,6 +27,7 @@ export default function RateSetter() {
       ]);
       setTodayRates(todayRes.data);
       setBuyingRates(buyingRes.data);
+      refetch();
       setError(null);
     } catch {
       setError("Failed to load rates");

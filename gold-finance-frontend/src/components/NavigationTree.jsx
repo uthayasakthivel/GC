@@ -3,6 +3,7 @@ import LatestSubmittedSheets from "./LatestSubmittedSheets";
 import SellingSheet from "../pages/sheets/SellingSheet";
 import MeltingSheet from "../pages/sheets/MeltingSheet";
 import FinanceSheet from "../pages/sheets/FinanceSheet";
+import CustomerRegistrationPage from "../pages/Loan/CustomerRegistrationPage";
 
 export default function GoldTabs({ role }) {
   // Main Tabs
@@ -127,7 +128,11 @@ export default function GoldTabs({ role }) {
             </button>
           </div>
           <div className="p-4 bg-white shadow rounded-lg">
-            {subTab === "finance-sheet" && <FinanceSheet />}
+            {subTab === "finance-sheet" &&
+              (role === "admin" || role === "manager") && (
+                <LatestSubmittedSheets role={role} sheetType="finance" />
+              )}
+
             {!subTab && <div>Please select a sheet above.</div>}
           </div>
         </div>
@@ -139,28 +144,54 @@ export default function GoldTabs({ role }) {
           <div className="flex border-b border-gray-200 mb-3">
             <button
               className={`px-4 py-1 ${
-                subTab === "loan1"
+                subTab === "newLoan"
                   ? "border-b-2 border-amber-500 font-semibold"
                   : "text-gray-500"
               }`}
-              onClick={() => setSubTab("loan1")}
+              onClick={() => setSubTab("newLoan")}
             >
-              Loan Tab 1
+              New Loan
             </button>
             <button
               className={`px-4 py-1 ${
-                subTab === "loan2"
+                subTab === "existingLoan"
                   ? "border-b-2 border-amber-500 font-semibold"
                   : "text-gray-500"
               }`}
-              onClick={() => setSubTab("loan2")}
+              onClick={() => setSubTab("existingLoan")}
             >
-              Loan Tab 2
+              Existing Loan
+            </button>
+            <button
+              className={`px-4 py-1 ${
+                subTab === "pledgeDetails"
+                  ? "border-b-2 border-amber-500 font-semibold"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setSubTab("pledgeDetails")}
+            >
+              Pledge Details
+            </button>
+            <button
+              className={`px-4 py-1 ${
+                subTab === "interestCalculator"
+                  ? "border-b-2 border-amber-500 font-semibold"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setSubTab("interestCalculator")}
+            >
+              Interest Calculator
             </button>
           </div>
           <div className="p-4 bg-white shadow rounded-lg">
-            {subTab === "loan1" && <div>Loan feature coming soon...</div>}
-            {subTab === "loan2" && (
+            {subTab === "newLoan" && <CustomerRegistrationPage />}
+            {subTab === "existingLoan" && (
+              <div>Another loan feature coming soon...</div>
+            )}
+            {subTab === "pledgeDetails" && (
+              <div>Loan feature coming soon...</div>
+            )}
+            {subTab === "interestCalculator" && (
               <div>Another loan feature coming soon...</div>
             )}
             {!subTab && <div>Please select a tab above.</div>}

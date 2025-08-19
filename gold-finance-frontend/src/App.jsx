@@ -28,6 +28,7 @@ import SellingSheet from "./pages/sheets/SellingSheet";
 import AllSheets from "./pages/admin/AllSheets";
 import MeltingSheet from "./pages/sheets/MeltingSheet";
 import MeltingSheetPreview from "./pages/admin/MeltingSheetPreview";
+import FinanaceSheet from "./pages/sheets/FinanceSheet";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
@@ -131,7 +132,7 @@ function AppRoutes() {
         path="/admin/melting-sheets"
         element={
           <PrivateRoute allowedRoles={["admin"]}>
-            <AllSheets sheetType="selling" />
+            <AllSheets sheetType="melting" />
           </PrivateRoute>
         }
       />
@@ -149,7 +150,7 @@ function AppRoutes() {
       <Route
         path="/buying-sheet"
         element={
-          <PrivateRoute allowedRoles={["admin", "employee"]}>
+          <PrivateRoute allowedRoles={["admin", "manager", "employee"]}>
             <BuyingSheet />
           </PrivateRoute>
         }
@@ -158,7 +159,7 @@ function AppRoutes() {
       <Route
         path="/selling-sheet"
         element={
-          <PrivateRoute allowedRoles={["admin", "manager", "employee"]}>
+          <PrivateRoute allowedRoles={["admin", "manager"]}>
             <SellingSheet />
           </PrivateRoute>
         }
@@ -167,8 +168,17 @@ function AppRoutes() {
       <Route
         path="/melting-sheet"
         element={
-          <PrivateRoute allowedRoles={["admin", "manager", "employee"]}>
+          <PrivateRoute allowedRoles={["admin", "manager"]}>
             <MeltingSheet />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/finance-sheet"
+        element={
+          <PrivateRoute allowedRoles={["admin", "manager"]}>
+            <FinanaceSheet />
           </PrivateRoute>
         }
       />

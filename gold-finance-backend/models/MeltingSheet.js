@@ -21,6 +21,7 @@ const meltingSheetSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   // articleId: {
   //   type: mongoose.Schema.Types.ObjectId,
   //   ref: "Jewellery",
@@ -31,7 +32,14 @@ const meltingSheetSchema = new mongoose.Schema({
     ref: "BuyingSheet",
     required: true,
   },
-
+  buyingSheetNumber: {
+    type: String,
+    required: true,
+  },
+  buyingCustomerName: {
+    type: String,
+    required: true,
+  },
   goldDetails: {
     grossWeight: { type: Number, required: true },
     afterStone: { type: Number, required: true },

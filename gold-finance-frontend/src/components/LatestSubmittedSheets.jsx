@@ -7,7 +7,7 @@ export default function LatestSubmittedSheets({ role, sheetType }) {
   const [sheets, setSheets] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  console.log(role, "role in latest submitted sheets");
   useEffect(() => {
     let mounted = true;
 
@@ -72,6 +72,9 @@ export default function LatestSubmittedSheets({ role, sheetType }) {
                     <th className="border p-2 text-left">Customer Name</th>
                   )}
                   <th className="border p-2 text-left">Date</th>
+                  {sheetType === "buying" && (
+                    <th className="border p-2 text-left">Status</th>
+                  )}
                   <th className="border p-2 text-left">Action</th>
                 </tr>
               </thead>
@@ -83,10 +86,24 @@ export default function LatestSubmittedSheets({ role, sheetType }) {
                       <td className="border p-2">{sheet.customerName}</td>
                     )}
                     <td className="border p-2">
-                      {sheet.date
-                        ? new Date(sheet.date).toLocaleDateString()
-                        : "-"}
+                      {new Date(sheet.date).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </td>
+                    {sheetType === "buying" && (
+                      <td className="border p-2">
+                        {sheet.sold ? (
+                          <span className="text-green-600 font-semibold">
+                            Sold
+                          </span>
+                        ) : (
+                          <span className="text-gray-500">Open</span>
+                        )}
+                      </td>
+                    )}
+
                     <td className="border p-2">
                       <button
                         onClick={() =>

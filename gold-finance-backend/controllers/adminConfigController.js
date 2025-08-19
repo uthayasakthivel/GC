@@ -2,6 +2,7 @@
 import Branch from "../models/Branch.js";
 import { AdminData } from "../models/AdminData.js";
 import Jewellery from "../models/Jewellery.js";
+import { getNextCustomerId } from "../utils/getNextCustomerId.js";
 
 // ---------- Branch Controllers ----------
 export const getBranches = async (req, res) => {
@@ -15,10 +16,13 @@ export const getBranches = async (req, res) => {
 
 export const createBranch = async (req, res) => {
   try {
-    const branch = new Branch({
-      name: req.body.name,
-      location: req.body.location,
-    });
+    const { name, location, code } = req.body;
+
+    if (!code) {
+      return res.status(400).json({ error: "Branch code is required" });
+    }
+
+    const branch = new Branch({ name, location, code });
     await branch.save();
     res.status(201).json(branch);
   } catch (err) {
@@ -28,9 +32,17 @@ export const createBranch = async (req, res) => {
 
 export const updateBranch = async (req, res) => {
   try {
-    const updated = await Branch.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const { name, location, code } = req.body;
+    if (code === undefined) {
+      return res.status(400).json({ error: "Branch code is required" });
+    }
+
+    const updated = await Branch.findByIdAndUpdate(
+      req.params.id,
+      { name, location, code },
+      { new: true }
+    );
+
     if (!updated) return res.status(404).json({ error: "Branch not found" });
     res.json(updated);
   } catch (err) {
@@ -45,6 +57,16 @@ export const deleteBranch = async (req, res) => {
     res.json({ message: "Branch deleted" });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete branch" });
+  }
+};
+
+export const getBranchById = async (req, res) => {
+  try {
+    const branch = await Branch.findById(req.params.id);
+    if (!branch) return res.status(404).json({ error: "Branch not found" });
+    res.json(branch);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch branch" });
   }
 };
 
@@ -304,6 +326,112 @@ export const deleteJewellery = async (req, res) => {
     res.status(200).json({ message: "Deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// Create Interest Rate
+export const createInterestRate = async (req, res) => {
+  try {
+    const { rate } = req.body;
+
+    if (rate === undefined || rate === null) {
+      return res.status(400).json({ message: "Rate is required" });
+    }
+
+    const interestRate = new InterestRate({
+      rate,
+      createdBy: req.user.id,
+    });
+
+    const savedRate = await interestRate.save();
+    res.status(201).json(savedRate);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get all interest rates
+export const getInterestRates = async (req, res) => {
+  try {
+    const rates = await InterestRate.find()
+      .populate("createdBy", "name email")
+      .populate("updatedBy", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(rates);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get single interest rate by ID
+export const getInterestRateById = async (req, res) => {
+  try {
+    const rate = await InterestRate.findById(req.params.id)
+      .populate("createdBy", "name email")
+      .populate("updatedBy", "name email");
+
+    if (!rate) {
+      return res.status(404).json({ message: "Interest rate not found" });
+    }
+
+    res.status(200).json(rate);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Update interest rate
+export const updateInterestRate = async (req, res) => {
+  try {
+    const { rate } = req.body;
+
+    const updatedRate = await InterestRate.findByIdAndUpdate(
+      req.params.id,
+      { rate, updatedBy: req.user.id },
+      { new: true }
+    );
+
+    if (!updatedRate) {
+      return res.status(404).json({ message: "Interest rate not found" });
+    }
+
+    res.status(200).json(updatedRate);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Delete interest rate
+export const deleteInterestRate = async (req, res) => {
+  try {
+    const deleted = await InterestRate.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Interest rate not found" });
+    }
+
+    res.status(200).json({ message: "Deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getNextCustomerIdApi = async (req, res) => {
+  try {
+    console.log("hiasdlkfjasdlkfj");
+    const branchCode = req.query.branchCode;
+    if (!branchCode) {
+      return res
+        .status(400)
+        .json({ message: "branchCode query parameter is required" });
+    }
+
+    const nextCustomerId = await getNextCustomerId(branchCode);
+    res.json({ customerId: nextCustomerId });
+  } catch (err) {
+    console.error("getNextCustomerIdApi error:", err);
+    res.status(500).json({ message: "Failed to get next customer ID" });
   }
 };
 

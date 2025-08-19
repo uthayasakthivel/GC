@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import BuyingSheet from "../models/BuyingSheet.js";
 import { updateClosingBalance } from "./adminConfigController.js";
 import { getNextSheetNumber } from "../utils/getNextSheetNumber.js";
+import User from "../models/User.js";
 
 export const createBuyingSheet = async (req, res) => {
   try {
@@ -92,6 +93,9 @@ export const createBuyingSheet = async (req, res) => {
     });
 
     const savedSheet = await buyingSheet.save();
+    const populatedSheet = await BuyingSheet.findById(savedSheet._id)
+      .populate("createdBy", "name") // populate with 'name' field from User
+      .lean();
     const closingBalance = await updateClosingBalance(
       totalAmountSpend,
       netWeight
@@ -99,7 +103,7 @@ export const createBuyingSheet = async (req, res) => {
 
     res.status(201).json({
       message: "Sheet created successfully",
-      sheet: savedSheet,
+      sheet: populatedSheet,
       closingBalance, // comes from updateClosingBalance()
     });
   } catch (error) {
@@ -112,7 +116,7 @@ export const getAllBuyingSheets = async (req, res) => {
   try {
     const sheets = await BuyingSheet.find()
       .sort({ date: -1 }) // recent first
-      .select("sheetNumber customerName date totalAmountSpend"); // select only needed fields for list
+      .select("sheetNumber customerName date totalAmountSpend sold"); // select only needed fields for list
 
     res.json(sheets);
   } catch (error) {

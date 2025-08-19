@@ -17,6 +17,10 @@ import {
   updateJewellery,
   deleteJewellery,
   createJewellery,
+  getInterestRates,
+  createInterestRate,
+  updateInterestRate,
+  deleteInterestRate,
 } from "../../controllers/adminConfigController.js";
 
 import { verifyToken, isAdmin } from "../../middlewares/authMiddleware.js";
@@ -56,5 +60,13 @@ router.put("/jewellery/:id", verifyToken, isAdmin, updateJewellery);
 
 // Delete Jewellery Type
 router.delete("/jewellery/:id", verifyToken, isAdmin, deleteJewellery);
+
+// Interest Rate
+
+// Interest Rate CRUD
+router.post("/interest-rate", verifyToken, isAdmin, createInterestRate);
+router.get("/interest-rate", verifyToken, isAdmin, getInterestRates);
+router.put("/interest-rate/:id", verifyToken, isAdmin, updateInterestRate);
+router.delete("/interest-rate/:id", verifyToken, isAdmin, deleteInterestRate);
 
 export default router;

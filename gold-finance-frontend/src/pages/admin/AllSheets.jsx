@@ -26,6 +26,7 @@ export default function AllSheets({ sheetType, role = "admin" }) {
   const titleMap = {
     buying: "All Submitted Buying Sheets",
     selling: "All Submitted Selling Sheets",
+    melting: "All Submitted Melting Sheets",
   };
 
   return (

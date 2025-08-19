@@ -4,7 +4,7 @@ import axios from "../api/axiosInstance";
 export default function BranchManagement({ onBranchesUpdated }) {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ name: "", location: "" });
+  const [form, setForm] = useState({ name: "", code: "", location: "" });
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState(null);
 
@@ -35,7 +35,7 @@ export default function BranchManagement({ onBranchesUpdated }) {
         // Create
         await axios.post("/admin/config/branches", form);
       }
-      setForm({ name: "", location: "" });
+      setForm({ name: "", code: "", location: "" });
       setEditId(null);
       fetchBranches();
       onBranchesUpdated?.();
@@ -45,7 +45,11 @@ export default function BranchManagement({ onBranchesUpdated }) {
   };
 
   const handleEdit = (branch) => {
-    setForm({ name: branch.name, location: branch.location });
+    setForm({
+      name: branch.name,
+      code: branch.code,
+      location: branch.location,
+    });
     setEditId(branch._id);
   };
 
@@ -75,10 +79,17 @@ export default function BranchManagement({ onBranchesUpdated }) {
         />
         <input
           type="text"
+          placeholder="Branch Code (e.g. kdm)"
+          value={form.code}
+          onChange={(e) => setForm({ ...form, code: e.target.value })}
+          required
+          className="input"
+        />
+        <input
+          type="text"
           placeholder="Location"
           value={form.location}
           onChange={(e) => setForm({ ...form, location: e.target.value })}
-          required
           className="input"
         />
         <button type="submit" className="btn btn-primary">
@@ -88,7 +99,7 @@ export default function BranchManagement({ onBranchesUpdated }) {
           <button
             type="button"
             onClick={() => {
-              setForm({ name: "", location: "" });
+              setForm({ name: "", code: "", location: "" });
               setEditId(null);
             }}
             className="btn btn-secondary ml-2"
@@ -107,7 +118,7 @@ export default function BranchManagement({ onBranchesUpdated }) {
           {branches.map((b) => (
             <li key={b._id} className="flex justify-between mb-1">
               <span>
-                {b.name} — {b.location}
+                <strong>{b.code}</strong> — {b.name} — {b.location}
               </span>
               <div>
                 <button

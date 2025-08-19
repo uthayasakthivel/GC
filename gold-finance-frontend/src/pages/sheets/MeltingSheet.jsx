@@ -6,10 +6,13 @@ import { useNextSheetNumber } from "../../hooks/useNextSheetNumber";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import DisbursalMode from "../../components/DisbursalMode";
+import ImageUploader from "../../components/ImageUploader";
+import { useImageUploader } from "../../hooks/useImageUploader";
 
 const MeltingSheet = () => {
   const [formData, setFormData] = useState({
     buyingSheetId: "",
+    sheetNumber: "",
     afterStone: "", // uppercase S
     afterMelting: "", // uppercase M
     kacchaPurity: "",
@@ -30,27 +33,26 @@ const MeltingSheet = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { refetch } = useDashboardData();
-  const { buyingSheets } = useBuyingSheets();
+  const { buyingSheets, refetch: refetchBuyingSheets } = useBuyingSheets();
   const { nextSheetNumber } = useNextSheetNumber("MeltingSheet");
-
+  const { files, previewUrls, handleFileChange, handleRemoveFile } =
+    useImageUploader(2);
   // Fetch data from selected buying sheet
   useEffect(() => {
-    if (!formData.buyingSheetNumber) return;
+    if (!formData.buyingSheetId) return;
 
     const fetchBuyingSheet = async () => {
       try {
         const res = await axiosInstance.get(
-          `/sheet/buying-sheet/${formData.buyingSheetId}`
+          `/sheet/buying-sheet/${formData.buyingSheetId}` // use buyingSheetId here!
         );
         const sheet = res.data;
         setSelectedBuyingSheet(sheet);
 
-        // Set API data into formData
+        // Update form with API data
         setFormData((prev) => ({
           ...prev,
-          buyingSheetId: sheet._id || "",
-          sheetNumber: sheet.sheetNumber || "",
-          buyingSheetNumber: sheet.sheetNumber || "",
+          buyingSheetNumber: sheet.sheetNumber || "", // for display only
           grossWeight: sheet.goldDetails?.grossWeight || "",
           buyingAmount: sheet.netAmount || "",
         }));
@@ -61,7 +63,7 @@ const MeltingSheet = () => {
     };
 
     fetchBuyingSheet();
-  }, [formData.buyingSheetNumber]);
+  }, [formData.buyingSheetId]); // watch buyingSheetId
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,17 +81,38 @@ const MeltingSheet = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = {
-      ...formData,
-      preparedBy: formData.preparedBy || user?.name || "",
-    };
+    const payload = new FormData();
+    console.log(payload, "data send from buying sheet creation");
+    // Append text fields
+    Object.entries(formData).forEach(([key, value]) => {
+      payload.append(key, value);
+    });
+
+    files.filter(Boolean).forEach((file) => {
+      payload.append("images", file);
+    });
+
+    console.log(payload, "payloadsss");
+
+    for (const [key, value] of payload.entries()) {
+      if (value instanceof File) {
+        console.log(key, value.name, "qqqq");
+      } else {
+        console.log(key, value);
+      }
+    }
 
     try {
-      await axiosInstance.post("/sheet/melting-sheet", payload);
+      // 1️⃣ Create Melting Sheet
+      await axiosInstance.post("/sheet/melting-sheet", payload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       alert("Melting Sheet created successfully!");
 
-      await refetch();
+      // 3️⃣ Refresh dashboard and buying sheet dropdown
+      await Promise.all([refetch(), refetchBuyingSheets()]);
 
+      // 4️⃣ Redirect based on role
       const role = user?.role;
       if (role === "admin") navigate("/admin");
       else if (role === "manager") navigate("/manager");
@@ -106,10 +129,9 @@ const MeltingSheet = () => {
       <h3 className="mb-2">Melting Sheet Number: {nextSheetNumber}</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Select Buying Sheet */}
         <select
-          name="buyingSheetId"
-          value={formData.buyingSheetId}
+          name="buyingSheetId" // <-- Changed to buyingSheetId
+          value={formData.buyingSheetId} // <-- use buyingSheetId as value (ID)
           onChange={handleChange}
           className="w-full border p-2"
           required
@@ -121,14 +143,11 @@ const MeltingSheet = () => {
             </option>
           ))}
         </select>
-
         {/* Show API data readonly */}
         <div className="bg-gray-100 p-3 rounded text-sm space-y-1">
           <p>
-            <strong>Sheet Number:</strong> {formData.sheetNumber || "-"}
-          </p>
-          <p>
-            <strong>Buying Sheet Number:</strong> {formData.sheetNumber || "-"}
+            <strong>Buying Sheet Number:</strong>{" "}
+            {formData.buyingSheetNumber || "-"}
           </p>
           <p>
             <strong>Gross Weight:</strong> {formData.grossWeight || "-"} g
@@ -137,7 +156,6 @@ const MeltingSheet = () => {
             <strong>Buying Amount:</strong> ₹{formData.buyingAmount || "-"}
           </p>
         </div>
-
         {/* UI Inputs */}
         <input
           type="number"
@@ -149,7 +167,6 @@ const MeltingSheet = () => {
           className="w-full border p-2"
           required
         />
-
         <input
           type="number"
           step="0.001"
@@ -160,7 +177,6 @@ const MeltingSheet = () => {
           className="w-full border p-2"
           required
         />
-
         <input
           type="text"
           name="kacchaPurity"
@@ -170,7 +186,6 @@ const MeltingSheet = () => {
           className="w-full border p-2"
           required
         />
-
         <input
           type="number"
           step="0.01"
@@ -181,14 +196,12 @@ const MeltingSheet = () => {
           className="w-full border p-2"
           required
         />
-
         <DisbursalMode
           amountDisbursedMethod={formData.amountDisbursedMethod}
           amountFromOnline={formData.amountFromOnline}
           amountFromOffline={formData.amountFromOffline}
           onChange={handleChange}
         />
-
         <input
           type="text"
           name="meltingCenter"
@@ -198,7 +211,6 @@ const MeltingSheet = () => {
           className="w-full border p-2"
           required
         />
-
         <input
           type="text"
           name="meltingPlace"
@@ -208,7 +220,6 @@ const MeltingSheet = () => {
           className="w-full border p-2"
           required
         />
-
         <input
           type="text"
           name="meltingRefPerson"
@@ -217,7 +228,6 @@ const MeltingSheet = () => {
           onChange={handleChange}
           className="w-full border p-2"
         />
-
         <input
           type="number"
           step="0.01"
@@ -228,16 +238,21 @@ const MeltingSheet = () => {
           className="w-full border p-2"
           required
         />
-
         <input
           type="text"
-          name="sheetPreparedBy"
+          name="preparedBy"
           placeholder="Sheet Prepared By"
-          value={formData.sheetPreparedBy}
+          value={formData.preparedBy}
           onChange={handleChange}
           className="w-full border p-2"
         />
-
+        <ImageUploader
+          sheetType="melting" // or "buyingSheet"
+          previewUrls={previewUrls}
+          files={files}
+          onFileChange={handleFileChange}
+          onRemoveFile={handleRemoveFile}
+        />
         {/* Net Profit Display */}
         <div className="mt-2 p-2 bg-green-100 rounded font-semibold">
           Net Profit: ₹ {netProfit.toFixed(2)}

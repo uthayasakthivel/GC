@@ -48,8 +48,8 @@ const BuyingSheet = () => {
   const { articles } = useArticles();
   const { nextSheetNumber } = useNextSheetNumber("BuyingSheet");
   const { rate: buyingRate, purity } = useBuyingRate(formData.is916HM);
-  const { images, previewUrls, handleImageChange, handleRemoveImage } =
-    useImageUploader(4);
+  const { files, previewUrls, handleFileChange, handleRemoveFile } =
+    useImageUploader(4); // 4 for buyingSheet
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -81,9 +81,9 @@ const BuyingSheet = () => {
       payload.append(key, value);
     });
 
-    // Append images
-    images.forEach((img) => {
-      payload.append("images", img);
+    // Append files
+    files.forEach((file) => {
+      payload.append("images", file);
     });
 
     try {
@@ -218,11 +218,12 @@ const BuyingSheet = () => {
           className="w-full border p-2"
         />
 
-        {/* Image Upload */}
         <ImageUploader
+          sheetType="buyingSheet"
+          files={files}
           previewUrls={previewUrls}
-          onImageChange={handleImageChange}
-          onRemoveImage={handleRemoveImage}
+          onFileChange={handleFileChange}
+          onRemoveFile={handleRemoveFile}
         />
 
         <button

@@ -16,6 +16,8 @@ export default function DashboardHeader({
     return <p>Loading dashboard data...</p>;
   }
   console.log(role, "role in DashboardHeader");
+  console.log(todayRates, "today");
+  console.log(buyingRates, "buyingRates");
   return (
     <>
       <RatesSection

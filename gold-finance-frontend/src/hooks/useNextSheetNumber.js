@@ -14,7 +14,10 @@ export const useNextSheetNumber = (TypeOfSheet = "BuyingSheet") => {
           ? "/sheet/selling-sheet/next-number"
           : TypeOfSheet === "MeltingSheet"
           ? "/sheet/melting-sheet/next-number"
+          : TypeOfSheet === "FinanceSheet"
+          ? "/sheet/finance-sheet/next-number"
           : "/sheet/buying-sheet/next-number"; // fallback default
+
       console.log(endpoint, "endpoint");
       const res = await axiosInstance.get(endpoint);
       console.log(res);

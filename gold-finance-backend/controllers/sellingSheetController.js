@@ -74,6 +74,8 @@ export const createSellingSheet = async (req, res) => {
       sheetNumber,
       date: new Date(),
       buyingSheetId,
+      buyingSheetNumber: buyingSheet.sheetNumber,
+      buyingCustomerName: buyingSheet.customerName,
       articleId,
       netAmount,
       customerName: buyerName,
@@ -90,17 +92,26 @@ export const createSellingSheet = async (req, res) => {
 
     // Save to DB
     const savedSheet = await sellingSheet.save();
-
+    const populatedSheet = await SellingSheet.findById(savedSheet._id)
+      .populate("createdBy", "name") // populate with 'name' field from User
+      .lean();
     // Update closing balance (assuming your function handles this)
-    const closingBalance = await updateClosingBalanceAfterSelling(
-      paymentTotalAmount,
-      grossWeight
-    );
+    // const closingBalance = await updateClosingBalanceAfterSelling(
+    //   paymentTotalAmount,
+    //   grossWeight
+    // );
 
+    // Delete the buying sheet after saving melting sheet
+    // await BuyingSheet.findByIdAndDelete(buyingSheetId);
+    console.log("Reached update!");
+    const updated = await BuyingSheet.findByIdAndUpdate(buyingSheetId, {
+      sold: true,
+    });
+    console.log("Buying sheet marked as sold:", updated);
     res.status(201).json({
       message: "Selling sheet created successfully",
-      sheet: savedSheet,
-      closingBalance,
+      sheet: populatedSheet,
+      // closingBalance,
     });
   } catch (error) {
     console.error("Selling sheet creation error:", error);

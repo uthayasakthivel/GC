@@ -4,6 +4,8 @@ import DashboardLayout from "../../components/pageLayouts/DashboardLayout";
 import DashboardHeader from "../../components/DashboardHeader";
 
 export default function ManagerDashboard({
+  todayRates,
+  buyingRates,
   combinedRates,
   balance,
   closingBalance,
@@ -15,6 +17,8 @@ export default function ManagerDashboard({
       <DashboardHeader
         role="manager"
         combinedRates={combinedRates}
+        todayRates={todayRates}
+        buyingRates={buyingRates}
         balance={balance}
         closingBalance={closingBalance}
         loadingDashboardData={loadingDashboardData}

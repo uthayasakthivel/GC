@@ -22,6 +22,19 @@ const sellingSheetSchema = new mongoose.Schema({
     ref: "BuyingSheet",
     required: true,
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  buyingSheetNumber: {
+    type: String,
+    required: true,
+  },
+  buyingCustomerName: {
+    type: String,
+    required: true,
+  },
   buyingRate: Number,
   amountDisbursedMethod: String, // "cash", "account", or "both"
   amountFromOnline: Number,

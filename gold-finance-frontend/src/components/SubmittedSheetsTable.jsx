@@ -56,28 +56,32 @@ export default function SubmittedSheetsTable({ data, sheetType }) {
         Header: "Sheet No",
         accessor: "sheetNumber",
       },
-      {
-        Header: "Customer Name",
-        accessor: "customerName",
-      },
-      //    clearer format like 7 Aug 2025
-      //   {
-      //     Header: "Date",
-      //     accessor: (row) =>
-      //       new Date(row.date).toLocaleDateString("en-IN", {
-      //         day: "numeric",
-      //         month: "short",
-      //         year: "numeric",
-      //       }),
-      //     id: "date",
-      //   },
-
-      //   This format 07/08/2025,
+      ...(sheetType !== "melting"
+        ? [
+            {
+              Header: "Customer Name",
+              accessor: "customerName",
+            },
+          ]
+        : []),
+      //  clearer format like 7 Aug 2025
       {
         Header: "Date",
-        accessor: (row) => new Date(row.date).toLocaleDateString("en-IN"),
+        accessor: (row) =>
+          new Date(row.date).toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          }),
         id: "date",
       },
+
+      //   This format 07/08/2025,
+      // {
+      //   Header: "Date",
+      //   accessor: (row) => new Date(row.date).toLocaleDateString("en-IN"),
+      //   id: "date",
+      // },
 
       {
         Header: "Action",
