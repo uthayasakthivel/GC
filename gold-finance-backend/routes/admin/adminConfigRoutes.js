@@ -18,9 +18,14 @@ import {
   deleteJewellery,
   createJewellery,
   getInterestRates,
-  createInterestRate,
-  updateInterestRate,
-  deleteInterestRate,
+  // createInterestRate,
+  // updateInterestRate,
+  // deleteInterestRate,
+  getTodayGoldLoanRate,
+  createTodayGoldLoanRate,
+  updateTodayGoldLoanRate,
+  deleteTodayGoldLoanRate,
+  setInterestRates,
 } from "../../controllers/adminConfigController.js";
 
 import { verifyToken, isAdmin } from "../../middlewares/authMiddleware.js";
@@ -61,12 +66,34 @@ router.put("/jewellery/:id", verifyToken, isAdmin, updateJewellery);
 // Delete Jewellery Type
 router.delete("/jewellery/:id", verifyToken, isAdmin, deleteJewellery);
 
-// Interest Rate
-
 // Interest Rate CRUD
-router.post("/interest-rate", verifyToken, isAdmin, createInterestRate);
-router.get("/interest-rate", verifyToken, isAdmin, getInterestRates);
-router.put("/interest-rate/:id", verifyToken, isAdmin, updateInterestRate);
-router.delete("/interest-rate/:id", verifyToken, isAdmin, deleteInterestRate);
+// router.post("/interest-rate", verifyToken, isAdmin, createInterestRate);
+// router.get("/interest-rate", verifyToken, isAdmin, getInterestRates);
+// router.put("/interest-rate/:id", verifyToken, isAdmin, updateInterestRate);
+// router.delete("/interest-rate/:id", verifyToken, isAdmin, deleteInterestRate);
+
+// Single global TodayGoldLoanRate
+router.get("/today-gold-loan-rate", verifyToken, getTodayGoldLoanRate);
+router.post(
+  "/today-gold-loan-rate",
+  verifyToken,
+  isAdmin,
+  createTodayGoldLoanRate
+);
+router.put(
+  "/today-gold-loan-rate",
+  verifyToken,
+  isAdmin,
+  updateTodayGoldLoanRate
+);
+router.delete(
+  "/today-gold-loan-rate",
+  verifyToken,
+  isAdmin,
+  deleteTodayGoldLoanRate
+);
+
+router.get("/interest-rates", verifyToken, getInterestRates);
+router.post("/interest-rates", verifyToken, isAdmin, setInterestRates);
 
 export default router;

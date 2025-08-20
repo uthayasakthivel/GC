@@ -13,6 +13,7 @@ import sellingSheetRoutes from "./routes/SellingSheetRoutes.js";
 import meltingSheetRoutes from "./routes/MeltingSheetRoutes.js";
 import financeSheetRoutes from "./routes/financeSheetRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
+import loanRoutes from "./routes/loanRoutes.js";
 import adminConfigRoutes from "./routes/admin/adminConfigRoutes.js";
 
 const app = express();
@@ -38,6 +39,7 @@ app.use("/api/sheet", sellingSheetRoutes);
 app.use("/api/sheet", meltingSheetRoutes);
 app.use("/api/sheet", financeSheetRoutes);
 app.use("/api/customer", customerRoutes);
+app.use("/api/loan", loanRoutes);
 
 app.get("/", (req, res) => res.send("API running"));
 

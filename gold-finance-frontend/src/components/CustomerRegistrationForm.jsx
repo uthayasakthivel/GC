@@ -265,13 +265,13 @@ export default function CustomerRegistrationForm({
             />
           </div>
 
-          <button
+          {/* <button
             type="submit"
             disabled={isSubmitting || loadingBranches || otpSent}
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
           >
             Send OTP
-          </button>
+          </button> */}
         </Form>
       )}
     </Formik>

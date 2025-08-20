@@ -2,6 +2,8 @@
 import Branch from "../models/Branch.js";
 import { AdminData } from "../models/AdminData.js";
 import Jewellery from "../models/Jewellery.js";
+import TodayGoldLoanRate from "../models/TodayGoldLoanRate.js";
+import InterestRate from "../models/InterestRate.js";
 import { getNextCustomerId } from "../utils/getNextCustomerId.js";
 
 // ---------- Branch Controllers ----------
@@ -351,71 +353,71 @@ export const createInterestRate = async (req, res) => {
 };
 
 // Get all interest rates
-export const getInterestRates = async (req, res) => {
-  try {
-    const rates = await InterestRate.find()
-      .populate("createdBy", "name email")
-      .populate("updatedBy", "name email")
-      .sort({ createdAt: -1 });
+// export const getInterestRates = async (req, res) => {
+//   try {
+//     const rates = await InterestRate.find()
+//       .populate("createdBy", "name email")
+//       .populate("updatedBy", "name email")
+//       .sort({ createdAt: -1 });
 
-    res.status(200).json(rates);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+//     res.status(200).json(rates);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
-// Get single interest rate by ID
-export const getInterestRateById = async (req, res) => {
-  try {
-    const rate = await InterestRate.findById(req.params.id)
-      .populate("createdBy", "name email")
-      .populate("updatedBy", "name email");
+// // Get single interest rate by ID
+// export const getInterestRateById = async (req, res) => {
+//   try {
+//     const rate = await InterestRate.findById(req.params.id)
+//       .populate("createdBy", "name email")
+//       .populate("updatedBy", "name email");
 
-    if (!rate) {
-      return res.status(404).json({ message: "Interest rate not found" });
-    }
+//     if (!rate) {
+//       return res.status(404).json({ message: "Interest rate not found" });
+//     }
 
-    res.status(200).json(rate);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+//     res.status(200).json(rate);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
-// Update interest rate
-export const updateInterestRate = async (req, res) => {
-  try {
-    const { rate } = req.body;
+// // Update interest rate
+// export const updateInterestRate = async (req, res) => {
+//   try {
+//     const { rate } = req.body;
 
-    const updatedRate = await InterestRate.findByIdAndUpdate(
-      req.params.id,
-      { rate, updatedBy: req.user.id },
-      { new: true }
-    );
+//     const updatedRate = await InterestRate.findByIdAndUpdate(
+//       req.params.id,
+//       { rate, updatedBy: req.user.id },
+//       { new: true }
+//     );
 
-    if (!updatedRate) {
-      return res.status(404).json({ message: "Interest rate not found" });
-    }
+//     if (!updatedRate) {
+//       return res.status(404).json({ message: "Interest rate not found" });
+//     }
 
-    res.status(200).json(updatedRate);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+//     res.status(200).json(updatedRate);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
-// Delete interest rate
-export const deleteInterestRate = async (req, res) => {
-  try {
-    const deleted = await InterestRate.findByIdAndDelete(req.params.id);
+// // Delete interest rate
+// export const deleteInterestRate = async (req, res) => {
+//   try {
+//     const deleted = await InterestRate.findByIdAndDelete(req.params.id);
 
-    if (!deleted) {
-      return res.status(404).json({ message: "Interest rate not found" });
-    }
+//     if (!deleted) {
+//       return res.status(404).json({ message: "Interest rate not found" });
+//     }
 
-    res.status(200).json({ message: "Deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+//     res.status(200).json({ message: "Deleted successfully" });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
 export const getNextCustomerIdApi = async (req, res) => {
   try {
@@ -432,6 +434,109 @@ export const getNextCustomerIdApi = async (req, res) => {
   } catch (err) {
     console.error("getNextCustomerIdApi error:", err);
     res.status(500).json({ message: "Failed to get next customer ID" });
+  }
+};
+
+// GET the current TodayGoldLoanRate (single record)
+export const getTodayGoldLoanRate = async (req, res) => {
+  try {
+    const rate = await TodayGoldLoanRate.findOne();
+    if (!rate)
+      return res.status(404).json({ error: "TodayGoldLoanRate not set" });
+    res.json(rate);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch TodayGoldLoanRate" });
+  }
+};
+
+// CREATE TodayGoldLoanRate (only once, if not exists)
+export const createTodayGoldLoanRate = async (req, res) => {
+  try {
+    const { ratePerGram, notes } = req.body;
+    if (!ratePerGram) {
+      return res.status(400).json({ error: "Rate per gram is required" });
+    }
+
+    // Check if it already exists
+    const existing = await TodayGoldLoanRate.findOne();
+    if (existing) {
+      return res
+        .status(400)
+        .json({ error: "Rate already exists. Use update instead." });
+    }
+
+    const rate = new TodayGoldLoanRate({ ratePerGram, notes });
+    await rate.save();
+    res.status(201).json(rate);
+  } catch (err) {
+    res.status(400).json({ error: "Failed to create TodayGoldLoanRate" });
+  }
+};
+
+// UPDATE TodayGoldLoanRate (replace old with new)
+export const updateTodayGoldLoanRate = async (req, res) => {
+  try {
+    const { ratePerGram, notes } = req.body;
+    if (ratePerGram === undefined) {
+      return res.status(400).json({ error: "Rate per gram is required" });
+    }
+
+    const updated = await TodayGoldLoanRate.findOneAndUpdate(
+      {},
+      { ratePerGram, notes },
+      { new: true, upsert: true } // ensures always one record exists
+    );
+
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: "Failed to update TodayGoldLoanRate" });
+  }
+};
+
+// DELETE TodayGoldLoanRate (optional)
+export const deleteTodayGoldLoanRate = async (req, res) => {
+  try {
+    const deleted = await TodayGoldLoanRate.findOneAndDelete();
+    if (!deleted)
+      return res.status(404).json({ error: "No TodayGoldLoanRate found" });
+    res.json({ message: "TodayGoldLoanRate deleted" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete TodayGoldLoanRate" });
+  }
+};
+
+// Get interest rates (latest or all)
+export const getInterestRates = async (req, res) => {
+  try {
+    const rates = await InterestRate.find().sort({ createdAt: -1 });
+    res.status(200).json(rates);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch interest rates", error });
+  }
+};
+
+// Set (add) interest rates
+export const setInterestRates = async (req, res) => {
+  try {
+    const { price, percentage, factor } = req.body;
+
+    // Validate input
+    if (price == null || percentage == null || factor == null) {
+      return res
+        .status(400)
+        .json({
+          message: "All fields (price, percentage, factor) are required.",
+        });
+    }
+
+    const newRate = new InterestRate({ price, percentage, factor });
+    await newRate.save();
+
+    res
+      .status(201)
+      .json({ message: "Interest rate added successfully", rate: newRate });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to set interest rate", error });
   }
 };
 
