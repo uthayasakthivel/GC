@@ -1,13 +1,12 @@
 import React from "react";
-import { useNextLoanNumber } from "../hooks/useNextLoanNumber";
+import { useLoan } from "../context/LoanContext";
 
-function LoanNumberDisplay({ selectedBranch: branchCode }) {
+function LoanNumberDisplay() {
+  const { nextLoanNumber, nextLoanNumberLoading } = useLoan();
   console.log("came loan number display");
-  console.log("LoanDetailsForm received in display:", branchCode);
+  console.log("LoanDetailsForm received in display:", nextLoanNumber);
 
-  const { nextLoanNumber, loading } = useNextLoanNumber(branchCode);
-
-  if (loading) return <div>Loading...</div>;
+  if (nextLoanNumberLoading) return <div>Loading...</div>;
   return <div>Next Loan Number: {nextLoanNumber}</div>;
 }
 

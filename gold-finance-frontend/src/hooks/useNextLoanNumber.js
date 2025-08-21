@@ -1,27 +1,21 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/axiosInstance";
-export const useNextLoanNumber = (branchCode) => {
-  const branchCodeValue = branchCode?.code; // safe access
 
+export const useNextLoanNumber = (selectedBranch) => {
+  const branchCodeValue = selectedBranch?.code; // safe access
   const [nextLoanNumber, setNextLoanNumber] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [nextLoanNumberLoading, setLoading] = useState(true);
 
   const fetchNextLoanNumber = async () => {
-    if (!branchCodeValue) {
-      setNextLoanNumber("");
-      return;
-    }
+    if (!branchCodeValue) return; // ensure code exists
     setLoading(true);
     try {
-      const res = await axiosInstance.get("/loan/next-id", {
-        params: { branchCode: branchCodeValue },
+      const res = await axiosInstance.get("loan/next-id", {
+        params: { branchCode: branchCodeValue }, // key matches backend
       });
-      // 🔥 match the backend response key
-      setNextLoanNumber(res.data.nextLoanNumber || res.data.loanId || "");
-      console.log(nextLoanNumber, "nln");
+      setNextLoanNumber(res.data.loanId || "");
     } catch (err) {
       console.error("Error fetching next loan number:", err);
-      setNextLoanNumber("");
     } finally {
       setLoading(false);
     }
@@ -33,7 +27,7 @@ export const useNextLoanNumber = (branchCode) => {
 
   return {
     nextLoanNumber,
-    loading,
+    nextLoanNumberLoading,
     refetchNextLoanNumber: fetchNextLoanNumber,
   };
 };

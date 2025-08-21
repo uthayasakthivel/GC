@@ -1,128 +1,58 @@
 import React, { useState, useEffect } from "react";
 import CustomerRegistrationForm from "../../components/CustomerRegistrationForm";
-import axiosInstance from "../../api/axiosInstance";
-import { useBranches } from "../../hooks/useBranches";
 import DynamicJewelleryTable from "../../components/DynamicJewelleryTable";
+import { useLoan } from "../../context/LoanContext";
 
 export default function CustomerRegistrationPage() {
-  const { branches, loading } = useBranches();
-  const [customerData, setCustomerData] = useState(null);
-  const [showOtp, setShowOtp] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [otpError, setOtpError] = useState("");
-  const [customerId, setCustomerId] = useState("");
-  const [customerIdGenerated, setCustomerIdGenerated] = useState(false);
-  const [loadingCustomerId, setLoadingCustomerId] = useState(false);
-  const [address, setAddress] = useState("");
-  const [aadharNumber, setAadharNumber] = useState("");
-  const [showJewelleryTable, setShowJewelleryTable] = useState(false);
-  const [jewelleryOptions, setJewelleryOptions] = useState([]);
-  const [ratePerGram, setRatePerGram] = useState(6000);
-  const [configLoading, setConfigLoading] = useState(true);
-  const [selectedBranch, setSelectedBranch] = useState(null);
+  const {
+    branches,
+    branchesLoading,
 
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const [jewelleryRes, rateRes] = await Promise.all([
-          axiosInstance.get("/admin/config/jewellery"),
-          axiosInstance.get("/admin/config/today-gold-loan-rate"), // fixed double slash
-        ]);
-        console.log(rateRes.data.ratePerGram, "rateRes");
+    // customer
+    customerData,
+    setCustomerData,
+    showOtp,
+    setShowOtp,
+    otp,
+    setOtp,
+    otpVerified,
+    otpError,
+    customerId,
+    customerIdGenerated,
+    loadingCustomerId,
+    address,
+    setAddress,
+    aadharNumber,
+    setAadharNumber,
 
-        setJewelleryOptions(jewelleryRes.data.map((j) => j.jewelleryName)); // fixed
-        setRatePerGram(rateRes.data.ratePerGram || 5000);
-      } catch (err) {
-        console.error("Error fetching jewellery config:", err);
-      } finally {
-        setConfigLoading(false);
-      }
-    };
+    //Loan
+    loanAmount,
 
-    fetchConfig();
-  }, []);
+    // jewellery config
+    showJewelleryTable,
+    setShowJewelleryTable,
+    jewelleryOptions,
 
-  // Send OTP
-  const onSendOtp = async (formValues) => {
-    try {
-      await axiosInstance.post("/customer/send-otp", {
-        phoneNumber: formValues.phoneNumber,
-      });
-      setCustomerData(formValues);
-      setShowOtp(true);
-      setOtpVerified(false);
-      setOtp("");
-      setOtpError("");
-      setCustomerId("");
-      setCustomerIdGenerated(false);
-      setAddress("");
-      setAadharNumber("");
-    } catch (err) {
-      alert("Failed to send OTP. Please try again.");
-      console.error(err);
-    }
+    // actions
+    onSendOtp,
+    onOtpVerified,
+    generateCustomerId,
+  } = useLoan();
+
+  const handleSubmit = () => {
+    console.log(
+      "Data verification",
+      address,
+      customerId,
+      loanAmount,
+      jewelleryOptions
+    );
   };
-
-  // Verify OTP
-  const onOtpVerified = async () => {
-    try {
-      await axiosInstance.post("/customer/verify-otp", {
-        phoneNumber: customerData.phoneNumber,
-        otp,
-      });
-      setOtpError("");
-      setOtpVerified(true);
-    } catch (err) {
-      setOtpVerified(false);
-      setOtpError("OTP not verified");
-    }
-  };
-
-  // Generate Customer ID based on branch code and create customer record
-  const generateCustomerId = async () => {
-    if (!customerData || !customerData.branch) return;
-    const selectedBranch = branches.find((b) => b._id === customerData.branch);
-    if (!selectedBranch) return;
-
-    try {
-      setLoadingCustomerId(true);
-      // Get next ID
-      const res = await axiosInstance.get(
-        `/customer/next-id?branchCode=${selectedBranch.code}`
-      );
-      const newCustomerId = res.data.customerId;
-      setCustomerId(newCustomerId);
-      // Save selected branch for use in JSX
-      setSelectedBranch(selectedBranch);
-      // Prepare payload with full data including generated customerId, address and aadharNumber
-      const payload = {
-        ...customerData,
-        address,
-        aadharNumber,
-        branch: selectedBranch.name,
-        branchId: customerData.branch,
-        customerId: newCustomerId,
-      };
-
-      // Create customer record
-      await axiosInstance.post("/customer/register", payload);
-
-      setCustomerIdGenerated(true);
-      alert("Customer registered successfully!");
-    } catch (err) {
-      alert("Failed to generate Customer ID or register customer. Try again.");
-      console.error(err);
-    } finally {
-      setLoadingCustomerId(false);
-    }
-  };
-
   return (
     <div className="p-4 border rounded shadow">
       <CustomerRegistrationForm
         branches={branches}
-        loadingBranches={loading}
+        loadingBranches={branchesLoading}
         onSendOtp={onSendOtp}
         customerData={customerData}
         setCustomerData={setCustomerData}
@@ -200,9 +130,6 @@ export default function CustomerRegistrationPage() {
       {showJewelleryTable && (
         <div className="mt-4">
           <DynamicJewelleryTable
-            ratePerGram={ratePerGram} // use state instead of hardcoded 7000
-            jewelleryOptions={jewelleryOptions} // <-- pass the options
-            selectedBranch={selectedBranch}
             initialRows={[]}
             columns={[
               {
@@ -249,6 +176,13 @@ export default function CustomerRegistrationPage() {
           />
         </div>
       )}
+
+      <button
+        onClick={handleSubmit}
+        className="bg-green-600 text-white w-full px-4 py-2 rounded mt-6"
+      >
+        Submit All Data
+      </button>
     </div>
   );
 }

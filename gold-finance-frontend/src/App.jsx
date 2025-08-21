@@ -29,6 +29,7 @@ import AllSheets from "./pages/admin/AllSheets";
 import MeltingSheet from "./pages/sheets/MeltingSheet";
 import MeltingSheetPreview from "./pages/admin/MeltingSheetPreview";
 import FinanaceSheet from "./pages/sheets/FinanceSheet";
+import { LoanProvider } from "./context/LoanContext";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
@@ -214,13 +215,15 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ToastProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </ToastProvider>
-      </AuthProvider>
+      <LoanProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </ToastProvider>
+        </AuthProvider>
+      </LoanProvider>
     </QueryClientProvider>
   );
 }

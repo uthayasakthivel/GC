@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import LoanDetailsForm from "./LoanDetailsForm";
+import { useLoan } from "../context/LoanContext";
 
 export default function DynamicJewelleryTable({
   columns,
   initialRows,
-  ratePerGram,
-  selectedBranch,
-  jewelleryOptions = [], // receive from parent
   onDataChange,
 }) {
+  const {
+    jewelleryOptions,
+    ratePerGram,
+    selectedBranch,
+    loanAmount,
+    setLoanAmount,
+  } = useLoan();
+
   const [rows, setRows] = useState(
     initialRows.length
       ? initialRows
@@ -27,7 +33,6 @@ export default function DynamicJewelleryTable({
 
   console.log(selectedBranch, "selectedBranch");
 
-  const [loanAmount, setLoanAmount] = useState(0);
   const [showLoanDetails, setShowLoanDetails] = useState(false); // New state
   // Helper to recalculate eligibleAmount and partial for all rows
   const recalculateRows = (rowsData, loanAmt) => {
@@ -56,22 +61,6 @@ export default function DynamicJewelleryTable({
             ) * 1000
           : row.eligibleAmount,
     }));
-
-    console.log("Recalculate Rows:");
-    if (loanAmountNum > 0) {
-      console.log("Recalculate Rows:");
-      console.log("Loan Amount:", loanAmountNum);
-      console.log("Total Eligible:", totalEligible);
-      console.log(
-        "Eligible Amounts:",
-        updatedRows.map((r) => r.eligibleAmount)
-      );
-    }
-    console.log("Total Eligible:", totalEligible);
-    console.log(
-      "Eligible Amounts:",
-      updatedRows.map((r) => r.eligibleAmount)
-    );
 
     return finalRows;
   };
@@ -243,7 +232,7 @@ export default function DynamicJewelleryTable({
         </button>
       </div>
       {/* Conditionally render another component */}
-      {showLoanDetails && <LoanDetailsForm selectedBranch={selectedBranch} />}
+      {showLoanDetails && <LoanDetailsForm />}
     </div>
   );
 }
