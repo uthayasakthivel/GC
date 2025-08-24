@@ -39,3 +39,33 @@ export const registerCustomer = async (req, res) => {
       .json({ message: "Registration failed", error: err.message });
   }
 };
+// ✅ Search customer by customerId or phoneNumber
+export const searchCustomer = async (req, res) => {
+  try {
+    const { idOrPhone } = req.params;
+    console.log(idOrPhone, "iiiiiiiiiii");
+
+    // Search by customerId OR phoneNumber
+    const customer = await Customer.findOne({
+      $or: [{ customerId: idOrPhone }, { phoneNumber: idOrPhone }],
+    });
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: "Customer not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      customer,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};

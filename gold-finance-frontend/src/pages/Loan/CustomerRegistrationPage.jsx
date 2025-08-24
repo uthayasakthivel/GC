@@ -233,13 +233,6 @@ export default function CustomerRegistrationPage() {
         </div>
       )}
 
-      {/* <button
-        onClick={handleSubmit}
-        className="bg-green-600 text-white w-full px-4 py-2 rounded mt-6"
-      >
-        Submit All Data
-      </button> */}
-
       <button
         onClick={handlePreview}
         className="bg-blue-600 text-white w-full px-4 py-2 rounded mt-6"

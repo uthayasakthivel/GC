@@ -11,7 +11,8 @@ export const LoanProvider = ({ children }) => {
   const { branches, loading: branchesLoading } = useBranches();
 
   // ---- Customer State ----
-  const [customerData, setCustomerData] = useState(null);
+  // IMPORTANT: keep customerData minimal & consistent across flows
+  const [customerData, setCustomerData] = useState(null); // { branch, customerName, phoneNumber }
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpVerified, setOtpVerified] = useState(false);
@@ -29,13 +30,18 @@ export const LoanProvider = ({ children }) => {
   const [ratePerGram, setRatePerGram] = useState(6000);
   const [configLoading, setConfigLoading] = useState(true);
 
+  // ---- Loan Numbers (depends on selectedBranch object) ----
   const { nextLoanNumber, nextLoanNumberLoading } =
     useNextLoanNumber(selectedBranch);
+
+  // ---- Loan core fields ----
   const [loanAmount, setLoanAmount] = useState(0);
   const [allInterestRates, setAllInterestRates] = useState([]);
   const [selectedInterestRate, setSelectedInterestRate] = useState("");
+
+  // Dates
   const defaultLoanDate = new Date();
-  const defaultLoanPeriod = 6;
+  const defaultLoanPeriod = 6; // months
   const [loanDate, setLoanDate] = useState(defaultLoanDate);
   const [loanPeriod, setLoanPeriod] = useState(defaultLoanPeriod);
 
@@ -78,119 +84,29 @@ export const LoanProvider = ({ children }) => {
   const [sheetPreparedBy, setSheetPreparedBy] = useState("");
 
   const [previewData, setPreviewData] = useState(null);
+  console.log(previewData, "previewData");
 
-  // Function to create FormData for API submission
-  const generateFormData = () => {
-    const formData = new FormData();
-
-    // Branches
-    formData.append("branches", JSON.stringify(branches));
-    formData.append("branchesLoading", branchesLoading);
-
-    // Customer
-    formData.append("customerData", JSON.stringify(customerData));
-    formData.append("showOtp", showOtp);
-    formData.append("otp", otp);
-    formData.append("otpVerified", otpVerified);
-    formData.append("otpError", otpError);
-    formData.append("customerId", customerId || "");
-    formData.append("customerIdGenerated", customerIdGenerated);
-    formData.append("loadingCustomerId", loadingCustomerId);
-    formData.append("address", address || "");
-    formData.append("aadharNumber", aadharNumber || "");
-    formData.append("selectedBranch", selectedBranch || "");
-
-    // Jewellery Config
-    formData.append("showJewelleryTable", showJewelleryTable);
-    formData.append("jewelleryOptions", JSON.stringify(jewelleryOptions));
-    formData.append("ratePerGram", ratePerGram || "");
-    formData.append("configLoading", configLoading);
-
-    // Loan Details
-    formData.append("nextLoanNumber", nextLoanNumber || "");
-    formData.append("nextLoanNumberLoading", nextLoanNumberLoading);
-    formData.append("loanAmount", loanAmount || "");
-    formData.append("allInterestRates", JSON.stringify(allInterestRates));
-    formData.append("selectedInterestRate", selectedInterestRate || "");
-    formData.append("loanDate", loanDate || "");
-    formData.append("loanPeriod", loanPeriod || "");
-    formData.append("dueDate", dueDate || "");
-    formData.append("noOfDays", noOfDays || "");
-    formData.append("selectedFactor", selectedFactor || "");
-    formData.append("totalInterest", totalInterest || "");
-    formData.append("paymentMethod", paymentMethod || "");
-    formData.append("paymentByOffline", paymentByOffline || "");
-    formData.append("paymentByOnline", paymentByOnline || "");
-    formData.append("refNumber", refNumber || "");
-    formData.append("defaultLoanDate", defaultLoanDate || "");
-    formData.append("defaultLoanPeriod", defaultLoanPeriod || "");
-
-    // Images
-    if (customerPhoto) formData.append("customerPhoto", customerPhoto);
-    if (jewelPhoto) formData.append("jewelPhoto", jewelPhoto);
-    if (aadharPhoto) formData.append("aadharPhoto", aadharPhoto);
-    if (declarationPhoto) formData.append("declarationPhoto", declarationPhoto);
-    if (otherPhoto) formData.append("otherPhoto", otherPhoto);
-
-    // Sheet Prepared By
-    formData.append("sheetPreparedBy", sheetPreparedBy || "");
-
-    // Preview Data
-    formData.append("previewData", JSON.stringify(previewData));
-
-    return formData;
-  };
-
-  // Function to generate preview data
-  const handleGeneratePledgeCard = () => {
-    setPreviewData({
-      branches,
-      customerData,
-      customerId,
-      address,
-      aadharNumber,
-      selectedBranch,
-      jewelleryOptions,
-      ratePerGram,
-      loanAmount,
-      selectedInterestRate,
-      loanDate,
-      loanPeriod,
-      dueDate,
-      noOfDays,
-      selectedFactor,
-      totalInterest,
-      paymentMethod,
-      paymentByOffline,
-      paymentByOnline,
-      refNumber,
-      sheetPreparedBy,
-      previewData,
-      nextLoanNumber,
-      customerPhoto,
-      jewelPhoto,
-      aadharPhoto,
-      declarationPhoto,
-      otherPhoto,
-    });
-  };
-
-  // ✅ Update due date & noOfDays whenever loanDate or loanPeriod changes
+  // ---------- Derived calculations ----------
+  // Update due date & noOfDays whenever loanDate or loanPeriod changes
   useEffect(() => {
     const newDueDate = calculateDueDate(loanDate, loanPeriod);
     setDueDate(newDueDate);
     setNoOfDays(calculateDays(loanDate, newDueDate));
   }, [loanDate, loanPeriod]);
 
-  // ✅ Calculate total interest whenever inputs change
+  // Calculate total interest whenever inputs change
   useEffect(() => {
     if (noOfDays && loanAmount && selectedFactor) {
       const interest = noOfDays * loanAmount * selectedFactor;
-      setTotalInterest(interest.toFixed(2));
+      setTotalInterest(
+        Number.isFinite(interest) ? interest.toFixed(2) : "0.00"
+      );
+    } else {
+      setTotalInterest("0.00");
     }
   }, [noOfDays, loanAmount, selectedFactor]);
 
-  // ---- Fetch config on mount ----
+  // ---------- Config fetch ----------
   useEffect(() => {
     const fetchConfig = async () => {
       try {
@@ -199,8 +115,12 @@ export const LoanProvider = ({ children }) => {
           axiosInstance.get("/admin/config/today-gold-loan-rate"),
         ]);
 
-        setJewelleryOptions(jewelleryRes.data.map((j) => j.jewelleryName));
-        setRatePerGram(rateRes.data.ratePerGram || 5000);
+        setJewelleryOptions(
+          Array.isArray(jewelleryRes.data)
+            ? jewelleryRes.data.map((j) => j.jewelleryName)
+            : []
+        );
+        setRatePerGram(rateRes?.data?.ratePerGram ?? 5000);
       } catch (err) {
         console.error("Error fetching jewellery config:", err);
       } finally {
@@ -218,23 +138,30 @@ export const LoanProvider = ({ children }) => {
         const response = await axiosInstance.get(
           "/admin/config/interest-rates"
         );
-        setAllInterestRates(response.data);
-        if (response.data.length > 0)
-          setSelectedInterestRate(response.data[0]._id);
+        const list = Array.isArray(response.data) ? response.data : [];
+        setAllInterestRates(list);
+        if (list.length > 0) setSelectedInterestRate(list[0]._id);
       } catch (error) {
-        console.error("Failed to load data", error);
+        console.error("Failed to load interest rates", error);
       }
     };
     fetchLoanInterest();
   }, []);
 
-  // ---- OTP ----
+  // ---------- OTP ----------
   const onSendOtp = async (formValues) => {
     try {
       await axiosInstance.post("/customer/send-otp", {
         phoneNumber: formValues.phoneNumber,
       });
-      setCustomerData(formValues);
+
+      // ✅ Keep minimal structure for consistency
+      setCustomerData({
+        branch: formValues.branch,
+        customerName: formValues.customerName,
+        phoneNumber: formValues.phoneNumber,
+      });
+
       setShowOtp(true);
       setOtpVerified(false);
       setOtp("");
@@ -243,6 +170,7 @@ export const LoanProvider = ({ children }) => {
       setCustomerIdGenerated(false);
       setAddress("");
       setAadharNumber("");
+      setSelectedBranch(null);
     } catch (err) {
       alert("Failed to send OTP. Please try again.");
       console.error(err);
@@ -252,7 +180,7 @@ export const LoanProvider = ({ children }) => {
   const onOtpVerified = async () => {
     try {
       await axiosInstance.post("/customer/verify-otp", {
-        phoneNumber: customerData.phoneNumber,
+        phoneNumber: customerData?.phoneNumber,
         otp,
       });
       setOtpError("");
@@ -263,7 +191,7 @@ export const LoanProvider = ({ children }) => {
     }
   };
 
-  // ---- Generate Customer ID + Register ----
+  // ---------- Register New Customer & Generate Customer ID ----------
   const generateCustomerId = async () => {
     if (!customerData || !customerData.branch) return;
     const branchObj = branches.find((b) => b._id === customerData.branch);
@@ -272,23 +200,24 @@ export const LoanProvider = ({ children }) => {
     try {
       setLoadingCustomerId(true);
 
-      // Get next ID
+      // Get next ID from backend using branch code
       const res = await axiosInstance.get(
         `/customer/next-id?branchCode=${branchObj.code}`
       );
-      const newCustomerId = res.data.customerId;
-      setCustomerId(newCustomerId);
+      const newCustomerId = res?.data?.customerId;
+      if (!newCustomerId) throw new Error("Failed to get new customer ID");
 
-      // Save selected branch
+      setCustomerId(newCustomerId);
       setSelectedBranch(branchObj);
 
-      // Prepare payload
+      // Prepare payload to register the new customer
       const payload = {
-        ...customerData,
+        customerName: customerData.customerName,
+        phoneNumber: customerData.phoneNumber,
         address,
         aadharNumber,
-        branch: branchObj.name,
-        branchId: customerData.branch,
+        branch: branchObj.name, // display name
+        branchId: customerData.branch, // reference id
         customerId: newCustomerId,
       };
 
@@ -304,6 +233,179 @@ export const LoanProvider = ({ children }) => {
     }
   };
 
+  // ---------- Search existing customer ----------
+  const fetchCustomerByIdOrPhone = async (inputValue) => {
+    try {
+      const { data } = await axiosInstance.get(
+        `/customer/search/${inputValue}`
+      );
+      const customer = data?.customer || data; // support both shapes
+      if (customer) {
+        populateExistingCustomer(customer);
+        return customer;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching customer:", error?.response?.data || error);
+      return null;
+    }
+  };
+
+  // ---------- Normalize existing customer to SAME pattern ----------
+  const populateExistingCustomer = (customer) => {
+    if (!customer) return;
+
+    // Keep minimal structure in customerData
+    setCustomerData({
+      branch: customer.branchId,
+      customerName: customer.customerName,
+      phoneNumber: customer.phoneNumber,
+    });
+
+    // Set separate fields
+    setCustomerId(customer.customerId || "");
+    setAddress(customer.address || "");
+    setAadharNumber(customer.aadharNumber || "");
+
+    // Resolve & set selectedBranch object
+    const branchObj = branches.find((b) => b._id === customer.branchId) || null;
+    setSelectedBranch(branchObj);
+
+    // Reset OTP UI (not needed for existing)
+    setOtpVerified(false);
+    setShowOtp(false);
+    setOtp("");
+    setCustomerIdGenerated(true);
+  };
+
+  // ---------- Keep selectedBranch in sync when branches or customerData change ----------
+  useEffect(() => {
+    if (customerData?.branch && branches.length) {
+      const branchObj =
+        branches.find((b) => b._id === customerData.branch) || null;
+      setSelectedBranch(branchObj);
+    }
+  }, [customerData?.branch, branches]);
+
+  // ---------- Preview ----------
+  const handleGeneratePledgeCard = () => {
+    // Build a clean, non-recursive preview object
+    setPreviewData({
+      // customer basics
+      customerData, // { branch, customerName, phoneNumber }
+      customerId, // string
+      address, // string
+      aadharNumber, // string
+      selectedBranch, // {_id, name, code, ...}
+
+      // jewellery & config
+      jewelleryOptions, // string[]
+      ratePerGram, // number
+      showJewelleryTable, // bool
+      configLoading, // bool
+
+      // loan details
+      nextLoanNumber,
+      nextLoanNumberLoading,
+      loanAmount,
+      allInterestRates,
+      selectedInterestRate,
+      loanDate,
+      loanPeriod,
+      dueDate,
+      noOfDays,
+      selectedFactor,
+      totalInterest,
+
+      // payment
+      paymentMethod,
+      paymentByOffline,
+      paymentByOnline,
+      refNumber,
+
+      // images & meta
+      customerPhoto,
+      jewelPhoto,
+      aadharPhoto,
+      declarationPhoto,
+      otherPhoto,
+      sheetPreparedBy,
+
+      // branches context
+      branches,
+      branchesLoading,
+      defaultLoanDate,
+      defaultLoanPeriod,
+    });
+  };
+
+  // ---------- FormData ----------
+  const serializeDate = (d) =>
+    d instanceof Date && !isNaN(d) ? d.toISOString() : d || "";
+
+  const generateFormData = () => {
+    const formData = new FormData();
+
+    // Branches
+    formData.append("branches", JSON.stringify(branches || []));
+    formData.append("branchesLoading", String(!!branchesLoading));
+
+    // Customer (consistent)
+    formData.append("customerData", JSON.stringify(customerData || {}));
+    formData.append("customerId", customerId || "");
+    formData.append("address", address || "");
+    formData.append("aadharNumber", aadharNumber || "");
+    formData.append("selectedBranch", JSON.stringify(selectedBranch || null));
+
+    // OTP UI (optional to send)
+    formData.append("showOtp", String(!!showOtp));
+    formData.append("otp", otp || "");
+    formData.append("otpVerified", String(!!otpVerified));
+    formData.append("otpError", otpError || "");
+    formData.append("customerIdGenerated", String(!!customerIdGenerated));
+    formData.append("loadingCustomerId", String(!!loadingCustomerId));
+
+    // Jewellery Config
+    formData.append("jewelleryOptions", JSON.stringify(jewelleryOptions || []));
+    formData.append("showJewelleryTable", String(!!showJewelleryTable));
+    formData.append("ratePerGram", String(ratePerGram ?? ""));
+
+    // Loan Details
+    formData.append("nextLoanNumber", String(nextLoanNumber ?? ""));
+    formData.append("nextLoanNumberLoading", String(!!nextLoanNumberLoading));
+    formData.append("loanAmount", String(loanAmount ?? ""));
+    formData.append("allInterestRates", JSON.stringify(allInterestRates || []));
+    formData.append("selectedInterestRate", selectedInterestRate || "");
+    formData.append("loanDate", serializeDate(loanDate));
+    formData.append("loanPeriod", String(loanPeriod ?? ""));
+    formData.append("dueDate", serializeDate(dueDate));
+    formData.append("noOfDays", String(noOfDays ?? ""));
+    formData.append("selectedFactor", String(selectedFactor ?? ""));
+    formData.append("totalInterest", String(totalInterest ?? ""));
+    formData.append("paymentMethod", paymentMethod || "");
+    formData.append("paymentByOffline", paymentByOffline || "");
+    formData.append("paymentByOnline", paymentByOnline || "");
+    formData.append("refNumber", refNumber || "");
+    formData.append("defaultLoanDate", serializeDate(defaultLoanDate));
+    formData.append("defaultLoanPeriod", String(defaultLoanPeriod ?? ""));
+
+    // Images
+    if (customerPhoto) formData.append("customerPhoto", customerPhoto);
+    if (jewelPhoto) formData.append("jewelPhoto", jewelPhoto);
+    if (aadharPhoto) formData.append("aadharPhoto", aadharPhoto);
+    if (declarationPhoto) formData.append("declarationPhoto", declarationPhoto);
+    if (otherPhoto) formData.append("otherPhoto", otherPhoto);
+
+    // Sheet Prepared By
+    formData.append("sheetPreparedBy", sheetPreparedBy || "");
+
+    // Preview Data snapshot
+    formData.append("previewData", JSON.stringify(previewData || {}));
+
+    return formData;
+  };
+
+  // ---------- Reset ----------
   const resetLoanForm = () => {
     setCustomerData(null);
     setShowOtp(false);
@@ -384,15 +486,7 @@ export const LoanProvider = ({ children }) => {
         ratePerGram,
         configLoading,
 
-        // Loan
-        nextLoanNumber,
-        nextLoanNumberLoading,
-        loanAmount,
-        setLoanAmount,
-        allInterestRates,
-        setAllInterestRates,
-        selectedInterestRate,
-        setSelectedInterestRate,
+        // loan
         nextLoanNumber,
         nextLoanNumberLoading,
         loanAmount,
@@ -415,8 +509,8 @@ export const LoanProvider = ({ children }) => {
         setTotalInterest,
         paymentMethod,
         setPaymentMethod,
-        setPaymentByOffline,
         paymentByOffline,
+        setPaymentByOffline,
         paymentByOnline,
         setPaymentByOnline,
         refNumber,
@@ -425,6 +519,8 @@ export const LoanProvider = ({ children }) => {
         defaultLoanPeriod,
         calculateDueDate,
         calculateDays,
+
+        // images/meta
         customerPhoto,
         setCustomerPhoto,
         jewelPhoto,
@@ -435,18 +531,20 @@ export const LoanProvider = ({ children }) => {
         setDeclarationPhoto,
         otherPhoto,
         setOtherPhoto,
-
         sheetPreparedBy,
         setSheetPreparedBy,
 
+        // preview & formdata
         previewData,
         handleGeneratePledgeCard,
         generateFormData,
+
         // actions
         onSendOtp,
         onOtpVerified,
         generateCustomerId,
-
+        fetchCustomerByIdOrPhone,
+        populateExistingCustomer,
         resetLoanForm,
       }}
     >

@@ -4,6 +4,7 @@ import SellingSheet from "../pages/sheets/SellingSheet";
 import MeltingSheet from "../pages/sheets/MeltingSheet";
 import FinanceSheet from "../pages/sheets/FinanceSheet";
 import CustomerRegistrationPage from "../pages/Loan/CustomerRegistrationPage";
+import ExistingCustomerLoan from "../pages/Loan/ExistingCustomerLoan";
 
 export default function GoldTabs({ role }) {
   // Main Tabs
@@ -216,11 +217,7 @@ export default function GoldTabs({ role }) {
                 {/* New Loan Inner Content */}
                 <div className="mt-3">
                   {innerTab === "newCustomer" && <CustomerRegistrationPage />}
-                  {innerTab === "existingCustomer" && (
-                    <div className="text-gray-600">
-                      Feature for Existing Customer coming soon...
-                    </div>
-                  )}
+                  {innerTab === "existingCustomer" && <ExistingCustomerLoan />}
                 </div>
               </div>
             )}
