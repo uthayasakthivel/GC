@@ -1,10 +1,45 @@
 import express from "express";
-import { getNextLoanIdApi } from "../controllers/loanController.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
+import loanUpload from "../middlewares/loanUpload.js";
+import {
+  createLoan,
+  getAllLoans,
+  getLoanById,
+  updateLoan,
+  deleteLoan,
+  getNextLoanIdApi,
+} from "../controllers/loanController.js";
 
 const router = express.Router();
 
-// Get next Loan ID
 router.get("/next-id", verifyToken, getNextLoanIdApi);
+router.post(
+  "/create-loan",
+  verifyToken,
+  loanUpload.fields([
+    { name: "customerPhoto", maxCount: 1 },
+    { name: "jewelPhoto", maxCount: 1 },
+    { name: "aadharPhoto", maxCount: 1 },
+    { name: "declarationPhoto", maxCount: 1 },
+    { name: "otherPhoto", maxCount: 1 },
+  ]),
+  createLoan
+);
+
+router.get("/", verifyToken, getAllLoans);
+router.get("/:id", verifyToken, getLoanById);
+router.put(
+  "/:id",
+  verifyToken,
+  loanUpload.fields([
+    { name: "customerPhoto", maxCount: 1 },
+    { name: "jewelPhoto", maxCount: 1 },
+    { name: "aadharPhoto", maxCount: 1 },
+    { name: "declarationPhoto", maxCount: 1 },
+    { name: "otherPhoto", maxCount: 1 },
+  ]),
+  updateLoan
+);
+router.delete("/:id", verifyToken, deleteLoan);
 
 export default router;

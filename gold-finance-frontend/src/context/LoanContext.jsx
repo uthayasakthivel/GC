@@ -32,6 +32,163 @@ export const LoanProvider = ({ children }) => {
   const { nextLoanNumber, nextLoanNumberLoading } =
     useNextLoanNumber(selectedBranch);
   const [loanAmount, setLoanAmount] = useState(0);
+  const [allInterestRates, setAllInterestRates] = useState([]);
+  const [selectedInterestRate, setSelectedInterestRate] = useState("");
+  const defaultLoanDate = new Date();
+  const defaultLoanPeriod = 6;
+  const [loanDate, setLoanDate] = useState(defaultLoanDate);
+  const [loanPeriod, setLoanPeriod] = useState(defaultLoanPeriod);
+
+  // ✅ Helper: Calculate due date
+  const calculateDueDate = (date, period) => {
+    const d = new Date(date);
+    d.setMonth(d.getMonth() + period);
+    d.setDate(d.getDate() - 1); // subtract 1 day
+    return d;
+  };
+
+  // ✅ Helper: Calculate days difference
+  const calculateDays = (start, end) => {
+    const diffTime = end.getTime() - start.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
+  const [dueDate, setDueDate] = useState(() =>
+    calculateDueDate(defaultLoanDate, defaultLoanPeriod)
+  );
+  const [noOfDays, setNoOfDays] = useState(() =>
+    calculateDays(
+      defaultLoanDate,
+      calculateDueDate(defaultLoanDate, defaultLoanPeriod)
+    )
+  );
+  const [selectedFactor, setSelectedFactor] = useState(0);
+  const [totalInterest, setTotalInterest] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("offline");
+  const [refNumber, setRefNumber] = useState("");
+  const [paymentByOnline, setPaymentByOnline] = useState("");
+  const [paymentByOffline, setPaymentByOffline] = useState("");
+
+  // Image states
+  const [customerPhoto, setCustomerPhoto] = useState(null);
+  const [jewelPhoto, setJewelPhoto] = useState(null);
+  const [aadharPhoto, setAadharPhoto] = useState(null);
+  const [declarationPhoto, setDeclarationPhoto] = useState(null);
+  const [otherPhoto, setOtherPhoto] = useState(null);
+  const [sheetPreparedBy, setSheetPreparedBy] = useState("");
+
+  const [previewData, setPreviewData] = useState(null);
+
+  // Function to create FormData for API submission
+  const generateFormData = () => {
+    const formData = new FormData();
+
+    // Branches
+    formData.append("branches", JSON.stringify(branches));
+    formData.append("branchesLoading", branchesLoading);
+
+    // Customer
+    formData.append("customerData", JSON.stringify(customerData));
+    formData.append("showOtp", showOtp);
+    formData.append("otp", otp);
+    formData.append("otpVerified", otpVerified);
+    formData.append("otpError", otpError);
+    formData.append("customerId", customerId || "");
+    formData.append("customerIdGenerated", customerIdGenerated);
+    formData.append("loadingCustomerId", loadingCustomerId);
+    formData.append("address", address || "");
+    formData.append("aadharNumber", aadharNumber || "");
+    formData.append("selectedBranch", selectedBranch || "");
+
+    // Jewellery Config
+    formData.append("showJewelleryTable", showJewelleryTable);
+    formData.append("jewelleryOptions", JSON.stringify(jewelleryOptions));
+    formData.append("ratePerGram", ratePerGram || "");
+    formData.append("configLoading", configLoading);
+
+    // Loan Details
+    formData.append("nextLoanNumber", nextLoanNumber || "");
+    formData.append("nextLoanNumberLoading", nextLoanNumberLoading);
+    formData.append("loanAmount", loanAmount || "");
+    formData.append("allInterestRates", JSON.stringify(allInterestRates));
+    formData.append("selectedInterestRate", selectedInterestRate || "");
+    formData.append("loanDate", loanDate || "");
+    formData.append("loanPeriod", loanPeriod || "");
+    formData.append("dueDate", dueDate || "");
+    formData.append("noOfDays", noOfDays || "");
+    formData.append("selectedFactor", selectedFactor || "");
+    formData.append("totalInterest", totalInterest || "");
+    formData.append("paymentMethod", paymentMethod || "");
+    formData.append("paymentByOffline", paymentByOffline || "");
+    formData.append("paymentByOnline", paymentByOnline || "");
+    formData.append("refNumber", refNumber || "");
+    formData.append("defaultLoanDate", defaultLoanDate || "");
+    formData.append("defaultLoanPeriod", defaultLoanPeriod || "");
+
+    // Images
+    if (customerPhoto) formData.append("customerPhoto", customerPhoto);
+    if (jewelPhoto) formData.append("jewelPhoto", jewelPhoto);
+    if (aadharPhoto) formData.append("aadharPhoto", aadharPhoto);
+    if (declarationPhoto) formData.append("declarationPhoto", declarationPhoto);
+    if (otherPhoto) formData.append("otherPhoto", otherPhoto);
+
+    // Sheet Prepared By
+    formData.append("sheetPreparedBy", sheetPreparedBy || "");
+
+    // Preview Data
+    formData.append("previewData", JSON.stringify(previewData));
+
+    return formData;
+  };
+
+  // Function to generate preview data
+  const handleGeneratePledgeCard = () => {
+    setPreviewData({
+      branches,
+      customerData,
+      customerId,
+      address,
+      aadharNumber,
+      selectedBranch,
+      jewelleryOptions,
+      ratePerGram,
+      loanAmount,
+      selectedInterestRate,
+      loanDate,
+      loanPeriod,
+      dueDate,
+      noOfDays,
+      selectedFactor,
+      totalInterest,
+      paymentMethod,
+      paymentByOffline,
+      paymentByOnline,
+      refNumber,
+      sheetPreparedBy,
+      previewData,
+      nextLoanNumber,
+      customerPhoto,
+      jewelPhoto,
+      aadharPhoto,
+      declarationPhoto,
+      otherPhoto,
+    });
+  };
+
+  // ✅ Update due date & noOfDays whenever loanDate or loanPeriod changes
+  useEffect(() => {
+    const newDueDate = calculateDueDate(loanDate, loanPeriod);
+    setDueDate(newDueDate);
+    setNoOfDays(calculateDays(loanDate, newDueDate));
+  }, [loanDate, loanPeriod]);
+
+  // ✅ Calculate total interest whenever inputs change
+  useEffect(() => {
+    if (noOfDays && loanAmount && selectedFactor) {
+      const interest = noOfDays * loanAmount * selectedFactor;
+      setTotalInterest(interest.toFixed(2));
+    }
+  }, [noOfDays, loanAmount, selectedFactor]);
 
   // ---- Fetch config on mount ----
   useEffect(() => {
@@ -52,6 +209,23 @@ export const LoanProvider = ({ children }) => {
     };
 
     fetchConfig();
+  }, []);
+
+  // Fetch Loan Interest Rates
+  useEffect(() => {
+    const fetchLoanInterest = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/admin/config/interest-rates"
+        );
+        setAllInterestRates(response.data);
+        if (response.data.length > 0)
+          setSelectedInterestRate(response.data[0]._id);
+      } catch (error) {
+        console.error("Failed to load data", error);
+      }
+    };
+    fetchLoanInterest();
   }, []);
 
   // ---- OTP ----
@@ -130,6 +304,53 @@ export const LoanProvider = ({ children }) => {
     }
   };
 
+  const resetLoanForm = () => {
+    setCustomerData(null);
+    setShowOtp(false);
+    setOtp("");
+    setOtpVerified(false);
+    setOtpError("");
+    setCustomerId("");
+    setCustomerIdGenerated(false);
+    setLoadingCustomerId(false);
+    setAddress("");
+    setAadharNumber("");
+    setSelectedBranch(null);
+
+    setShowJewelleryTable(false);
+    setJewelleryOptions([]);
+    setRatePerGram(6000);
+    setConfigLoading(true);
+
+    setLoanAmount(0);
+    setAllInterestRates([]);
+    setSelectedInterestRate("");
+    setLoanDate(defaultLoanDate);
+    setLoanPeriod(defaultLoanPeriod);
+    setDueDate(calculateDueDate(defaultLoanDate, defaultLoanPeriod));
+    setNoOfDays(
+      calculateDays(
+        defaultLoanDate,
+        calculateDueDate(defaultLoanDate, defaultLoanPeriod)
+      )
+    );
+    setSelectedFactor(0);
+    setTotalInterest(0);
+    setPaymentMethod("offline");
+    setRefNumber("");
+    setPaymentByOnline("");
+    setPaymentByOffline("");
+
+    setCustomerPhoto(null);
+    setJewelPhoto(null);
+    setAadharPhoto(null);
+    setDeclarationPhoto(null);
+    setOtherPhoto(null);
+    setSheetPreparedBy("");
+
+    setPreviewData(null);
+  };
+
   return (
     <LoanContext.Provider
       value={{
@@ -168,11 +389,65 @@ export const LoanProvider = ({ children }) => {
         nextLoanNumberLoading,
         loanAmount,
         setLoanAmount,
+        allInterestRates,
+        setAllInterestRates,
+        selectedInterestRate,
+        setSelectedInterestRate,
+        nextLoanNumber,
+        nextLoanNumberLoading,
+        loanAmount,
+        setLoanAmount,
+        allInterestRates,
+        setAllInterestRates,
+        selectedInterestRate,
+        setSelectedInterestRate,
+        loanDate,
+        setLoanDate,
+        loanPeriod,
+        setLoanPeriod,
+        dueDate,
+        setDueDate,
+        noOfDays,
+        setNoOfDays,
+        selectedFactor,
+        setSelectedFactor,
+        totalInterest,
+        setTotalInterest,
+        paymentMethod,
+        setPaymentMethod,
+        setPaymentByOffline,
+        paymentByOffline,
+        paymentByOnline,
+        setPaymentByOnline,
+        refNumber,
+        setRefNumber,
+        defaultLoanDate,
+        defaultLoanPeriod,
+        calculateDueDate,
+        calculateDays,
+        customerPhoto,
+        setCustomerPhoto,
+        jewelPhoto,
+        setJewelPhoto,
+        aadharPhoto,
+        setAadharPhoto,
+        declarationPhoto,
+        setDeclarationPhoto,
+        otherPhoto,
+        setOtherPhoto,
 
+        sheetPreparedBy,
+        setSheetPreparedBy,
+
+        previewData,
+        handleGeneratePledgeCard,
+        generateFormData,
         // actions
         onSendOtp,
         onOtpVerified,
         generateCustomerId,
+
+        resetLoanForm,
       }}
     >
       {children}

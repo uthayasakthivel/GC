@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import CustomerRegistrationForm from "../../components/CustomerRegistrationForm";
 import DynamicJewelleryTable from "../../components/DynamicJewelleryTable";
 import { useLoan } from "../../context/LoanContext";
+import axiosInstance from "../../api/axiosInstance";
+import PreviewLoanModal from "../../components/PreviewLoanModal";
 
 export default function CustomerRegistrationPage() {
   const {
     branches,
     branchesLoading,
-
+    selectedBranch,
     // customer
     customerData,
     setCustomerData,
@@ -27,27 +29,81 @@ export default function CustomerRegistrationPage() {
 
     //Loan
     loanAmount,
+    selectedInterestRate,
+    loanDate,
+    loanPeriod,
 
     // jewellery config
     showJewelleryTable,
     setShowJewelleryTable,
     jewelleryOptions,
+    sheetPreparedBy,
+    customerPhoto,
+    jewelPhoto,
+    aadharPhoto,
+    declarationPhoto,
 
     // actions
     onSendOtp,
     onOtpVerified,
     generateCustomerId,
+    generateFormData,
   } = useLoan();
 
-  const handleSubmit = () => {
-    console.log(
-      "Data verification",
-      address,
-      customerId,
-      loanAmount,
-      jewelleryOptions
+  const [showPreview, setShowPreview] = useState(false);
+
+  const handlePreview = () => {
+    setShowPreview(true);
+  };
+  const isFormComplete = () => {
+    return (
+      customerData &&
+      customerId &&
+      selectedBranch &&
+      aadharNumber &&
+      address &&
+      loanAmount > 0 &&
+      selectedInterestRate &&
+      loanDate &&
+      loanPeriod &&
+      sheetPreparedBy &&
+      customerPhoto &&
+      jewelPhoto &&
+      aadharPhoto &&
+      declarationPhoto
     );
   };
+
+  const handleSubmit = async () => {
+    try {
+      const formData = generateFormData();
+
+      // ✅ Debugging: log all key-value pairs
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      console.log("Form Data Ready", formData);
+
+      // ✅ API call
+      const response = await axiosInstance.post("/loan/create-loan", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Important for FormData
+        },
+      });
+
+      if (response.data.success) {
+        alert("Loan Submitted Successfully!");
+        console.log("API Response:", response.data);
+      } else {
+        alert(response.data.message || "Failed to submit loan.");
+      }
+    } catch (error) {
+      console.error("Error submitting loan:", error.response?.data || error);
+      alert("Something went wrong. Check console for details.");
+    }
+  };
+
   return (
     <div className="p-4 border rounded shadow">
       <CustomerRegistrationForm
@@ -177,12 +233,23 @@ export default function CustomerRegistrationPage() {
         </div>
       )}
 
-      <button
+      {/* <button
         onClick={handleSubmit}
         className="bg-green-600 text-white w-full px-4 py-2 rounded mt-6"
       >
         Submit All Data
+      </button> */}
+
+      <button
+        onClick={handlePreview}
+        className="bg-blue-600 text-white w-full px-4 py-2 rounded mt-6"
+      >
+        Preview & Print
       </button>
+
+      {showPreview && (
+        <PreviewLoanModal onClose={() => setShowPreview(false)} />
+      )}
     </div>
   );
 }

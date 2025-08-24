@@ -10,7 +10,7 @@ export default function GoldTabs({ role }) {
   const [mainTab, setMainTab] = useState("sales");
   // Sub Tabs
   const [subTab, setSubTab] = useState("buying");
-
+  const [innerTab, setInnerTab] = useState("newCustomer");
   return (
     <div className="w-full">
       <div className="flex border-b border-gray-300 mb-4">
@@ -141,6 +141,7 @@ export default function GoldTabs({ role }) {
       {/* Loan Section */}
       {mainTab === "loan" && (
         <div>
+          {/* Main Loan Tabs */}
           <div className="flex border-b border-gray-200 mb-3">
             <button
               className={`px-4 py-1 ${
@@ -183,8 +184,47 @@ export default function GoldTabs({ role }) {
               Interest Calculator
             </button>
           </div>
+
+          {/* Loan Content Area */}
           <div className="p-4 bg-white shadow rounded-lg">
-            {subTab === "newLoan" && <CustomerRegistrationPage />}
+            {subTab === "newLoan" && (
+              <div>
+                {/* New Loan Inner Tabs */}
+                <div className="flex border-b border-gray-200 mb-4">
+                  <button
+                    className={`px-4 py-1 ${
+                      innerTab === "newCustomer"
+                        ? "border-b-2 border-blue-500 font-semibold"
+                        : "text-gray-500"
+                    }`}
+                    onClick={() => setInnerTab("newCustomer")}
+                  >
+                    New Customer
+                  </button>
+                  <button
+                    className={`px-4 py-1 ${
+                      innerTab === "existingCustomer"
+                        ? "border-b-2 border-blue-500 font-semibold"
+                        : "text-gray-500"
+                    }`}
+                    onClick={() => setInnerTab("existingCustomer")}
+                  >
+                    Existing Customer
+                  </button>
+                </div>
+
+                {/* New Loan Inner Content */}
+                <div className="mt-3">
+                  {innerTab === "newCustomer" && <CustomerRegistrationPage />}
+                  {innerTab === "existingCustomer" && (
+                    <div className="text-gray-600">
+                      Feature for Existing Customer coming soon...
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {subTab === "existingLoan" && (
               <div>Another loan feature coming soon...</div>
             )}
