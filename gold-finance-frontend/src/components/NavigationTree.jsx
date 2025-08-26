@@ -5,6 +5,7 @@ import MeltingSheet from "../pages/sheets/MeltingSheet";
 import FinanceSheet from "../pages/sheets/FinanceSheet";
 import CustomerRegistrationPage from "../pages/Loan/CustomerRegistrationPage";
 import ExistingCustomerLoan from "../pages/Loan/ExistingCustomerLoan";
+import ExistingLoanLatest from "../pages/Loan/ExistingLoanLatest";
 
 export default function GoldTabs({ role }) {
   // Main Tabs
@@ -222,9 +223,7 @@ export default function GoldTabs({ role }) {
               </div>
             )}
 
-            {subTab === "existingLoan" && (
-              <div>Another loan feature coming soon...</div>
-            )}
+            {subTab === "existingLoan" && <ExistingLoanLatest />}
             {subTab === "pledgeDetails" && (
               <div>Loan feature coming soon...</div>
             )}

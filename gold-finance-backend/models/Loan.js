@@ -46,6 +46,12 @@ const loanSchema = new mongoose.Schema(
     // Sheet Prepared By
     sheetPreparedBy: { type: String },
 
+    // lastInterestPaidDate
+    lastInterestPaidDate: {
+      type: Date,
+      default: null,
+    },
+
     // Preview Data
     previewData: { type: Object, default: {} },
 

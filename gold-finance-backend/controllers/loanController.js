@@ -2,6 +2,7 @@ import { getNextLoanId } from "../utils/getNextLoanId.js";
 import Loan from "../models/Loan.js";
 
 export const getNextLoanIdApi = async (req, res) => {
+  console.log("🔥 Entered getNextLoanIdApi");
   try {
     const branchCode = req.query.branchCode;
     if (!branchCode) {
@@ -91,17 +92,31 @@ export const createLoan = async (req, res) => {
   }
 };
 
+// Get all loans
 export const getAllLoans = async (req, res) => {
   try {
-    const loans = await Loan.find().sort({ createdAt: -1 });
-    res.status(200).json({ success: true, loans });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+    const loans = await Loan.find().sort({ createdAt: -1 }); // latest first
+    res.json({ success: true, loans });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to fetch loans" });
   }
 };
 
+// Get latest 5 loans
+export const getLatestLoans = async (req, res) => {
+  try {
+    const loans = await Loan.find().sort({ createdAt: -1 }).limit(5);
+    res.json({ success: true, loans });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch latest loans" });
+  }
+};
+
+// Get loan by ID
 export const getLoanById = async (req, res) => {
   try {
     const loan = await Loan.findById(req.params.id);
@@ -109,66 +124,83 @@ export const getLoanById = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Loan not found" });
-
-    res.status(200).json({ success: true, loan });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+    res.json({ success: true, loan });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to fetch loan" });
   }
 };
 
+// Update loan
 export const updateLoan = async (req, res) => {
   try {
-    const loan = await Loan.findById(req.params.id);
-    if (!loan)
+    const files = req.files || {};
+    const updateData = {
+      ...req.body,
+      customerPhoto: files.customerPhoto?.[0]?.filename,
+      jewelPhoto: files.jewelPhoto?.[0]?.filename,
+      aadharPhoto: files.aadharPhoto?.[0]?.filename,
+      declarationPhoto: files.declarationPhoto?.[0]?.filename,
+      otherPhoto: files.otherPhoto?.[0]?.filename,
+    };
+
+    const updatedLoan = await Loan.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+    if (!updatedLoan)
       return res
         .status(404)
         .json({ success: false, message: "Loan not found" });
-
-    const updates = req.body;
-
-    // If images are updated
-    if (req.files) {
-      if (req.files.customerPhoto)
-        loan.images.customerPhoto = req.files.customerPhoto[0].path;
-      if (req.files.jewelPhoto)
-        loan.images.jewelPhoto = req.files.jewelPhoto[0].path;
-      if (req.files.aadharPhoto)
-        loan.images.aadharPhoto = req.files.aadharPhoto[0].path;
-      if (req.files.declarationPhoto)
-        loan.images.declarationPhoto = req.files.declarationPhoto[0].path;
-      if (req.files.otherPhoto)
-        loan.images.otherPhoto = req.files.otherPhoto[0].path;
-    }
-
-    Object.assign(loan, updates);
-
-    await loan.save();
-    res
-      .status(200)
-      .json({ success: true, message: "Loan updated successfully", loan });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+    res.json({ success: true, loan: updatedLoan });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to update loan" });
   }
 };
 
+// Delete loan
 export const deleteLoan = async (req, res) => {
   try {
-    const loan = await Loan.findByIdAndDelete(req.params.id);
-    if (!loan)
+    const deletedLoan = await Loan.findByIdAndDelete(req.params.id);
+    if (!deletedLoan)
       return res
         .status(404)
         .json({ success: false, message: "Loan not found" });
+    res.json({ success: true, message: "Loan deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to delete loan" });
+  }
+};
 
-    res
-      .status(200)
-      .json({ success: true, message: "Loan deleted successfully" });
+// PATCH /loan/:id/pay-interest
+export const payInterest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const loan = await Loan.findById(id);
+
+    if (!loan) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Loan not found" });
+    }
+
+    const today = new Date();
+
+    loan.lastInterestPaidDate = today;
+    loan.loanDate = today; // reset for next interest calculation
+
+    await loan.save();
+
+    res.json({
+      success: true,
+      message: "Interest paid successfully",
+      loan,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+    console.error("Error paying interest:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

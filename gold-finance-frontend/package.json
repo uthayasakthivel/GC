@@ -14,6 +14,7 @@
     "@react-oauth/google": "^0.12.2",
     "@tailwindcss/postcss": "^4.1.11",
     "@tanstack/react-query": "^5.84.1",
+    "@tanstack/react-table": "^8.21.3",
     "axios": "^1.11.0",
     "dayjs": "^1.11.13",
     "dom-to-image-more": "^3.6.0",

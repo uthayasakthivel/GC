@@ -7,12 +7,18 @@ import {
   getLoanById,
   updateLoan,
   deleteLoan,
+  getLatestLoans,
   getNextLoanIdApi,
+  payInterest,
 } from "../controllers/loanController.js";
 
 const router = express.Router();
-
 router.get("/next-id", verifyToken, getNextLoanIdApi);
+router.get("/latest", verifyToken, getLatestLoans);
+router.get("/", verifyToken, getAllLoans);
+router.get("/:id", verifyToken, getLoanById);
+router.patch("/:id/pay-interest", payInterest);
+
 router.post(
   "/create-loan",
   verifyToken,
@@ -26,8 +32,6 @@ router.post(
   createLoan
 );
 
-router.get("/", verifyToken, getAllLoans);
-router.get("/:id", verifyToken, getLoanById);
 router.put(
   "/:id",
   verifyToken,
@@ -40,6 +44,6 @@ router.put(
   ]),
   updateLoan
 );
-router.delete("/:id", verifyToken, deleteLoan);
 
+router.delete("/:id", verifyToken, deleteLoan);
 export default router;

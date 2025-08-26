@@ -49,7 +49,8 @@ export const LoanProvider = ({ children }) => {
   const calculateDueDate = (date, period) => {
     const d = new Date(date);
     d.setMonth(d.getMonth() + period);
-    d.setDate(d.getDate() - 1); // subtract 1 day
+    // d.setDate(d.getDate() - 1); // subtract 1 day
+    d.setDate(d.getDate()); // subtract 1 day
     return d;
   };
 
@@ -129,23 +130,6 @@ export const LoanProvider = ({ children }) => {
     };
 
     fetchConfig();
-  }, []);
-
-  // Fetch Loan Interest Rates
-  useEffect(() => {
-    const fetchLoanInterest = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "/admin/config/interest-rates"
-        );
-        const list = Array.isArray(response.data) ? response.data : [];
-        setAllInterestRates(list);
-        if (list.length > 0) setSelectedInterestRate(list[0]._id);
-      } catch (error) {
-        console.error("Failed to load interest rates", error);
-      }
-    };
-    fetchLoanInterest();
   }, []);
 
   // ---------- OTP ----------

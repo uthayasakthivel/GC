@@ -30,6 +30,9 @@ import MeltingSheet from "./pages/sheets/MeltingSheet";
 import MeltingSheetPreview from "./pages/admin/MeltingSheetPreview";
 import FinanaceSheet from "./pages/sheets/FinanceSheet";
 import { LoanProvider } from "./context/LoanContext";
+import AllLoansPage from "./pages/Loan/AllLoansPage";
+import ExistingLoanTab from "./pages/Loan/ExistingLoanLatest";
+import LoanDetailsPage from "./pages/Loan/LoanDetailsPage";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
@@ -62,18 +65,13 @@ function AppRoutes() {
       <Route path="/about" element={<About />} />
       <Route path="/services" element={<Services />} />
       <Route path="/contact" element={<Contact />} /> */}
-
       {/* Login page */}
       <Route path="/login" element={<Login />} />
-
       {/* Signup page */}
       <Route path="/signup" element={<SignUp />} />
-
       {/* Forgot password page */}
       <Route path="/forgot-password" element={<ForgotPassword />} />
-
       <Route path="/reset-password/:token" element={<ResetPassword />} />
-
       {/* Admin dashboard protected */}
       <Route
         path="/admin"
@@ -83,7 +81,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/admin/sheets/buying/:id"
         element={
@@ -92,7 +89,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/admin/sheets/selling/:id"
         element={
@@ -101,7 +97,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/admin/sheets/melting/:id"
         element={
@@ -110,7 +105,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/admin/buying-sheets"
         element={
@@ -119,7 +113,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/admin/selling-sheets"
         element={
@@ -128,7 +121,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/admin/melting-sheets"
         element={
@@ -137,7 +129,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       {/* <Route
         path="/admin/selling-sheets"
         element={
@@ -146,7 +137,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       /> */}
-
       {/* Buying Sheet route (protected for Admin) */}
       <Route
         path="/buying-sheet"
@@ -165,12 +155,39 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       <Route
-        path="/melting-sheet"
+        path="/existing-loans-tab"
         element={
           <PrivateRoute allowedRoles={["admin", "manager"]}>
-            <MeltingSheet />
+            <ExistingLoanTab />
+          </PrivateRoute>
+        }
+      />
+
+      {/* All loans page */}
+      <Route
+        path="/all-loans"
+        element={
+          <PrivateRoute allowedRoles={["admin", "manager"]}>
+            <AllLoansPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/existing-loans"
+        element={
+          <PrivateRoute allowedRoles={["admin", "manager"]}>
+            <AllLoansPage />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Individual loan details */}
+      <Route
+        path="/loan/:id"
+        element={
+          <PrivateRoute allowedRoles={["admin", "manager"]}>
+            <LoanDetailsPage /> {/* <-- Create this new component */}
           </PrivateRoute>
         }
       />
@@ -183,7 +200,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       {/* Manager dashboard protected */}
       <Route
         path="/manager"
@@ -193,7 +209,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       {/* Employee dashboard protected */}
       <Route
         path="/employee"
@@ -203,7 +218,6 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
-
       {/* Catch all - redirect unknown routes to homepage */}
       {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
     </Routes>
