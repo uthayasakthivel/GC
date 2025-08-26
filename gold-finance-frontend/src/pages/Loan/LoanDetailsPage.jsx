@@ -2,50 +2,25 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 import PayTabs from "./PayTabs";
+import { useLoan } from "../../context/LoanContext";
 
 export default function LoanDetailsPage() {
   const { id } = useParams();
-  const [singleLoan, setSingleLoan] = useState(null);
-  const [singelLoanLoading, setSingelLoanLoading] = useState(true);
-
+  const {
+    singleLoan,
+    setSingleLoan,
+    singelLoanLoading,
+    setSingelLoanLoading,
+    fetchSingleLoan,
+    noOfDaysLoan,
+    interestToPay,
+  } = useLoan();
   useEffect(() => {
-    const fetchSingleLoan = async () => {
-      try {
-        const res = await axiosInstance.get(`/loan/${id}`);
-        if (res.data.success) {
-          setSingleLoan(res.data.loan);
-        }
-      } catch (error) {
-        console.error("Failed to fetch singleLoan details", error);
-      } finally {
-        setSingelLoanLoading(false);
-      }
-    };
-
-    fetchSingleLoan();
+    fetchSingleLoan(id);
   }, [id]);
-
-  // ✅ Utility function for date difference in days
-  const calculateLoanDays = (fromDate, toDate) => {
-    const from = new Date(fromDate);
-    const to = new Date(toDate);
-    const diffTime = to.getTime() - from.getTime();
-    return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24))); // Minimum 1 day
-  };
 
   if (singelLoanLoading) return <p>Loading singleLoan details...</p>;
   if (!singleLoan) return <p>No singleLoan found.</p>;
-
-  // ✅ Calculate No. of Days
-  const noOfDays = singleLoan?.lastInterestPaidDate
-    ? calculateLoanDays(singleLoan.lastInterestPaidDate, new Date())
-    : calculateLoanDays(singleLoan.loanDate, new Date());
-
-  // ✅ Calculate Interest Needs to Pay
-  const interestToPay =
-    singleLoan && singleLoan.selectedFactor && singleLoan.loanAmount
-      ? noOfDays * singleLoan.selectedFactor * singleLoan.loanAmount
-      : 0;
 
   return (
     <div className="p-4 bg-white shadow rounded">
@@ -113,7 +88,7 @@ export default function LoanDetailsPage() {
       </p>
 
       <p>
-        <strong>No. of Days:</strong> {noOfDays}
+        <strong>No. of Days:</strong> {noOfDaysLoan}
       </p>
 
       <p>

@@ -44,6 +44,8 @@ export const LoanProvider = ({ children }) => {
   const defaultLoanPeriod = 6; // months
   const [loanDate, setLoanDate] = useState(defaultLoanDate);
   const [loanPeriod, setLoanPeriod] = useState(defaultLoanPeriod);
+  const [singleLoan, setSingleLoan] = useState(null);
+  const [singelLoanLoading, setSingelLoanLoading] = useState(true);
 
   // ✅ Helper: Calculate due date
   const calculateDueDate = (date, period) => {
@@ -69,6 +71,40 @@ export const LoanProvider = ({ children }) => {
       calculateDueDate(defaultLoanDate, defaultLoanPeriod)
     )
   );
+
+  const fetchSingleLoan = async (id) => {
+    try {
+      const res = await axiosInstance.get(`/loan/${id}`);
+      if (res.data.success) {
+        setSingleLoan(res.data.loan);
+      }
+    } catch (error) {
+      console.error("Failed to fetch singleLoan details", error);
+    } finally {
+      setSingelLoanLoading(false);
+    }
+  };
+
+  // ✅ Calculate loan days difference
+  const calculateLoanDays = (fromDate, toDate) => {
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+    const diffTime = to.getTime() - from.getTime();
+    return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24))); // At least 1 day
+  };
+
+  // ✅ Derived calculations based on current singleLoan
+  const noOfDaysLoan = singleLoan
+    ? singleLoan.lastInterestPaidDate
+      ? calculateLoanDays(singleLoan.lastInterestPaidDate, new Date())
+      : calculateLoanDays(singleLoan.loanDate, new Date())
+    : 0;
+
+  const interestToPay =
+    singleLoan && singleLoan.selectedFactor && singleLoan.loanAmount
+      ? noOfDaysLoan * singleLoan.selectedFactor * singleLoan.loanAmount
+      : 0;
+
   const [selectedFactor, setSelectedFactor] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("offline");
@@ -530,6 +566,14 @@ export const LoanProvider = ({ children }) => {
         fetchCustomerByIdOrPhone,
         populateExistingCustomer,
         resetLoanForm,
+
+        singleLoan,
+        setSingleLoan,
+        singelLoanLoading,
+        setSingelLoanLoading,
+        fetchSingleLoan,
+        noOfDaysLoan,
+        interestToPay,
       }}
     >
       {children}
