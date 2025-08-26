@@ -1,5 +1,11 @@
 // LoanContext.jsx
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import axiosInstance from "../api/axiosInstance";
 import { useBranches } from "../hooks/useBranches";
 import { useNextLoanNumber } from "../hooks/useNextLoanNumber";
@@ -105,6 +111,27 @@ export const LoanProvider = ({ children }) => {
       ? noOfDaysLoan * singleLoan.selectedFactor * singleLoan.loanAmount
       : 0;
 
+  const payInterestAPI = async (id) => {
+    try {
+      const res = await axiosInstance.patch(`/loan/${id}/pay-interest`);
+      return res.data;
+    } catch (error) {
+      console.error("Error in payInterestAPI:", error);
+      throw error;
+    }
+  };
+
+  const payInterest = useCallback(async (id) => {
+    try {
+      const data = await payInterestAPI(id);
+      if (data.success) {
+        setSingleLoan(data.loan); // ✅ Update state after paying interest
+      }
+    } catch (error) {
+      console.error("Error paying interest:", error);
+    }
+  }, []);
+
   const [selectedFactor, setSelectedFactor] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("offline");
@@ -166,6 +193,27 @@ export const LoanProvider = ({ children }) => {
     };
 
     fetchConfig();
+  }, []);
+
+  // Fetch Loan Interest Rates
+
+  useEffect(() => {
+    const fetchLoanInterest = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/admin/config/interest-rates"
+        );
+
+        setAllInterestRates(response.data);
+
+        if (response.data.length > 0)
+          setSelectedInterestRate(response.data[0]._id);
+      } catch (error) {
+        console.error("Failed to load data", error);
+      }
+    };
+
+    fetchLoanInterest();
   }, []);
 
   // ---------- OTP ----------
@@ -574,6 +622,7 @@ export const LoanProvider = ({ children }) => {
         fetchSingleLoan,
         noOfDaysLoan,
         interestToPay,
+        payInterest,
       }}
     >
       {children}

@@ -189,8 +189,7 @@ export const payInterest = async (req, res) => {
 
     const today = new Date();
 
-    loan.lastInterestPaidDate = today;
-    loan.loanDate = today; // reset for next interest calculation
+    loan.lastInterestPaidDate = today; // ✅ Update to today
 
     await loan.save();
 

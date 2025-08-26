@@ -1,7 +1,16 @@
 import React, { useState } from "react";
+import { useLoan } from "../../context/LoanContext";
 
 export default function PayTabs({ loan }) {
-  const [activeTab, setActiveTab] = useState("interest"); // 'interest' or 'principal'
+  const [activeTab, setActiveTab] = useState("interest");
+  const { interestToPay, singleLoan, payInterest } = useLoan();
+
+  const handlePayInterest = async () => {
+    if (singleLoan?._id) {
+      await payInterest(singleLoan._id);
+      alert("Interest Paid Successfully!");
+    }
+  };
 
   return (
     <div className="border rounded-lg shadow p-4">
@@ -44,12 +53,23 @@ export default function PayTabs({ loan }) {
               <strong>Loan ID:</strong> {loan.loanId}
             </p>
             <p>
-              <strong>Loan Amount:</strong> {loan.loanAmount}
+              <strong>Loan Amount:</strong> ₹{loan.loanAmount}
             </p>
             <p>
-              <strong>Interest Amount:</strong> ₹{loan.interestAmount || "0"}
+              <strong>Interest Amount:</strong> ₹{interestToPay.toFixed(2)}
             </p>
-            <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+            <p>
+              <strong>Interest Paid On:</strong>{" "}
+              {singleLoan?.lastInterestPaidDate
+                ? new Date(singleLoan.lastInterestPaidDate).toLocaleDateString(
+                    "en-GB"
+                  )
+                : "Not paid yet"}
+            </p>
+            <button
+              onClick={handlePayInterest}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+            >
               Pay Interest
             </button>
           </div>
