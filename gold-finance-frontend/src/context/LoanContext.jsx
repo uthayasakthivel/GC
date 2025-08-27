@@ -57,8 +57,7 @@ export const LoanProvider = ({ children }) => {
   const calculateDueDate = (date, period) => {
     const d = new Date(date);
     d.setMonth(d.getMonth() + period);
-    // d.setDate(d.getDate() - 1); // subtract 1 day
-    d.setDate(d.getDate()); // subtract 1 day
+    d.setDate(d.getDate() - 1); // subtract 1 day correctly
     return d;
   };
 
@@ -111,9 +110,11 @@ export const LoanProvider = ({ children }) => {
       ? noOfDaysLoan * singleLoan.selectedFactor * singleLoan.loanAmount
       : 0;
 
-  const payInterestAPI = async (id) => {
+  const payInterestAPI = async (id, paidDate) => {
     try {
-      const res = await axiosInstance.patch(`/loan/${id}/pay-interest`);
+      const res = await axiosInstance.patch(`/loan/${id}/pay-interest`, {
+        paidDate,
+      });
       return res.data;
     } catch (error) {
       console.error("Error in payInterestAPI:", error);
@@ -121,11 +122,11 @@ export const LoanProvider = ({ children }) => {
     }
   };
 
-  const payInterest = useCallback(async (id) => {
+  const payInterest = useCallback(async (id, paidDate) => {
     try {
-      const data = await payInterestAPI(id);
+      const data = await payInterestAPI(id, paidDate);
       if (data.success) {
-        setSingleLoan(data.loan); // ✅ Update state after paying interest
+        setSingleLoan(data.loan);
       }
     } catch (error) {
       console.error("Error paying interest:", error);
@@ -155,7 +156,7 @@ export const LoanProvider = ({ children }) => {
   useEffect(() => {
     const newDueDate = calculateDueDate(loanDate, loanPeriod);
     setDueDate(newDueDate);
-    setNoOfDays(calculateDays(loanDate, newDueDate));
+    setNoOfDays(calculateDays(loanDate, newDueDate) + 1);
   }, [loanDate, loanPeriod]);
 
   // Calculate total interest whenever inputs change

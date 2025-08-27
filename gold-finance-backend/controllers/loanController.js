@@ -179,6 +179,8 @@ export const deleteLoan = async (req, res) => {
 export const payInterest = async (req, res) => {
   try {
     const { id } = req.params;
+    const { paidDate } = req.body; // ✅ Optional
+
     const loan = await Loan.findById(id);
 
     if (!loan) {
@@ -187,9 +189,9 @@ export const payInterest = async (req, res) => {
         .json({ success: false, message: "Loan not found" });
     }
 
-    const today = new Date();
+    const updateDate = paidDate ? new Date(paidDate) : new Date(); // ✅ Use provided date or today
 
-    loan.lastInterestPaidDate = today; // ✅ Update to today
+    loan.lastInterestPaidDate = updateDate;
 
     await loan.save();
 

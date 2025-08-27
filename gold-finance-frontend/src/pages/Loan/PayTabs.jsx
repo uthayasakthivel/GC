@@ -5,9 +5,13 @@ export default function PayTabs({ loan }) {
   const [activeTab, setActiveTab] = useState("interest");
   const { interestToPay, singleLoan, payInterest } = useLoan();
 
+  const [paidDate, setPaidDate] = useState(
+    new Date().toISOString().split("T")[0] // ✅ Default today
+  );
+
   const handlePayInterest = async () => {
     if (singleLoan?._id) {
-      await payInterest(singleLoan._id);
+      await payInterest(singleLoan._id, paidDate);
       alert("Interest Paid Successfully!");
     }
   };
@@ -66,6 +70,18 @@ export default function PayTabs({ loan }) {
                   )
                 : "Not paid yet"}
             </p>
+
+            {/* ✅ Date Picker */}
+            <div className="mt-2">
+              <label className="block font-semibold">Payment Date:</label>
+              <input
+                type="date"
+                value={paidDate}
+                onChange={(e) => setPaidDate(e.target.value)}
+                className="border p-2 rounded w-full"
+              />
+            </div>
+
             <button
               onClick={handlePayInterest}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
