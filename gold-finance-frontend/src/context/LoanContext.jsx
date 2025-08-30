@@ -7,14 +7,15 @@ import {
   useCallback,
 } from "react";
 import axiosInstance from "../api/axiosInstance";
-import { useBranches } from "../hooks/useBranches";
 import { useNextLoanNumber } from "../hooks/useNextLoanNumber";
+import { useBranchContext } from "./BranchContext";
 
 const LoanContext = createContext();
 
 export const LoanProvider = ({ children }) => {
   // ---- Branches ----
-  const { branches, loading: branchesLoading } = useBranches();
+  const { branches, branchesLoading, selectedBranch, setSelectedBranch } =
+    useBranchContext();
 
   // ---- Customer State ----
   // IMPORTANT: keep customerData minimal & consistent across flows
@@ -28,7 +29,6 @@ export const LoanProvider = ({ children }) => {
   const [loadingCustomerId, setLoadingCustomerId] = useState(false);
   const [address, setAddress] = useState("");
   const [aadharNumber, setAadharNumber] = useState("");
-  const [selectedBranch, setSelectedBranch] = useState(null);
 
   // ---- Jewellery Config ----
   const [showJewelleryTable, setShowJewelleryTable] = useState(false);
