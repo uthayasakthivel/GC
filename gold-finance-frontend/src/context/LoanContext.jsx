@@ -33,6 +33,12 @@ export const LoanProvider = ({ children }) => {
   // ---- Jewellery Config ----
   const [showJewelleryTable, setShowJewelleryTable] = useState(false);
   const [jewelleryOptions, setJewelleryOptions] = useState([]);
+
+  const [selectedJewels, setSelectedJewels] = useState([]);
+  const [eligibleAmount, setEligibleAmount] = useState(0);
+
+  const [totalEligibility, setTotalEligibility] = useState(0);
+
   const [ratePerGram, setRatePerGram] = useState(6000);
   const [configLoading, setConfigLoading] = useState(true);
 
@@ -173,6 +179,8 @@ export const LoanProvider = ({ children }) => {
   const [refNumber, setRefNumber] = useState("");
   const [paymentByOnline, setPaymentByOnline] = useState("");
   const [paymentByOffline, setPaymentByOffline] = useState("");
+
+  // Jewel States
 
   // Image states
   const [customerPhoto, setCustomerPhoto] = useState(null);
@@ -472,6 +480,9 @@ export const LoanProvider = ({ children }) => {
     formData.append("jewelleryOptions", JSON.stringify(jewelleryOptions || []));
     formData.append("showJewelleryTable", String(!!showJewelleryTable));
     formData.append("ratePerGram", String(ratePerGram ?? ""));
+    formData.append("jewels", JSON.stringify(selectedJewels));
+    formData.append("eligibleAmount", eligibleAmount);
+    formData.append("totalEligibleAmount", totalEligibility);
 
     // Loan Details
     formData.append("nextLoanNumber", String(nextLoanNumber ?? ""));
@@ -588,6 +599,12 @@ export const LoanProvider = ({ children }) => {
         jewelleryOptions,
         ratePerGram,
         configLoading,
+        selectedJewels,
+        setSelectedJewels,
+        eligibleAmount,
+        setEligibleAmount,
+        totalEligibility,
+        setTotalEligibility,
 
         // loan
         nextLoanNumber,

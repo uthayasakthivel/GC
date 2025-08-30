@@ -32,7 +32,7 @@ import FinanaceSheet from "./pages/sheets/FinanceSheet";
 import { LoanProvider } from "./context/LoanContext";
 import AllLoansPage from "./pages/Loan/AllLoansPage";
 import ExistingLoanTab from "./pages/Loan/ExistingLoanLatest";
-import LoanDetailsPage from "./pages/Loan/LoanDetailsPage";
+import LoanDetails from "./pages/Loan/LoanDetails";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
@@ -187,7 +187,7 @@ function AppRoutes() {
         path="/loan/:id"
         element={
           <PrivateRoute allowedRoles={["admin", "manager"]}>
-            <LoanDetailsPage /> {/* <-- Create this new component */}
+            <LoanDetails /> {/* <-- Create this new component */}
           </PrivateRoute>
         }
       />

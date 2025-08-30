@@ -1,5 +1,18 @@
 import mongoose from "mongoose";
 
+const jewelSchema = new mongoose.Schema(
+  {
+    ornament: { type: String, required: true }, // e.g., Ring, Chain
+    numItems: { type: Number, required: true }, // number of pieces
+    grossWeight: { type: Number, required: true }, // grams
+    netWeight: { type: Number, required: true }, // grams
+    ratePerGram: { type: Number, required: true }, // per gram rate
+    eligibleAmount: { type: Number, required: true }, // rupees
+    partial: { type: Number, default: 0 }, // partial amount if applicable
+  },
+  { _id: false } // no extra _id for each jewel
+);
+
 const loanSchema = new mongoose.Schema(
   {
     loanId: { type: String, required: true, unique: true }, // From nextLoanNumber
@@ -13,9 +26,10 @@ const loanSchema = new mongoose.Schema(
     aadharNumber: { type: String },
     otpVerified: { type: Boolean, default: false },
 
-    // Jewellery Config
-    jewelleryOptions: { type: Array, default: [] },
+    // Jewellery Details
+    jewels: { type: [jewelSchema], required: true }, // array of jewels
     ratePerGram: { type: Number },
+    eligibleAmount: { type: Number, required: true, min: 0 }, // total eligibility
 
     // Loan Details
     loanAmount: { type: Number },

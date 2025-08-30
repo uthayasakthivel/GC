@@ -45,6 +45,9 @@ export const createLoan = async (req, res) => {
       sheetPreparedBy,
       previewData,
       nextLoanNumber,
+      jewels,
+      eligibleAmount,
+      totalEligibleAmount,
     } = req.body;
 
     const loan = new Loan({
@@ -71,6 +74,9 @@ export const createLoan = async (req, res) => {
       refNumber,
       sheetPreparedBy,
       previewData: JSON.parse(previewData || "{}"),
+      jewels: JSON.parse(jewels || "[]"), // ✅ Save parsed jewels
+      eligibleAmount,
+      totalEligibleAmount: Number(totalEligibleAmount) || 0, // ✅ Save total eligibility
       images: {
         customerPhoto: req.files?.customerPhoto?.[0]?.path || null,
         jewelPhoto: req.files?.jewelPhoto?.[0]?.path || null,
@@ -91,6 +97,83 @@ export const createLoan = async (req, res) => {
       .json({ success: false, message: "Server error", error: error.message });
   }
 };
+
+// export const createLoan = async (req, res) => {
+//   try {
+//     const {
+//       branches,
+//       customerData,
+//       customerId,
+//       address,
+//       aadharNumber,
+//       selectedBranch,
+//       jewelleryOptions,
+//       ratePerGram,
+//       loanAmount,
+//       selectedInterestRate,
+//       loanDate,
+//       loanPeriod,
+//       dueDate,
+//       noOfDays,
+//       selectedFactor,
+//       totalInterest,
+//       paymentMethod,
+//       paymentByOffline,
+//       paymentByOnline,
+//       refNumber,
+//       sheetPreparedBy,
+//       previewData,
+//       nextLoanNumber,
+//       jewels, // ✅ New
+//       totalEligibleAmount, // ✅ New
+//     } = req.body;
+
+//     const loan = new Loan({
+//       loanId: nextLoanNumber,
+//       customerId,
+//       branches: JSON.parse(branches || "[]"),
+//       selectedBranch,
+//       customerData: JSON.parse(customerData || "{}"),
+//       address,
+//       aadharNumber,
+//       jewelleryOptions: JSON.parse(jewelleryOptions || "[]"),
+//       ratePerGram,
+//       loanAmount,
+//       selectedInterestRate,
+//       loanDate,
+//       loanPeriod,
+//       dueDate,
+//       noOfDays,
+//       selectedFactor,
+//       totalInterest,
+//       paymentMethod,
+//       paymentByOffline,
+//       paymentByOnline,
+//       refNumber,
+//       sheetPreparedBy,
+//       previewData: JSON.parse(previewData || "{}"),
+//       images: {
+//         customerPhoto: req.files?.customerPhoto?.[0]?.path || null,
+//         jewelPhoto: req.files?.jewelPhoto?.[0]?.path || null,
+//         aadharPhoto: req.files?.aadharPhoto?.[0]?.path || null,
+//         declarationPhoto: req.files?.declarationPhoto?.[0]?.path || null,
+//         otherPhoto: req.files?.otherPhoto?.[0]?.path || null,
+//       },
+//       Jewels: JSON.parse(jewels || "[]"),
+//       totalEligibleAmount: Number(totalEligibleAmount) || 0, // ✅ New
+//     });
+
+//     await loan.save();
+//     res
+//       .status(201)
+//       .json({ success: true, message: "Loan created successfully", loan });
+//   } catch (error) {
+//     console.error("Error creating loan:", error);
+//     res
+//       .status(500)
+//       .json({ success: false, message: "Server error", error: error.message });
+//   }
+// };
 
 // Get all loans
 export const getAllLoans = async (req, res) => {

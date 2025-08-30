@@ -13,6 +13,8 @@ export default function DynamicJewelleryTable({
     selectedBranch,
     loanAmount,
     setLoanAmount,
+    setSelectedJewels,
+    setTotalEligibility,
   } = useLoan();
 
   const [rows, setRows] = useState(
@@ -24,17 +26,16 @@ export default function DynamicJewelleryTable({
             numItems: "",
             grossWeight: "",
             netWeight: "",
-            ratePerGram,
+            ratePerGram: ratePerGram || 0,
             eligibleAmount: 0,
             partial: 0,
           },
         ]
   );
 
-  console.log(selectedBranch, "selectedBranch");
+  const [showLoanDetails, setShowLoanDetails] = useState(false);
 
-  const [showLoanDetails, setShowLoanDetails] = useState(false); // New state
-  // Helper to recalculate eligibleAmount and partial for all rows
+  // ✅ Function to recalculate eligibleAmount and partial
   const recalculateRows = (rowsData, loanAmt) => {
     const loanAmountNum = Number(loanAmt) || 0;
 
@@ -49,8 +50,6 @@ export default function DynamicJewelleryTable({
       (sum, r) => sum + r.eligibleAmount,
       0
     );
-
-    // Add console logs here to debug values
 
     const finalRows = updatedRows.map((row) => ({
       ...row,
@@ -67,13 +66,10 @@ export default function DynamicJewelleryTable({
 
   const handleChange = (idx, field, value) => {
     setRows((prevRows) => {
-      // Update the specific field in the targeted row
       const updatedRows = prevRows.map((row, i) =>
         i === idx ? { ...row, [field]: value } : row
       );
-
-      // Recalculate eligibility and partial amounts using current loanAmount
-      return recalculateRows(updatedRows, parseFloat(loanAmount) || 0);
+      return recalculateRows(updatedRows, loanAmount);
     });
   };
 
@@ -83,7 +79,7 @@ export default function DynamicJewelleryTable({
       numItems: "",
       grossWeight: "",
       netWeight: "",
-      ratePerGram,
+      ratePerGram: ratePerGram || 0,
       eligibleAmount: 0,
       partial: 0,
     };
@@ -101,31 +97,32 @@ export default function DynamicJewelleryTable({
     });
   };
 
-  // Recalculate partial amounts when loanAmount changes
+  // ✅ Recalculate when loanAmount changes
   useEffect(() => {
-    setRows((prevRows) =>
-      recalculateRows(prevRows, parseFloat(loanAmount) || 0)
-    );
+    setRows((prevRows) => recalculateRows(prevRows, loanAmount));
   }, [loanAmount]);
 
-  // Notify parent of data changes (optional)
+  // ✅ Notify parent & update context
   useEffect(() => {
+    const totalEligibility = rows.reduce(
+      (sum, row) => sum + Number(row.eligibleAmount || 0),
+      0
+    );
+    const loanNum = parseFloat(loanAmount) || 0;
+
     if (onDataChange) {
-      const totalEligibility = rows.reduce(
-        (sum, row) => sum + Number(row.eligibleAmount || 0),
-        0
-      );
-      const loanNum = parseFloat(loanAmount) || 0;
       onDataChange(rows, totalEligibility, loanNum);
     }
-  }, [rows, loanAmount, onDataChange]);
+
+    // ✅ Update context for backend payload
+    setSelectedJewels(rows); // Send full rows (array of objects)
+    setTotalEligibility(totalEligibility);
+  }, [rows, loanAmount]);
 
   const totalEligibility = rows.reduce(
     (sum, row) => sum + Number(row.eligibleAmount || 0),
     0
   );
-
-  console.log("Parent selectedBranch:", selectedBranch);
 
   return (
     <div>
@@ -214,13 +211,14 @@ export default function DynamicJewelleryTable({
           value={loanAmount}
           onChange={(e) => {
             const val = e.target.value;
-            setLoanAmount(val === "" ? 0 : Number(val)); // Always number or 0
+            setLoanAmount(val === "" ? 0 : Number(val));
           }}
           placeholder="Enter Loan Amount"
           className="input border rounded px-2 py-1"
           min={0}
         />
       </div>
+
       {/* Add Loan Details Button */}
       <div className="mt-4">
         <button
@@ -231,6 +229,7 @@ export default function DynamicJewelleryTable({
           Add Loan Details
         </button>
       </div>
+
       {/* Conditionally render another component */}
       {showLoanDetails && <LoanDetailsForm />}
     </div>
