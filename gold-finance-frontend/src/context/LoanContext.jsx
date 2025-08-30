@@ -90,15 +90,20 @@ export const LoanProvider = ({ children }) => {
     }
   };
 
-  // ✅ Calculate loan days difference
+  // ✅ Calculate loan days difference (allow 0)
   const calculateLoanDays = (fromDate, toDate) => {
     const from = new Date(fromDate);
     const to = new Date(toDate);
+
+    // normalize to midnight for full-day difference
+    from.setHours(0, 0, 0, 0);
+    to.setHours(0, 0, 0, 0);
+
     const diffTime = to.getTime() - from.getTime();
-    return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24))); // At least 1 day
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // can be 0
   };
 
-  // ✅ Derived calculations based on current singleLoan
+  // ✅ Derived calculation
   const noOfDaysLoan = singleLoan
     ? singleLoan.lastInterestPaidDate
       ? calculateLoanDays(singleLoan.lastInterestPaidDate, new Date())
@@ -122,6 +127,20 @@ export const LoanProvider = ({ children }) => {
     }
   };
 
+  // API call
+  const payPrincipalAPI = async (id, paidDate, newLoanAmount) => {
+    try {
+      const res = await axiosInstance.patch(`/loan/${id}/pay-principal`, {
+        paidDate,
+        newLoanAmount,
+      });
+      return res.data;
+    } catch (error) {
+      console.error("Error in payPrincipalAPI:", error);
+      throw error;
+    }
+  };
+
   const payInterest = useCallback(async (id, paidDate) => {
     try {
       const data = await payInterestAPI(id, paidDate);
@@ -132,6 +151,21 @@ export const LoanProvider = ({ children }) => {
       console.error("Error paying interest:", error);
     }
   }, []);
+
+  // ✅ Hook to call payPrincipal API
+  const payPrincipal = useCallback(
+    async (id, paidDate, newLoanAmount, status) => {
+      try {
+        const data = await payPrincipalAPI(id, paidDate, newLoanAmount, status);
+        if (data.success) {
+          setSingleLoan(data.loan); // ✅ Update local state
+        }
+      } catch (error) {
+        console.error("Error paying principal:", error);
+      }
+    },
+    []
+  );
 
   const [selectedFactor, setSelectedFactor] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
@@ -624,6 +658,7 @@ export const LoanProvider = ({ children }) => {
         noOfDaysLoan,
         interestToPay,
         payInterest,
+        payPrincipal,
       }}
     >
       {children}

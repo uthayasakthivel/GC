@@ -10,6 +10,7 @@ import {
   getLatestLoans,
   getNextLoanIdApi,
   payInterest,
+  payPrincipal,
 } from "../controllers/loanController.js";
 
 const router = express.Router();
@@ -18,6 +19,7 @@ router.get("/latest", verifyToken, getLatestLoans);
 router.get("/", verifyToken, getAllLoans);
 router.get("/:id", verifyToken, getLoanById);
 router.patch("/:id/pay-interest", payInterest);
+router.patch("/:id/pay-principal", payPrincipal);
 
 router.post(
   "/create-loan",

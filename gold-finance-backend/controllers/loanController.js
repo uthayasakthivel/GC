@@ -205,3 +205,38 @@ export const payInterest = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// PATCH /loan/:id/pay-principal
+export const payPrincipal = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { paidDate, newLoanAmount } = req.body; // Expect payment date and updated loan amount
+
+    const loan = await Loan.findById(id);
+
+    if (!loan) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Loan not found" });
+    }
+
+    // Update fields
+    loan.lastInterestPaidDate = paidDate ? new Date(paidDate) : new Date();
+    loan.loanAmount = newLoanAmount;
+
+    if (newLoanAmount <= 0) {
+      loan.status = "loanclosed";
+    }
+
+    await loan.save();
+
+    res.json({
+      success: true,
+      message: "Principal payment processed successfully",
+      loan,
+    });
+  } catch (error) {
+    console.error("Error in payPrincipal:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

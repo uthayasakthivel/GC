@@ -56,7 +56,7 @@ const loanSchema = new mongoose.Schema(
     previewData: { type: Object, default: {} },
 
     // Status
-    status: { type: String, default: "pending" },
+    status: { type: String, default: "loanopen" },
   },
   { timestamps: true }
 );
