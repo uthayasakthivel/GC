@@ -35,6 +35,11 @@ export const LoanProvider = ({ children }) => {
     setAadharNumber,
     onSendOtp,
     onOtpVerified,
+    setOtpVerified,
+    setOtpError,
+    setCustomerId,
+    setCustomerIdGenerated,
+    setLoadingCustomerId,
     generateCustomerId,
     fetchCustomerByIdOrPhone,
     populateExistingCustomer,
@@ -42,6 +47,7 @@ export const LoanProvider = ({ children }) => {
   // ---- Customer State ----
 
   // ---- Jewellery Config ----
+
   const [showJewelleryTable, setShowJewelleryTable] = useState(false);
   const [jewelleryOptions, setJewelleryOptions] = useState([]);
 
