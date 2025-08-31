@@ -125,23 +125,31 @@ export default function DynamicJewelleryTable({
   );
 
   return (
-    <div>
-      <table className="min-w-full border">
+    <div className="pt-6 max-w-5xl mx-autorounded-xl space-y-6">
+      <table className="min-w-full border border-gray-200 mt-2 rounded-lg overflow-hidden">
         <thead className="bg-gray-100">
           <tr>
             {columns.map((col) => (
-              <th key={col.key} className="border p-2 text-left">
+              <th
+                key={col.key}
+                className="border-b border-gray-200 px-3 py-2 text-left text-sm font-medium text-gray-700"
+              >
                 {col.label}
               </th>
             ))}
-            <th className="border p-2 text-left">Actions</th>
+            <th className="border-b border-gray-200 px-3 py-2 text-left text-sm font-medium text-gray-700">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row, idx) => (
-            <tr key={idx}>
+            <tr key={idx} className="hover:bg-gray-50">
               {columns.map((col) => (
-                <td key={col.key} className="border p-2">
+                <td
+                  key={col.key}
+                  className="border-b border-gray-200 px-2 py-1"
+                >
                   {col.input ? (
                     col.type === "select" ? (
                       <select
@@ -149,7 +157,7 @@ export default function DynamicJewelleryTable({
                         onChange={(e) =>
                           handleChange(idx, col.key, e.target.value)
                         }
-                        className="input border rounded px-2 py-1"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
                       >
                         <option value="">Select {col.label}</option>
                         {jewelleryOptions.map((option) => (
@@ -166,20 +174,21 @@ export default function DynamicJewelleryTable({
                         onChange={(e) =>
                           handleChange(idx, col.key, e.target.value)
                         }
-                        className="input border rounded px-2 py-1"
+                        className="w-full border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-green-500 focus:outline-none"
                         readOnly={col.readOnly}
                         min={col.min}
+                        placeholder={col.label}
                       />
                     )
                   ) : (
-                    row[col.key]
+                    <span className="text-gray-700">{row[col.key]}</span>
                   )}
                 </td>
               ))}
-              <td className="border p-2 space-x-1">
+              <td className="border-b border-gray-200 px-2 py-1 space-x-1">
                 <button
                   type="button"
-                  className="bg-green-600 text-white px-3 py-1 rounded"
+                  className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition"
                   onClick={() => addRow(idx)}
                 >
                   +
@@ -187,7 +196,7 @@ export default function DynamicJewelleryTable({
                 {rows.length > 1 && (
                   <button
                     type="button"
-                    className="bg-red-600 text-white px-3 py-1 rounded"
+                    className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
                     onClick={() => removeRow(idx)}
                   >
                     −
@@ -199,13 +208,15 @@ export default function DynamicJewelleryTable({
         </tbody>
       </table>
 
-      <div className="my-4 flex items-center">
-        <label className="mb-1 font-semibold mr-2">Total Eligibility:</label>
-        <span className="font-bold text-blue-600">{totalEligibility}</span>
+      {/* Total Eligibility */}
+      <div className="flex items-center space-x-2 text-gray-700">
+        <label className="text-sm font-medium">Total Eligibility:</label>
+        <span className="font-semibold text-blue-600">{totalEligibility}</span>
       </div>
 
-      <div className="flex items-center mb-4">
-        <label className="block mb-1 font-semibold mr-2">Loan Amount:</label>
+      {/* Loan Amount */}
+      <div className="flex flex-col md:flex-row md:items-center md:space-x-2 text-gray-700">
+        <label className="text-sm font-medium mb-1 md:mb-0">Loan Amount:</label>
         <input
           type="number"
           value={loanAmount}
@@ -214,7 +225,7 @@ export default function DynamicJewelleryTable({
             setLoanAmount(val === "" ? 0 : Number(val));
           }}
           placeholder="Enter Loan Amount"
-          className="input border rounded px-2 py-1"
+          className="w-full md:w-auto border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
           min={0}
         />
       </div>
@@ -223,7 +234,7 @@ export default function DynamicJewelleryTable({
       <div className="mt-4">
         <button
           type="button"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="w-full md:w-auto bg-green-600 text-white font-medium py-3 px-4 rounded-lg hover:bg-green-700 transition"
           onClick={() => setShowLoanDetails(true)}
         >
           Add Loan Details

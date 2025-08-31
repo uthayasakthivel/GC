@@ -14,6 +14,7 @@ export default function PreviewModal({ onClose }) {
   console.log(previewData, "pppppppp");
 
   const handlePrintCustomer = () => {
+    alert(1);
     printJS({
       printable: "customer-print",
       type: "html",
@@ -67,119 +68,123 @@ export default function PreviewModal({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
-      <div className="bg-white rounded-xl p-6 w-full max-w-4xl">
-        <h2 className="text-xl font-bold mb-4">Preview Loan Details</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start overflow-y-auto p-4 pt-10 z-50">
+      <div className="bg-white rounded-xl p-6 w-full max-w-4xl shadow-lg">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">
+          Preview Loan Details
+        </h2>
 
-        {/* Display preview data */}
-        <div className="mb-4 max-h-[500px] overflow-y-auto border p-4 rounded">
-          <p className="underline font-bold mb-2">Customer Data</p>
-          <p>
-            <strong>Customer Name:</strong>{" "}
-            {previewData?.customerData?.customerName}
+        {/* Preview Details */}
+        <div className="mb-6 max-h-[500px] overflow-y-auto border border-gray-200 p-4 rounded-lg bg-gray-50 space-y-3">
+          <p className="underline font-semibold mb-2 text-gray-700">
+            Customer Data
           </p>
-          <p>
-            <strong>Phone Number:</strong>{" "}
-            {previewData?.customerData?.phoneNumber}
-          </p>
-          <p>
-            <strong>Loan Amount:</strong> ₹{previewData?.loanAmount}
-          </p>
-          <p>
-            <strong>Customer ID:</strong> {previewData?.customerId}
-          </p>
-          <p>
-            <strong>Address:</strong> {previewData?.address}
-          </p>
-          <p>
-            <strong>Aadhar Number:</strong> {previewData?.aadharNumber}
-          </p>
-          <p>
-            <strong>Selected Branch:</strong>{" "}
-            {previewData?.selectedBranch?.name}
-          </p>
-          <p>
-            <strong>Rate Per Gram:</strong> ₹{previewData?.ratePerGram}
-          </p>
-          <p>
-            <strong>Loan Date:</strong>{" "}
-            {new Date(previewData?.loanDate).toLocaleDateString()}
-          </p>
-          <p>
-            <strong>Loan Period:</strong> {previewData?.loanPeriod} months
-          </p>
-          <p>
-            <strong>Due Date:</strong>{" "}
-            {new Date(previewData?.dueDate).toLocaleDateString()}
-          </p>
-          <p>
-            <strong>No. of Days:</strong> {previewData?.noOfDays}
-          </p>
-          <p>
-            <strong>Total Interest:</strong> ₹{previewData?.totalInterest}
-          </p>
-          <p>
-            <strong>Payment Method:</strong> {previewData?.paymentMethod}
-          </p>
-          <p>
-            <strong>Reference Number:</strong> {previewData?.refNumber}
-          </p>
-          <p>
-            <strong>Sheet Prepared By:</strong> {previewData?.sheetPreparedBy}
-          </p>
-          <p>
-            <strong>Next Loan Number:</strong> {previewData?.nextLoanNumber}
-          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700">
+            <p>
+              <strong>Name:</strong> {previewData?.customerData?.customerName}
+            </p>
+            <p>
+              <strong>Phone:</strong> {previewData?.customerData?.phoneNumber}
+            </p>
+            <p>
+              <strong>Loan Amount:</strong> ₹{previewData?.loanAmount}
+            </p>
+            <p>
+              <strong>Customer ID:</strong> {previewData?.customerId}
+            </p>
+            <p>
+              <strong>Address:</strong> {previewData?.address}
+            </p>
+            <p>
+              <strong>Aadhaar:</strong> {previewData?.aadharNumber}
+            </p>
+            <p>
+              <strong>Branch:</strong> {previewData?.selectedBranch?.name}
+            </p>
+            <p>
+              <strong>Rate Per Gram:</strong> ₹{previewData?.ratePerGram}
+            </p>
+            <p>
+              <strong>Loan Date:</strong>{" "}
+              {new Date(previewData?.loanDate).toLocaleDateString()}
+            </p>
+            <p>
+              <strong>Loan Period:</strong> {previewData?.loanPeriod} months
+            </p>
+            <p>
+              <strong>Due Date:</strong>{" "}
+              {new Date(previewData?.dueDate).toLocaleDateString()}
+            </p>
+            <p>
+              <strong>No. of Days:</strong> {previewData?.noOfDays}
+            </p>
+            <p>
+              <strong>Total Interest:</strong> ₹{previewData?.totalInterest}
+            </p>
+            <p>
+              <strong>Payment Method:</strong> {previewData?.paymentMethod}
+            </p>
+            <p>
+              <strong>Reference Number:</strong> {previewData?.refNumber}
+            </p>
+            <p>
+              <strong>Sheet Prepared By:</strong> {previewData?.sheetPreparedBy}
+            </p>
+            <p>
+              <strong>Next Loan Number:</strong> {previewData?.nextLoanNumber}
+            </p>
+          </div>
 
           {/* Images */}
-          <div className="flex flex-wrap gap-4 mt-2">
+          <div className="flex flex-wrap gap-4 mt-4">
             {previewData?.customerPhoto && (
               <div>
-                <strong>Customer Photo:</strong>
+                <p className="font-medium mb-1">Customer Photo:</p>
                 <img
                   src={URL.createObjectURL(previewData.customerPhoto)}
                   alt="Customer"
-                  className="w-20 h-20 object-cover mt-1 rounded border"
+                  className="w-24 h-24 object-cover rounded border"
                 />
               </div>
             )}
             {previewData?.jewelPhoto && (
               <div>
-                <strong>Jewel Photo:</strong>
+                <p className="font-medium mb-1">Jewel Photo:</p>
                 <img
                   src={URL.createObjectURL(previewData.jewelPhoto)}
                   alt="Jewel"
-                  className="w-20 h-20 object-cover mt-1 rounded border"
+                  className="w-24 h-24 object-cover rounded border"
                 />
               </div>
             )}
             {previewData?.aadharPhoto && (
               <div>
-                <strong>Aadhar Photo:</strong>
+                <p className="font-medium mb-1">Aadhaar Photo:</p>
                 <img
                   src={URL.createObjectURL(previewData.aadharPhoto)}
-                  alt="Aadhar"
-                  className="w-20 h-20 object-cover mt-1 rounded border"
+                  alt="Aadhaar"
+                  className="w-24 h-24 object-cover rounded border"
                 />
               </div>
             )}
             {previewData?.declarationPhoto && (
               <div>
-                <strong>Declaration Photo:</strong>
+                <p className="font-medium mb-1">Declaration Photo:</p>
                 <img
                   src={URL.createObjectURL(previewData.declarationPhoto)}
                   alt="Declaration"
-                  className="w-20 h-20 object-cover mt-1 rounded border"
+                  className="w-24 h-24 object-cover rounded border"
                 />
               </div>
             )}
             {previewData?.otherPhoto && (
               <div>
-                <strong>Other Photo:</strong>
+                <p className="font-medium mb-1">Other Photo:</p>
                 <img
                   src={URL.createObjectURL(previewData.otherPhoto)}
                   alt="Other"
-                  className="w-20 h-20 object-cover mt-1 rounded border"
+                  className="w-24 h-24 object-cover rounded border"
                 />
               </div>
             )}
@@ -188,33 +193,30 @@ export default function PreviewModal({ onClose }) {
 
         {/* Hidden Print Sections */}
         <div style={{ display: "none" }}>
-          <div id="customer-print">
-            <h2>Customer Copy</h2>
-            <p>Name: {previewData?.customerData?.customerName}</p>
-            <p>Loan Amount: ₹{previewData?.loanAmount}</p>
-            <p>Branch: {previewData?.selectedBranch?.name}</p>
+          {/* Customer Copy */}
+          <div id="customer-print" className="p-4 font-sans">
+            <h2 className="text-lg font-bold mb-2">Customer Copy</h2>
             <p>
-              Loan Date: {new Date(previewData?.loanDate).toLocaleDateString()}
+              <strong>Name:</strong> {previewData?.customerData?.customerName}
+            </p>
+            <p>
+              <strong>Loan Amount:</strong> ₹{previewData?.loanAmount}
+            </p>
+            <p>
+              <strong>Branch:</strong> {previewData?.selectedBranch?.name}
+            </p>
+            <p>
+              <strong>Loan Date:</strong>{" "}
+              {new Date(previewData?.loanDate).toLocaleDateString()}
             </p>
           </div>
 
-          <div
-            id="official-print"
-            style={{ fontFamily: "Arial, sans-serif", padding: "20px" }}
-          >
-            <h2 style={{ textAlign: "center", marginBottom: "10px" }}>
+          {/* Official Copy */}
+          <div id="official-print" className="p-4 font-sans">
+            <h2 className="text-lg font-bold text-center mb-4">
               Official Copy
             </h2>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 150px",
-                gap: "10px",
-                fontSize: "14px",
-              }}
-            >
-              {/* Customer Name */}
+            <div className="grid grid-cols-[1fr_150px] gap-2 text-sm">
               <div>
                 <strong>Customer Name:</strong>{" "}
                 {previewData?.customerData?.customerName}
@@ -223,38 +225,23 @@ export default function PreviewModal({ onClose }) {
                 <img
                   src={URL.createObjectURL(previewData.customerPhoto)}
                   alt="Customer"
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    objectFit: "cover",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                  }}
+                  className="w-20 h-20 object-cover border rounded"
                 />
               )}
 
-              {/* Phone Number */}
               <div>
                 <strong>Phone Number:</strong>{" "}
                 {previewData?.customerData?.phoneNumber}
               </div>
-
-              {/* Loan Amount */}
               <div>
                 <strong>Loan Amount:</strong> ₹{previewData?.loanAmount}
               </div>
-
-              {/* Customer ID */}
               <div>
                 <strong>Customer ID:</strong> {previewData?.customerId}
               </div>
-
-              {/* Address */}
               <div>
                 <strong>Address:</strong> {previewData?.address}
               </div>
-
-              {/* Aadhar Number */}
               <div>
                 <strong>Aadhar Number:</strong> {previewData?.aadharNumber}
               </div>
@@ -262,17 +249,10 @@ export default function PreviewModal({ onClose }) {
                 <img
                   src={URL.createObjectURL(previewData.aadharPhoto)}
                   alt="Aadhar"
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    objectFit: "cover",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                  }}
+                  className="w-20 h-20 object-cover border rounded"
                 />
               )}
 
-              {/* Jewel Photo */}
               {previewData?.jewelPhoto && (
                 <>
                   <div>
@@ -281,18 +261,11 @@ export default function PreviewModal({ onClose }) {
                   <img
                     src={URL.createObjectURL(previewData.jewelPhoto)}
                     alt="Jewel"
-                    style={{
-                      width: "80px",
-                      height: "80px",
-                      objectFit: "cover",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                    }}
+                    className="w-20 h-20 object-cover border rounded"
                   />
                 </>
               )}
 
-              {/* Declaration Photo */}
               {previewData?.declarationPhoto && (
                 <>
                   <div>
@@ -301,18 +274,11 @@ export default function PreviewModal({ onClose }) {
                   <img
                     src={URL.createObjectURL(previewData.declarationPhoto)}
                     alt="Declaration"
-                    style={{
-                      width: "80px",
-                      height: "80px",
-                      objectFit: "cover",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                    }}
+                    className="w-20 h-20 object-cover border rounded"
                   />
                 </>
               )}
 
-              {/* Other Photo */}
               {previewData?.otherPhoto && (
                 <>
                   <div>
@@ -321,18 +287,11 @@ export default function PreviewModal({ onClose }) {
                   <img
                     src={URL.createObjectURL(previewData.otherPhoto)}
                     alt="Other"
-                    style={{
-                      width: "80px",
-                      height: "80px",
-                      objectFit: "cover",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                    }}
+                    className="w-20 h-20 object-cover border rounded"
                   />
                 </>
               )}
 
-              {/* Remaining Details */}
               <div>
                 <strong>Branch:</strong> {previewData?.selectedBranch?.name}
               </div>
@@ -374,30 +333,29 @@ export default function PreviewModal({ onClose }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-4 mt-6">
+        <div className="flex flex-wrap justify-end gap-3 mt-4">
           <button
             onClick={handlePrintCustomer}
-            className="bg-yellow-500 text-white px-4 py-2 rounded"
-            disabled={!previewData}
+            // disabled={!previewData}
+            className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition"
           >
             Print Customer Copy
           </button>
-
           <button
             onClick={handlePrintOfficial}
-            className="bg-purple-500 text-white px-4 py-2 rounded"
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition"
           >
             Print Official Copy
           </button>
           <button
             onClick={handleSubmit}
-            className="bg-green-600 text-white px-4 py-2 rounded"
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
           >
             Submit
           </button>
           <button
             onClick={onClose}
-            className="bg-gray-400 text-white px-4 py-2 rounded"
+            className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition"
           >
             Close
           </button>

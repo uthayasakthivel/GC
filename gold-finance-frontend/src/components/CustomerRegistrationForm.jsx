@@ -33,7 +33,7 @@ export default function CustomerRegistrationForm({
       }}
     >
       {({ isSubmitting }) => (
-        <Form className=" bg-white  rounded-xl space-y-6">
+        <Form className=" bg-white rounded-xl space-y-6">
           {/* Branch */}
           <div>
             <label

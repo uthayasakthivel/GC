@@ -58,29 +58,34 @@ const LoanDetailsForm = () => {
   if (nextLoanNumberLoading) return <div>Loading...</div>;
 
   return (
-    <div className="p-4 border rounded-md space-y-4">
-      <p>
+    <div className=" rounded-xl space-y-6">
+      {/* Next Loan Number */}
+      <p className="text-gray-700">
         <strong>Next Loan Number:</strong> {nextLoanNumber}
       </p>
 
       {/* Loan Amount */}
       <div>
-        <label className="block font-semibold">Loan Amount:</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Loan Amount
+        </label>
         <input
           type="number"
           value={loanAmount}
           readOnly
-          className="border px-2 py-1 rounded w-full bg-gray-100"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed focus:outline-none"
         />
       </div>
 
       {/* Loan Period */}
       <div>
-        <label className="block font-semibold">Loan Period (Months):</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Loan Period (Months)
+        </label>
         <select
           value={loanPeriod}
           onChange={(e) => setLoanPeriod(Number(e.target.value))}
-          className="border px-2 py-1 rounded w-full"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         >
           <option value={6}>6 Months</option>
           <option value={9}>9 Months</option>
@@ -90,7 +95,9 @@ const LoanDetailsForm = () => {
 
       {/* Interest Rate Selector */}
       <div>
-        <label className="block font-semibold">Interest Rate:</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Interest Rate
+        </label>
         <select
           onChange={(e) => {
             const selected = allInterestRates.find(
@@ -98,7 +105,7 @@ const LoanDetailsForm = () => {
             );
             if (selected) setSelectedFactor(selected.factor);
           }}
-          className="border px-2 py-1 rounded w-full"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         >
           <option value="">Select Interest Rate</option>
           {allInterestRates.map((item) => (
@@ -111,154 +118,167 @@ const LoanDetailsForm = () => {
 
       {/* Loan Date */}
       <div>
-        <label className="block font-semibold">Loan Date:</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Loan Date
+        </label>
         <DatePicker
           selected={loanDate}
           onChange={(date) => setLoanDate(date)}
           dateFormat="dd/MM/yyyy"
-          className="border px-2 py-1 rounded w-full"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </div>
 
-      {/* Loan Due Date (read-only) */}
+      {/* Loan Due Date */}
       <div>
-        <label className="block font-semibold">Loan Due Date:</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Loan Due Date
+        </label>
         <input
           type="text"
           value={dueDate ? dueDate.toLocaleDateString("en-GB") : ""}
           readOnly
-          className="border px-2 py-1 rounded w-full bg-gray-100 cursor-not-allowed"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed focus:outline-none"
         />
       </div>
 
       {/* No. of Days */}
       <div>
-        <label className="block font-semibold">No. of Days:</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          No. of Days
+        </label>
         <input
           type="number"
           value={noOfDays}
           readOnly
-          className="border px-2 py-1 rounded w-full bg-gray-100 cursor-not-allowed"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed focus:outline-none"
         />
       </div>
 
       {/* Total Interest */}
       <div>
-        <label className="block font-semibold">
-          Total Interest to be Paid:
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Total Interest to be Paid
         </label>
         <input
           type="text"
           value={totalInterest}
           readOnly
-          className="border px-2 py-1 rounded w-full font-bold bg-gray-100"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 font-semibold focus:outline-none"
         />
       </div>
 
-      {/* Always show Ref Number */}
+      {/* Ref Number */}
       <div>
-        <label className="block font-semibold mb-1">Ref Number:</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Ref Number
+        </label>
         <input
           type="text"
           value={refNumber}
           onChange={(e) => setRefNumber(e.target.value)}
-          className="border px-2 py-1 rounded w-full"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </div>
 
       {/* Payment Method */}
       <div>
-        <label className="block font-semibold mb-1">Payment Method:</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Payment Method
+        </label>
         <div className="flex gap-4">
-          <label>
+          <label className="flex items-center gap-1">
             <input
               type="radio"
               name="paymentMethod"
               value="online"
               checked={paymentMethod === "online"}
               onChange={() => setPaymentMethod("online")}
-            />{" "}
+            />
             Online
           </label>
-          <label>
+          <label className="flex items-center gap-1">
             <input
               type="radio"
               name="paymentMethod"
               value="offline"
               checked={paymentMethod === "offline"}
               onChange={() => setPaymentMethod("offline")}
-            />{" "}
+            />
             Offline
           </label>
         </div>
       </div>
 
-      {/* Conditional extra input based on payment method */}
+      {/* Conditional Payment Inputs */}
       {paymentMethod === "online" && (
         <div>
-          <label className="block font-semibold mb-1">Payment by Online:</label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">
+            Payment by Online
+          </label>
           <input
             type="text"
             value={paymentByOnline}
             onChange={(e) => setPaymentByOnline(e.target.value)}
-            className="border px-2 py-1 rounded w-full"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </div>
       )}
 
       {paymentMethod === "offline" && (
         <div>
-          <label className="block font-semibold mb-1">
-            Payment by Offline:
+          <label className="block mb-1 text-sm font-medium text-gray-700">
+            Payment by Offline
           </label>
           <input
             type="text"
             value={paymentByOffline}
             onChange={(e) => setPaymentByOffline(e.target.value)}
-            className="border px-2 py-1 rounded w-full"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </div>
       )}
 
       {/* Sheet Prepared By */}
       <div>
-        <label className="block font-semibold mb-1">Sheet Prepared By:</label>
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Sheet Prepared By
+        </label>
         <input
           type="text"
           value={sheetPreparedBy}
           onChange={(e) => setSheetPreparedBy(e.target.value)}
-          className="border px-2 py-1 rounded w-full"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </div>
 
       {/* File Uploads */}
       <div className="space-y-2">
-        <label className="block font-semibold mb-1">Upload Photos:</label>
-        <input
-          type="file"
-          onChange={(e) => setCustomerPhoto(e.target.files[0])}
-        />{" "}
-        Customer Photo
-        <input
-          type="file"
-          onChange={(e) => setJewelPhoto(e.target.files[0])}
-        />{" "}
-        Jewel Photo
-        <input
-          type="file"
-          onChange={(e) => setAadharPhoto(e.target.files[0])}
-        />{" "}
-        Signed Aadhaar Photo
-        <input
-          type="file"
-          onChange={(e) => setDeclarationPhoto(e.target.files[0])}
-        />{" "}
-        Self Declaration Photo
-        <input
-          type="file"
-          onChange={(e) => setOtherPhoto(e.target.files[0])}
-        />{" "}
-        Others
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Upload Photos
+        </label>
+        <div className="flex flex-col gap-2">
+          <input
+            type="file"
+            onChange={(e) => setCustomerPhoto(e.target.files[0])}
+          />
+          <input
+            type="file"
+            onChange={(e) => setJewelPhoto(e.target.files[0])}
+          />
+          <input
+            type="file"
+            onChange={(e) => setAadharPhoto(e.target.files[0])}
+          />
+          <input
+            type="file"
+            onChange={(e) => setDeclarationPhoto(e.target.files[0])}
+          />
+          <input
+            type="file"
+            onChange={(e) => setOtherPhoto(e.target.files[0])}
+          />
+        </div>
       </div>
 
       {/* Generate & Preview */}
@@ -266,7 +286,7 @@ const LoanDetailsForm = () => {
         <button
           type="button"
           onClick={handleGeneratePledgeCard}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
         >
           Generate Pledge Card / Receipt
         </button>
@@ -274,7 +294,7 @@ const LoanDetailsForm = () => {
 
       {/* Preview Section */}
       {previewData && (
-        <div className="border p-4 mt-4">
+        <div className="border p-4 mt-4 rounded-lg bg-gray-50">
           <h3 className="font-bold mb-2">Pledge card created</h3>
         </div>
       )}

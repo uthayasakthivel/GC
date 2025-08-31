@@ -40,33 +40,35 @@ export default function ExistingCustomerLoan() {
       validationSchema={validationSchema}
       onSubmit={async (values, { setSubmitting }) => {
         const data = await fetchCustomerByIdOrPhone(values.inputValue);
-        if (data) {
-          setCustomerData(data);
-        }
+        if (data) setCustomerData(data);
         setSubmitting(false);
       }}
     >
       {({ isSubmitting }) => (
-        <Form className="p-4 border rounded shadow max-w-md mx-auto">
+        <Form className="space-y-6">
           {/* Search Customer */}
-          <div className="mb-4">
-            <label className="block mb-1 font-semibold">
+          <div>
+            <label
+              htmlFor="inputValue"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Enter Customer ID or Phone Number
             </label>
             <Field
               name="inputValue"
+              id="inputValue"
               type="text"
-              className="w-full px-3 py-2 border rounded mb-1"
+              className="w-full pl-3 pr-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
             />
             <ErrorMessage
               name="inputValue"
               component="div"
-              className="text-red-600 text-sm mb-2"
+              className="text-red-600 text-sm mt-1"
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 text-white w-full px-4 py-2 rounded hover:bg-blue-700 transition"
+              className="w-full mt-3 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
             >
               {isSubmitting ? "Fetching..." : "Fetch Customer"}
             </button>
@@ -74,8 +76,8 @@ export default function ExistingCustomerLoan() {
 
           {/* Show Customer Details after fetch */}
           {customerData && (
-            <>
-              <div className="mt-4 p-3 border rounded bg-gray-50">
+            <div className="space-y-4">
+              <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg shadow-sm text-gray-700">
                 <h3 className="text-lg font-semibold mb-2">Customer Details</h3>
                 <p>
                   <strong>Name:</strong> {customerData.customerName}
@@ -93,11 +95,12 @@ export default function ExistingCustomerLoan() {
 
               <button
                 type="button"
-                className="bg-gray-800 text-white w-full px-4 py-2 rounded mt-4 hover:bg-gray-900 transition"
+                className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition"
                 onClick={() => setShowJewelleryTable(true)}
               >
                 Add Jewellery Details
               </button>
+
               {showJewelleryTable && (
                 <div className="mt-4">
                   <DynamicJewelleryTable
@@ -144,9 +147,9 @@ export default function ExistingCustomerLoan() {
                       },
                       { key: "partial", label: "Partial", input: false },
                     ]}
-                    onDataChange={(data) => {
-                      console.log("Jewellery Data:", data);
-                    }}
+                    onDataChange={(data) =>
+                      console.log("Jewellery Data:", data)
+                    }
                   />
                 </div>
               )}
@@ -154,7 +157,7 @@ export default function ExistingCustomerLoan() {
               <button
                 type="button"
                 onClick={handlePreview}
-                className="bg-blue-600 text-white w-full px-4 py-2 rounded mt-6"
+                className="w-full mt-6 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
               >
                 Preview & Print
               </button>
@@ -162,7 +165,7 @@ export default function ExistingCustomerLoan() {
               {showPreview && (
                 <PreviewLoanModal onClose={() => setShowPreview(false)} />
               )}
-            </>
+            </div>
           )}
         </Form>
       )}

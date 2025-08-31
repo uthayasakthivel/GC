@@ -1,3 +1,5 @@
+import { FingerPrintIcon, MapPinIcon } from "@heroicons/react/24/solid";
+
 export default function CustomerDetailsForm({
   address,
   setAddress,
@@ -10,28 +12,40 @@ export default function CustomerDetailsForm({
   setShowJewelleryTable,
 }) {
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white shadow-md rounded-xl space-y-6">
+    <div className=" space-y-6">
       {/* Address */}
-      <div className="relative">
-        <MapPinIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+      <div>
+        <label
+          htmlFor="address"
+          className="block mt-6 mb-1 text-sm font-medium text-gray-700"
+        >
+          Address
+        </label>
         <input
           type="text"
+          id="address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          placeholder="Address"
-          className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          className="w-full pl-3 pr-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+          placeholder="Enter Address"
         />
       </div>
 
       {/* Aadhaar Number */}
-      <div className="relative">
-        <FingerPrintIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+      <div>
+        <label
+          htmlFor="aadharNumber"
+          className="block mb-1 text-sm font-medium text-gray-700"
+        >
+          Aadhaar Number
+        </label>
         <input
           type="text"
+          id="aadharNumber"
           value={aadharNumber}
           onChange={(e) => setAadharNumber(e.target.value)}
-          placeholder="Aadhaar Number"
-          className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          className="w-full pl-3 pr-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+          placeholder="Enter Aadhaar Number"
         />
       </div>
 
