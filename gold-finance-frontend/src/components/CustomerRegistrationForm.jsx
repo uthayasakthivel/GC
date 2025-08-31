@@ -33,19 +33,23 @@ export default function CustomerRegistrationForm({
       }}
     >
       {({ isSubmitting }) => (
-        <Form className="max-w-md mx-auto p-6 border rounded-md shadow-md">
-          <div className="mb-4">
-            <label htmlFor="branch" className="block mb-1 font-semibold">
+        <Form className=" bg-white  rounded-xl space-y-6">
+          {/* Branch */}
+          <div>
+            <label
+              htmlFor="branch"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Branch
             </label>
             {loadingBranches ? (
-              <div>Loading branches...</div>
+              <div className="text-gray-500">Loading branches...</div>
             ) : (
               <Field
                 as="select"
                 name="branch"
                 id="branch"
-                className="w-full border px-3 py-2 rounded"
+                className="w-full pl-3 pr-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
                 disabled={otpSent}
                 onChange={(e) =>
                   setCustomerData((prev) => ({
@@ -69,15 +73,19 @@ export default function CustomerRegistrationForm({
             />
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="customerName" className="block mb-1 font-semibold">
+          {/* Customer Name */}
+          <div>
+            <label
+              htmlFor="customerName"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Customer Name
             </label>
             <Field
               name="customerName"
               id="customerName"
               type="text"
-              className="w-full border px-3 py-2 rounded"
+              className="w-full pl-3 pr-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
               disabled={otpSent}
               onChange={(e) =>
                 setCustomerData((prev) => ({
@@ -93,15 +101,19 @@ export default function CustomerRegistrationForm({
             />
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="phoneNumber" className="block mb-1 font-semibold">
+          {/* Phone Number */}
+          <div>
+            <label
+              htmlFor="phoneNumber"
+              className="block mb-1 text-sm font-medium text-gray-700"
+            >
               Phone Number
             </label>
             <Field
               name="phoneNumber"
               id="phoneNumber"
               type="text"
-              className="w-full border px-3 py-2 rounded"
+              className="w-full pl-3 pr-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
               disabled={otpSent}
               onChange={(e) =>
                 setCustomerData((prev) => ({
@@ -117,13 +129,15 @@ export default function CustomerRegistrationForm({
             />
           </div>
 
+          {/* Submit Button */}
           {/* <button
-            type="submit"
-            disabled={isSubmitting || loadingBranches || otpSent}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-          >
-            Send OTP
-          </button> */}
+        type="submit"
+        disabled={isSubmitting || loadingBranches || otpSent}
+        className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
+      >
+        <CheckCircleIcon className="w-5 h-5" />
+        Send OTP
+      </button> */}
         </Form>
       )}
     </Formik>

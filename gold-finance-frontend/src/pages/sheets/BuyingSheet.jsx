@@ -15,6 +15,7 @@ import ImageUploader from "../../components/ImageUploader"; // Assuming this com
 import CommissionInputs from "../../components/CommissionInputs";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 const BuyingSheet = () => {
   const [formData, setFormData] = useState({
@@ -139,98 +140,176 @@ const BuyingSheet = () => {
     parseFloat(formData.miscellaneousAmount || 0);
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">Create Buying Sheet</h2>
-      <h2>Buying Sheet - {nextSheetNumber}</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Sample inputs */}
-        <BranchSelect
-          branches={branches}
-          value={formData.branchId}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="customerName"
-          placeholder="Customer Name"
-          value={formData.customerName}
-          onChange={handleChange}
-          className="w-full border p-2"
-        />
-        <input
-          type="tel"
-          name="phoneNumber"
-          placeholder="Phone Number"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-          className="w-full border p-2"
-        />
-        <ArticleSelect
-          articles={articles}
-          value={formData.articleId}
-          onChange={handleChange}
-        />
-        <WeightInputs
-          grossWeight={formData.grossWeight}
-          stoneWeight={formData.stoneWeight}
-          is916HM={formData.is916HM}
-          purity={formData.purity}
-          buyingRate={formData.buyingRate}
-          netAmount={netAmount}
-          onWeightChange={handleChange}
-          on916HMChange={handle916HMChange}
-          onPurityChange={handleChange}
-        />
+    <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl shadow-lg relative">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="absolute -top-[-12] -left-24 bg-white rounded-full shadow-md p-3 hover:bg-gray-100 transition-all"
+        title="Go Back"
+      >
+        <ArrowLeftIcon className="w-6 h-6 text-[#313485]" />
+      </button>
 
-        <DisbursalMode
-          amountDisbursedMethod={formData.amountDisbursedMethod}
-          amountFromOnline={formData.amountFromOnline}
-          amountFromOffline={formData.amountFromOffline}
-          onChange={handleChange}
-        />
+      {/* Header */}
+      <div className="mb-6 border-b border-gray-300 pb-4 flex items-center justify-between gap-3">
+        <h2 className="text-3xl font-bold text-[#313485]">
+          Create Buying Sheet
+        </h2>
+        <p className="text-gray-700 mt-1 text-base">
+          Buying Sheet Number:{" "}
+          <span className="inline-block bg-gray-100 text-[#00b8db] font-semibold px-2 py-1 rounded-md">
+            {nextSheetNumber}
+          </span>
+        </p>
+      </div>
 
-        <CommissionInputs
-          commissionPersonName={formData.commissionPersonName}
-          commissionPhone={formData.commissionPhone}
-          commissionFixed={formData.commissionFixed}
-          onChange={handleChange}
-        />
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Branch Select */}
+        <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            🏢 Branch Selection
+          </h3>
+          <BranchSelect
+            branches={branches}
+            value={formData.branchId}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Customer Details */}
+        <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            👤 Customer Details
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="customerName"
+              placeholder="Customer Name"
+              value={formData.customerName}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#00b8db] outline-none"
+            />
+            <input
+              type="tel"
+              name="phoneNumber"
+              placeholder="Phone Number"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#00b8db] outline-none"
+            />
+          </div>
+        </div>
+
+        {/* Article Select */}
+        <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            📦 Article
+          </h3>
+          <ArticleSelect
+            articles={articles}
+            value={formData.articleId}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Weight Inputs */}
+        <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            ⚖️ Weight Details
+          </h3>
+          <WeightInputs
+            grossWeight={formData.grossWeight}
+            stoneWeight={formData.stoneWeight}
+            is916HM={formData.is916HM}
+            purity={formData.purity}
+            buyingRate={formData.buyingRate}
+            netAmount={netAmount}
+            onWeightChange={handleChange}
+            on916HMChange={handle916HMChange}
+            onPurityChange={handleChange}
+          />
+        </div>
+
+        {/* Disbursal Mode */}
+        <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            💳 Disbursal Mode
+          </h3>
+          <DisbursalMode
+            amountDisbursedMethod={formData.amountDisbursedMethod}
+            amountFromOnline={formData.amountFromOnline}
+            amountFromOffline={formData.amountFromOffline}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Commission Details */}
+        <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            🤝 Commission Details
+          </h3>
+          <CommissionInputs
+            commissionPersonName={formData.commissionPersonName}
+            commissionPhone={formData.commissionPhone}
+            commissionFixed={formData.commissionFixed}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Miscellaneous */}
         <input
           type="number"
           name="miscellaneousAmount"
           placeholder="Miscellaneous Amount"
           value={formData.miscellaneousAmount}
           onChange={handleChange}
-          className="w-full border p-2"
+          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#00b8db] outline-none"
         />
+
+        {/* Total Amount */}
         {netAmount > 0 && (
-          <div className="mt-2 text-sm text-gray-800 font-semibold">
-            Total Amount Spend: ₹ {totalAmountSpend.toFixed(2)}
+          <div className="bg-green-50 text-green-800 border border-green-200 rounded-lg p-4 font-semibold text-lg shadow-sm">
+            💰 Total Amount Spend: ₹ {totalAmountSpend.toFixed(2)}
           </div>
         )}
 
-        <input
-          type="text"
-          name="preparedBy"
-          placeholder="Prepared By"
-          value={formData.preparedBy}
-          onChange={handleChange}
-          className="w-full border p-2"
-        />
+        {/* Prepared By */}
+        <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            🖊️ Prepared By
+          </h3>
+          <input
+            type="text"
+            name="preparedBy"
+            placeholder="Prepared By"
+            value={formData.preparedBy}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#00b8db] outline-none"
+          />
+        </div>
 
-        <ImageUploader
-          sheetType="buyingSheet"
-          files={files}
-          previewUrls={previewUrls}
-          onFileChange={handleFileChange}
-          onRemoveFile={handleRemoveFile}
-        />
+        {/* Image Upload */}
+        <div className="bg-gray-50 p-5 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            📷 Upload Images
+          </h3>
+          <ImageUploader
+            sheetType="buyingSheet"
+            files={files}
+            previewUrls={previewUrls}
+            onFileChange={handleFileChange}
+            onRemoveFile={handleRemoveFile}
+          />
+        </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="w-full bg-gradient-to-r from-[#00b8db] to-[#313485] text-white text-xl font-bold py-4 rounded-xl shadow-lg hover:scale-105 transition-all duration-300"
         >
-          Submit Sheet
+          ✅ Submit Sheet
         </button>
       </form>
     </div>

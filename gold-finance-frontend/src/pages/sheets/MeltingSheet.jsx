@@ -8,6 +8,20 @@ import { useNavigate } from "react-router-dom";
 import DisbursalMode from "../../components/DisbursalMode";
 import ImageUploader from "../../components/ImageUploader";
 import { useImageUploader } from "../../hooks/useImageUploader";
+import {
+  FireIcon,
+  ShoppingBagIcon,
+  ScaleIcon,
+  BanknotesIcon,
+  AdjustmentsVerticalIcon,
+  BuildingLibraryIcon,
+  MapPinIcon,
+  UserIcon,
+  PencilSquareIcon,
+  CurrencyRupeeIcon,
+  CheckCircleIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 
 const MeltingSheet = () => {
   const [formData, setFormData] = useState({
@@ -124,144 +138,219 @@ const MeltingSheet = () => {
   };
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">Create Melting Sheet</h2>
-      <h3 className="mb-2">Melting Sheet Number: {nextSheetNumber}</h3>
+    <div className="p-6 max-w-3xl mx-auto bg-white shadow-md rounded-xl">
+      {/* Header */}
+      <div className="mb-6 border-b border-gray-200 pb-4 flex items-center justify-between">
+        <h2 className="flex items-center text-2xl font-semibold text-gray-800 gap-2">
+          <FireIcon className="w-6 h-6 text-green-600" />
+          Create Melting Sheet
+        </h2>
+        <span className="text-gray-500 text-sm">
+          Sheet No: {nextSheetNumber}
+        </span>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <select
-          name="buyingSheetId" // <-- Changed to buyingSheetId
-          value={formData.buyingSheetId} // <-- use buyingSheetId as value (ID)
-          onChange={handleChange}
-          className="w-full border p-2"
-          required
-        >
-          <option value="">Select Buying Sheet</option>
-          {buyingSheets.map((sheet) => (
-            <option key={sheet._id} value={sheet._id}>
-              {sheet.sheetNumber} - {sheet.customerName} - {sheet.articleName}
-            </option>
-          ))}
-        </select>
-        {/* Show API data readonly */}
-        <div className="bg-gray-100 p-3 rounded text-sm space-y-1">
-          <p>
-            <strong>Buying Sheet Number:</strong>{" "}
-            {formData.buyingSheetNumber || "-"}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Select Buying Sheet */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Select Buying Sheet
+          </label>
+          <div className="relative">
+            <ShoppingBagIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <select
+              name="buyingSheetId"
+              value={formData.buyingSheetId}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
+            >
+              <option value="">Choose a sheet</option>
+              {buyingSheets.map((sheet) => (
+                <option key={sheet._id} value={sheet._id}>
+                  {sheet.sheetNumber} - {sheet.customerName} -{" "}
+                  {sheet.articleName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Read-only Info */}
+        <div className="bg-gray-50 border border-gray-200 p-5 rounded-lg shadow-sm text-gray-700 text-base space-y-3 divide-y divide-gray-100">
+          <p className="flex justify-between items-center py-1">
+            <span className="flex items-center gap-2 font-medium">
+              <DocumentTextIcon className="w-5 h-5 text-gray-500" />
+              Buying Sheet Number:
+            </span>
+            <span>{formData.buyingSheetNumber || "-"}</span>
           </p>
-          <p>
-            <strong>Gross Weight:</strong> {formData.grossWeight || "-"} g
+          <p className="flex justify-between items-center py-1">
+            <span className="flex items-center gap-2 font-medium">
+              <ScaleIcon className="w-5 h-5 text-gray-500" />
+              Gross Weight:
+            </span>
+            <span>{formData.grossWeight || "-"} g</span>
           </p>
-          <p>
-            <strong>Buying Amount:</strong> ₹{formData.buyingAmount || "-"}
+          <p className="flex justify-between items-center py-1">
+            <span className="flex items-center gap-2 font-medium">
+              <BanknotesIcon className="w-5 h-5 text-green-500" />
+              Buying Amount:
+            </span>
+            <span className="text-green-600 font-semibold">
+              ₹{formData.buyingAmount || "-"}
+            </span>
           </p>
         </div>
-        {/* UI Inputs */}
-        <input
-          type="number"
-          step="0.001"
-          name="afterStone"
-          placeholder="After Stone (g)"
-          value={formData.afterStone}
-          onChange={handleChange}
-          className="w-full border p-2"
-          required
-        />
-        <input
-          type="number"
-          step="0.001"
-          name="afterMelting"
-          placeholder="After Melting (g)"
-          value={formData.afterMelting}
-          onChange={handleChange}
-          className="w-full border p-2"
-          required
-        />
-        <input
-          type="text"
-          name="kacchaPurity"
-          placeholder="Kaccha Purity"
-          value={formData.kacchaPurity}
-          onChange={handleChange}
-          className="w-full border p-2"
-          required
-        />
-        <input
-          type="number"
-          step="0.01"
-          name="totalAmountRecieved"
-          placeholder="Total Amount Received"
-          value={formData.totalAmountRecieved}
-          onChange={handleChange}
-          className="w-full border p-2"
-          required
-        />
+
+        {/* Input Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative">
+            <ScaleIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <input
+              type="number"
+              step="0.001"
+              name="afterStone"
+              placeholder="After Stone (g)"
+              value={formData.afterStone}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="relative">
+            <FireIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <input
+              type="number"
+              step="0.001"
+              name="afterMelting"
+              placeholder="After Melting (g)"
+              value={formData.afterMelting}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="relative">
+            <AdjustmentsVerticalIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              name="kacchaPurity"
+              placeholder="Kaccha Purity"
+              value={formData.kacchaPurity}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="relative">
+            <BanknotesIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <input
+              type="number"
+              step="0.01"
+              name="totalAmountRecieved"
+              placeholder="Total Amount Received"
+              value={formData.totalAmountRecieved}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Disbursal Mode */}
         <DisbursalMode
           amountDisbursedMethod={formData.amountDisbursedMethod}
           amountFromOnline={formData.amountFromOnline}
           amountFromOffline={formData.amountFromOffline}
           onChange={handleChange}
         />
-        <input
-          type="text"
-          name="meltingCenter"
-          placeholder="Melting Center"
-          value={formData.meltingCenter}
-          onChange={handleChange}
-          className="w-full border p-2"
-          required
-        />
-        <input
-          type="text"
-          name="meltingPlace"
-          placeholder="Melting Place"
-          value={formData.meltingPlace}
-          onChange={handleChange}
-          className="w-full border p-2"
-          required
-        />
-        <input
-          type="text"
-          name="meltingRefPerson"
-          placeholder="Melting Reference Person"
-          value={formData.meltingRefPerson}
-          onChange={handleChange}
-          className="w-full border p-2"
-        />
-        <input
-          type="number"
-          step="0.01"
-          name="sellingRate"
-          placeholder="Selling Amount"
-          value={formData.sellingRate}
-          onChange={handleChange}
-          className="w-full border p-2"
-          required
-        />
-        <input
-          type="text"
-          name="preparedBy"
-          placeholder="Sheet Prepared By"
-          value={formData.preparedBy}
-          onChange={handleChange}
-          className="w-full border p-2"
-        />
+
+        {/* Melting Center / Place / Ref */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative">
+            <BuildingLibraryIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              name="meltingCenter"
+              placeholder="Melting Center"
+              value={formData.meltingCenter}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="relative">
+            <MapPinIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              name="meltingPlace"
+              placeholder="Melting Place"
+              value={formData.meltingPlace}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="relative">
+            <UserIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              name="meltingRefPerson"
+              placeholder="Melting Reference Person"
+              value={formData.meltingRefPerson}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2"
+            />
+          </div>
+          <div className="relative">
+            <CurrencyRupeeIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <input
+              type="number"
+              step="0.01"
+              name="sellingRate"
+              placeholder="Selling Amount"
+              value={formData.sellingRate}
+              onChange={handleChange}
+              className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Prepared By */}
+        <div className="relative">
+          <PencilSquareIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            name="preparedBy"
+            placeholder="Sheet Prepared By"
+            value={formData.preparedBy}
+            onChange={handleChange}
+            className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+          />
+        </div>
+
+        {/* Image Uploader */}
         <ImageUploader
-          sheetType="melting" // or "buyingSheet"
+          sheetType="melting"
           previewUrls={previewUrls}
           files={files}
           onFileChange={handleFileChange}
           onRemoveFile={handleRemoveFile}
         />
-        {/* Net Profit Display */}
-        <div className="mt-2 p-2 bg-green-100 rounded font-semibold">
+
+        {/* Net Profit */}
+        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded text-green-700 font-semibold text-lg text-center">
           Net Profit: ₹ {netProfit.toFixed(2)}
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="w-full bg-green-600 text-white font-medium py-3 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
         >
+          <CheckCircleIcon className="w-5 h-5" />
           Submit Melting Sheet
         </button>
       </form>

@@ -127,6 +127,7 @@ function AppRoutes() {
           </PrivateRoute>
         }
       />
+
       <Route
         path="/admin/melting-sheets"
         element={
@@ -158,6 +159,15 @@ function AppRoutes() {
         element={
           <PrivateRoute allowedRoles={["admin", "manager"]}>
             <SellingSheet />
+          </PrivateRoute>
+        }
+      />
+      {/* Melting Sheet route (protected for Admin) */}
+      <Route
+        path="/melting-sheet"
+        element={
+          <PrivateRoute allowedRoles={["admin", "manager"]}>
+            <MeltingSheet />
           </PrivateRoute>
         }
       />

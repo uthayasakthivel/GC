@@ -38,7 +38,7 @@ export default function CustomerRegistrationPage() {
   const [showPreview, setShowPreview] = useState(false);
 
   return (
-    <div className="p-4 border rounded shadow">
+    <div className="p-4 rounded shadow">
       <CustomerRegistrationForm
         branches={loanContext.branches}
         loadingBranches={loanContext.branchesLoading}

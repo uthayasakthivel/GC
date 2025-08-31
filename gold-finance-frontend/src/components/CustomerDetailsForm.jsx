@@ -10,46 +10,53 @@ export default function CustomerDetailsForm({
   setShowJewelleryTable,
 }) {
   return (
-    <div className="mt-4 space-y-4">
-      <div>
-        <label className="block mb-1 font-semibold">Address</label>
+    <div className="p-6 max-w-3xl mx-auto bg-white shadow-md rounded-xl space-y-6">
+      {/* Address */}
+      <div className="relative">
+        <MapPinIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
         <input
           type="text"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
+          placeholder="Address"
+          className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </div>
-      <div>
-        <label className="block mb-1 font-semibold">Aadhaar Number</label>
+
+      {/* Aadhaar Number */}
+      <div className="relative">
+        <FingerPrintIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
         <input
           type="text"
           value={aadharNumber}
           onChange={(e) => setAadharNumber(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
+          placeholder="Aadhaar Number"
+          className="w-full pl-10 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
       </div>
 
+      {/* Generate Customer ID Button */}
       <button
         disabled={customerIdGenerated || loadingCustomerId}
         onClick={generateCustomerId}
-        className="bg-purple-600 text-white w-full px-4 py-2 rounded"
+        className="w-full bg-green-600 text-white font-medium py-3 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
       >
         {loadingCustomerId ? "Processing..." : "Generate CustomerId & Register"}
       </button>
 
+      {/* Customer ID Display & Add Jewellery */}
       {customerIdGenerated && (
-        <>
-          <div className="font-bold text-center py-2 text-blue-700">
+        <div className="space-y-3">
+          <div className="p-3 bg-green-50 border border-green-200 rounded text-green-700 font-semibold text-center">
             Customer ID: {customerId}
           </div>
           <button
-            className="bg-gray-800 text-white w-full px-4 py-2 rounded"
+            className="w-full bg-green-600 text-white font-medium py-3 rounded-lg hover:bg-green-700 transition"
             onClick={() => setShowJewelleryTable(true)}
           >
             Add Jewellery Details
           </button>
-        </>
+        </div>
       )}
     </div>
   );
