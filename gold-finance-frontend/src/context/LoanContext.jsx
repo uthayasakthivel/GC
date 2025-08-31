@@ -12,6 +12,8 @@ import { useBranchContext } from "./BranchContext";
 import { useCustomerContext } from "./CustomerContext";
 import { useJewellery } from "./JewelleryContext";
 import { useLoanDetails } from "./LoanDetailsContext";
+import { useMediaContext } from "./MediaContext";
+import { usePreviewContext } from "./PreviewContext";
 
 const LoanContext = createContext();
 
@@ -128,15 +130,23 @@ export const LoanProvider = ({ children }) => {
   } = useLoanDetails();
 
   // Image states
-  const [customerPhoto, setCustomerPhoto] = useState(null);
-  const [jewelPhoto, setJewelPhoto] = useState(null);
-  const [aadharPhoto, setAadharPhoto] = useState(null);
-  const [declarationPhoto, setDeclarationPhoto] = useState(null);
-  const [otherPhoto, setOtherPhoto] = useState(null);
-  const [sheetPreparedBy, setSheetPreparedBy] = useState("");
+  const {
+    customerPhoto,
+    setCustomerPhoto,
+    jewelPhoto,
+    setJewelPhoto,
+    aadharPhoto,
+    setAadharPhoto,
+    declarationPhoto,
+    setDeclarationPhoto,
+    otherPhoto,
+    setOtherPhoto,
+    sheetPreparedBy,
+    setSheetPreparedBy,
+  } = useMediaContext();
 
-  const [previewData, setPreviewData] = useState(null);
-  console.log(previewData, "previewData");
+  const { previewData, setPreviewData, handleGeneratePledgeCard } =
+    usePreviewContext();
 
   useEffect(() => {
     const fetchLoanInterest = async () => {
@@ -158,23 +168,19 @@ export const LoanProvider = ({ children }) => {
   }, []);
 
   // ---------- Preview ----------
-  const handleGeneratePledgeCard = () => {
-    // Build a clean, non-recursive preview object
-    setPreviewData({
-      // customer basics
-      customerData, // { branch, customerName, phoneNumber }
-      customerId, // string
-      address, // string
-      aadharNumber, // string
-      selectedBranch, // {_id, name, code, ...}
+  const onGeneratePreview = () => {
+    handleGeneratePledgeCard({
+      customerData,
+      customerId,
+      address,
+      aadharNumber,
+      selectedBranch,
 
-      // jewellery & config
-      jewelleryOptions, // string[]
-      ratePerGram, // number
-      showJewelleryTable, // bool
-      configLoading, // bool
+      jewelleryOptions,
+      ratePerGram,
+      showJewelleryTable,
+      configLoading,
 
-      // loan details
       nextLoanNumber,
       nextLoanNumberLoading,
       loanAmount,
@@ -187,13 +193,11 @@ export const LoanProvider = ({ children }) => {
       selectedFactor,
       totalInterest,
 
-      // payment
       paymentMethod,
       paymentByOffline,
       paymentByOnline,
       refNumber,
 
-      // images & meta
       customerPhoto,
       jewelPhoto,
       aadharPhoto,
@@ -201,7 +205,6 @@ export const LoanProvider = ({ children }) => {
       otherPhoto,
       sheetPreparedBy,
 
-      // branches context
       branches,
       branchesLoading,
       defaultLoanDate,
@@ -305,6 +308,7 @@ export const LoanProvider = ({ children }) => {
         setAadharNumber,
         selectedBranch,
         setSelectedBranch,
+        resetCustomerState,
 
         // jewellery config
         showJewelleryTable,
@@ -318,6 +322,7 @@ export const LoanProvider = ({ children }) => {
         setEligibleAmount,
         totalEligibility,
         setTotalEligibility,
+        resetJewellery,
 
         // loan
         nextLoanNumber,
@@ -369,7 +374,7 @@ export const LoanProvider = ({ children }) => {
 
         // preview & formdata
         previewData,
-        handleGeneratePledgeCard,
+        handleGeneratePledgeCard: onGeneratePreview,
         generateFormData,
 
         // actions

@@ -190,6 +190,25 @@ export const LoanDetailsProvider = ({ children }) => {
     }
   }, [noOfDays, loanAmount, selectedFactor]);
 
+  // Fetch Loan Interest Rates on mount
+  useEffect(() => {
+    const fetchLoanInterest = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/admin/config/interest-rates"
+        );
+        setAllInterestRates(response.data);
+
+        if (response.data.length > 0)
+          setSelectedInterestRate(response.data[0]._id);
+      } catch (error) {
+        console.error("Failed to load data", error);
+      }
+    };
+
+    fetchLoanInterest();
+  }, []);
+
   return (
     <LoanDetailsContext.Provider
       value={{

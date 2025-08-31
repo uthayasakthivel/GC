@@ -37,6 +37,8 @@ import { BranchProvider } from "./context/BranchContext";
 import { CustomerProvider } from "./context/CustomerContext";
 import { JewelleryProvider } from "./context/JewelleryContext";
 import { LoanDetailsProvider } from "./context/LoanDetailsContext";
+import { MediaProvider } from "./context/MediaContext";
+import { PreviewProvider } from "./context/PreviewContext";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
@@ -237,15 +239,19 @@ function App() {
         <CustomerProvider>
           <JewelleryProvider>
             <LoanDetailsProvider>
-              <LoanProvider>
-                <AuthProvider>
-                  <ToastProvider>
-                    <BrowserRouter>
-                      <AppRoutes />
-                    </BrowserRouter>
-                  </ToastProvider>
-                </AuthProvider>
-              </LoanProvider>
+              <MediaProvider>
+                <PreviewProvider>
+                  <LoanProvider>
+                    <AuthProvider>
+                      <ToastProvider>
+                        <BrowserRouter>
+                          <AppRoutes />
+                        </BrowserRouter>
+                      </ToastProvider>
+                    </AuthProvider>
+                  </LoanProvider>
+                </PreviewProvider>
+              </MediaProvider>
             </LoanDetailsProvider>
           </JewelleryProvider>
         </CustomerProvider>

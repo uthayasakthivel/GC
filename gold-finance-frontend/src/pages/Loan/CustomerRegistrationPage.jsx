@@ -126,13 +126,13 @@ export default function CustomerRegistrationPage() {
       >
         Preview & Print
       </button>
-
+      {/* 
       <button
         onClick={handleSubmit}
         className="bg-green-600 text-white w-full px-4 py-2 rounded mt-2"
       >
         Submit Loan
-      </button>
+      </button> */}
 
       {showPreview && (
         <PreviewLoanModal onClose={() => setShowPreview(false)} />
