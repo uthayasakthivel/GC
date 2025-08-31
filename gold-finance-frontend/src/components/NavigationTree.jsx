@@ -24,7 +24,7 @@ export default function GoldTabs({ role }) {
           }`}
           onClick={() => {
             setMainTab("sales");
-            setSubTab("");
+            setSubTab("buying");
           }}
         >
           Gold Sales
@@ -37,7 +37,7 @@ export default function GoldTabs({ role }) {
           }`}
           onClick={() => {
             setMainTab("finance");
-            setSubTab("");
+            setSubTab("finance-sheet");
           }}
         >
           Gold Finance
@@ -50,7 +50,8 @@ export default function GoldTabs({ role }) {
           }`}
           onClick={() => {
             setMainTab("loan");
-            setSubTab("");
+            setSubTab("newLoan"); // Default sub-tab for loan
+            setInnerTab("newCustomer"); // Default inner tab for new loan
           }}
         >
           Gold Loan
