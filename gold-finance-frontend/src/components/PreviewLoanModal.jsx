@@ -1,9 +1,17 @@
 import { useLoan } from "../context/LoanContext";
 import axiosInstance from "../api/axiosInstance";
 import printJS from "print-js";
+import { usePreviewContext } from "../context/PreviewContext";
+import { useJewellery } from "../context/JewelleryContext";
+import { useCustomerContext } from "../context/CustomerContext";
 
 export default function PreviewModal({ onClose }) {
-  const { previewData, generateFormData, resetLoanForm } = useLoan();
+  const { generateFormData, resetLoanForm } = useLoan();
+  const { previewData, resetPreviewData } = usePreviewContext();
+  const { resetJewellery } = useJewellery();
+  const { resetCustomerState } = useCustomerContext();
+
+  console.log(previewData, "pppppppp");
 
   const handlePrintCustomer = () => {
     printJS({
@@ -33,13 +41,24 @@ export default function PreviewModal({ onClose }) {
 
   const handleSubmit = async () => {
     try {
-      const formData = generateFormData();
+      if (!previewData) {
+        alert("No data to submit");
+        return;
+      }
+
+      // pass previewData as formValues
+      const formData = generateFormData(previewData);
+
       const res = await axiosInstance.post("/loan/create-loan", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
       alert("Loan Created Successfully!");
       console.log(res.data);
-      resetLoanForm();
+      resetLoanForm(); // resets loan details
+      resetJewellery();
+      resetCustomerState();
+      resetPreviewData();
       onClose(); // close modal
     } catch (error) {
       console.error(error);

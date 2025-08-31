@@ -1,15 +1,20 @@
-// contexts/CustomerContext.jsx
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import axiosInstance from "../api/axiosInstance";
 import { useBranchContext } from "./BranchContext";
 
 const CustomerContext = createContext();
 
 export const CustomerProvider = ({ children }) => {
-  const { branches, setSelectedBranch } = useBranchContext();
+  const { branches, branchesLoading, selectedBranch, setSelectedBranch } =
+    useBranchContext();
 
-  // Customer State
-  const [customerData, setCustomerData] = useState(null);
+  const [customerData, setCustomerData] = useState(null); // { branch, customerName, phoneNumber }
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpVerified, setOtpVerified] = useState(false);
@@ -20,20 +25,29 @@ export const CustomerProvider = ({ children }) => {
   const [address, setAddress] = useState("");
   const [aadharNumber, setAadharNumber] = useState("");
 
-  // ✅ Send OTP
+  // Sync selectedBranch when customerData or branches change
+  useEffect(() => {
+    if (customerData?.branchId && branches.length) {
+      const branchObj =
+        branches.find((b) => b._id === customerData.branchId) || null;
+      setSelectedBranch(branchObj);
+    }
+  }, [customerData?.branchId, branches, setSelectedBranch]);
+
+  console.log(customerData, "customerData");
+
+  // OTP send
   const onSendOtp = useCallback(
     async (formValues) => {
       try {
         await axiosInstance.post("/customer/send-otp", {
           phoneNumber: formValues.phoneNumber,
         });
-
         setCustomerData({
           branch: formValues.branch,
           customerName: formValues.customerName,
           phoneNumber: formValues.phoneNumber,
         });
-
         setShowOtp(true);
         setOtpVerified(false);
         setOtp("");
@@ -51,7 +65,7 @@ export const CustomerProvider = ({ children }) => {
     [setSelectedBranch]
   );
 
-  // ✅ Verify OTP
+  // OTP verify
   const onOtpVerified = useCallback(async () => {
     try {
       await axiosInstance.post("/customer/verify-otp", {
@@ -66,7 +80,7 @@ export const CustomerProvider = ({ children }) => {
     }
   }, [customerData, otp]);
 
-  // ✅ Generate Customer ID
+  // Generate customer ID & register new customer
   const generateCustomerId = useCallback(async () => {
     if (!customerData || !customerData.branch) return;
     const branchObj = branches.find((b) => b._id === customerData.branch);
@@ -88,8 +102,8 @@ export const CustomerProvider = ({ children }) => {
         phoneNumber: customerData.phoneNumber,
         address,
         aadharNumber,
-        branch: branchObj.name,
-        branchId: customerData.branch,
+        branch: branchObj.name, // display name
+        branchId: customerData.branch, // reference id
         customerId: newCustomerId,
       };
 
@@ -105,13 +119,13 @@ export const CustomerProvider = ({ children }) => {
     }
   }, [customerData, branches, address, aadharNumber, setSelectedBranch]);
 
-  // ✅ Search customer by ID or phone
+  // Fetch existing customer by ID or phone
   const fetchCustomerByIdOrPhone = useCallback(async (inputValue) => {
     try {
       const { data } = await axiosInstance.get(
         `/customer/search/${inputValue}`
       );
-      const customer = data?.customer || data;
+      const customer = data?.customer || data; // support both shapes
       if (customer) {
         populateExistingCustomer(customer);
         return customer;
@@ -123,7 +137,7 @@ export const CustomerProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ Normalize and populate existing customer
+  // Populate normalized existing customer
   const populateExistingCustomer = useCallback(
     (customer) => {
       if (!customer) return;
@@ -138,6 +152,7 @@ export const CustomerProvider = ({ children }) => {
       setAddress(customer.address || "");
       setAadharNumber(customer.aadharNumber || "");
 
+      // Set selected branch after branches are loaded
       const branchObj =
         branches.find((b) => b._id === customer.branchId) || null;
       setSelectedBranch(branchObj);
@@ -149,6 +164,21 @@ export const CustomerProvider = ({ children }) => {
     },
     [branches, setSelectedBranch]
   );
+
+  // Reset customer form/state
+  const resetCustomerState = useCallback(() => {
+    setCustomerData(null);
+    setShowOtp(false);
+    setOtp("");
+    setOtpVerified(false);
+    setOtpError("");
+    setCustomerId("");
+    setCustomerIdGenerated(false);
+    setLoadingCustomerId(false);
+    setAddress("");
+    setAadharNumber("");
+    setSelectedBranch(null);
+  }, [setSelectedBranch]);
 
   return (
     <CustomerContext.Provider
@@ -163,22 +193,26 @@ export const CustomerProvider = ({ children }) => {
         setOtpVerified,
         otpError,
         setOtpError,
-        setOtpError,
-        setCustomerId,
-        setCustomerIdGenerated,
-        setLoadingCustomerId,
         customerId,
+        setCustomerId,
         customerIdGenerated,
+        setCustomerIdGenerated,
         loadingCustomerId,
+        setLoadingCustomerId,
         address,
         setAddress,
         aadharNumber,
         setAadharNumber,
+        branches,
+        selectedBranch,
+        setSelectedBranch,
+        branchesLoading,
         onSendOtp,
         onOtpVerified,
         generateCustomerId,
         fetchCustomerByIdOrPhone,
         populateExistingCustomer,
+        resetCustomerState,
       }}
     >
       {children}

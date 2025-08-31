@@ -35,7 +35,10 @@ import ExistingLoanTab from "./pages/Loan/ExistingLoanLatest";
 import LoanDetails from "./pages/Loan/LoanDetails";
 import { BranchProvider } from "./context/BranchContext";
 import { CustomerProvider } from "./context/CustomerContext";
-import { LoanConfigProvider } from "./context/LoanConfigContext";
+import { JewelleryProvider } from "./context/JewelleryContext";
+import { LoanDetailsProvider } from "./context/LoanDetailsContext";
+import { MediaProvider } from "./context/MediaContext";
+import { PreviewProvider } from "./context/PreviewContext";
 
 function AppRoutes() {
   const { loading: authLoading } = useAuth();
@@ -234,17 +237,23 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BranchProvider>
         <CustomerProvider>
-          <LoanConfigProvider>
-            <LoanProvider>
-              <AuthProvider>
-                <ToastProvider>
-                  <BrowserRouter>
-                    <AppRoutes />
-                  </BrowserRouter>
-                </ToastProvider>
-              </AuthProvider>
-            </LoanProvider>
-          </LoanConfigProvider>
+          <JewelleryProvider>
+            <LoanDetailsProvider>
+              <MediaProvider>
+                <PreviewProvider>
+                  <LoanProvider>
+                    <AuthProvider>
+                      <ToastProvider>
+                        <BrowserRouter>
+                          <AppRoutes />
+                        </BrowserRouter>
+                      </ToastProvider>
+                    </AuthProvider>
+                  </LoanProvider>
+                </PreviewProvider>
+              </MediaProvider>
+            </LoanDetailsProvider>
+          </JewelleryProvider>
         </CustomerProvider>
       </BranchProvider>
     </QueryClientProvider>
