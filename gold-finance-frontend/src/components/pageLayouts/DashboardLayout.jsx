@@ -1,3 +1,4 @@
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,15 +18,14 @@ export default function DashboardLayout({ role, children }) {
   else if (role === "employee") dashboardTitle = "Employee Dashboard";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      <div className="flex justify-between items-center bg-gradient-to-r from-amber-400 to-yellow-500 p-4 shadow">
-        <h1 className="text-2xl font-bold text-white drop-shadow-lg">
-          {dashboardTitle}
-        </h1>
+    <div className="">
+      <div className="flex justify-between items-center  p-4 ">
+        <h1 className="text-2xl font-bold text-[#111012]">{dashboardTitle}</h1>
         <button
           onClick={handleLogout}
-          className="bg-white text-amber-600 px-4 py-2 rounded-lg shadow hover:bg-amber-100 transition"
+          className="flex items-center gap-2 bg-gradient-to-r from-[#313485] to-[#00b8db] text-white font-semibold px-5 py-2 rounded-xl shadow-lg hover:from-[#00b8db] hover:to-[#313485] hover:scale-105 transition-all duration-300 ease-in-out backdrop-blur-md cursor-pointer"
         >
+          <ArrowRightOnRectangleIcon className="h-5 w-5" />
           Logout
         </button>
       </div>

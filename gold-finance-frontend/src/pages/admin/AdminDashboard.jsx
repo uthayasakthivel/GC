@@ -1,14 +1,17 @@
-// src/pages/admin/AdminDashboard.jsx
-import React from "react";
+import { useState } from "react";
 import DashboardLayout from "../../components/pageLayouts/DashboardLayout";
+import DashboardHeader from "../../components/DashboardHeader";
 import PendingApprovals from "../../components/PendingApprovals";
 import UserList from "../../components/UserList";
 import BranchManagement from "../../components/BranchManagement";
+import JewelleryManagement from "../../components/JewelleryManagement";
 import RateSetter from "../../components/RateSetter";
 import OpeningBalanceForm from "../../components/OpeningBalanceForm";
-import DashboardHeader from "../../components/DashboardHeader";
+import LatestSubmittedSheets from "../../components/LatestSubmittedSheets";
+import CustomerRegistrationPage from "../../pages/Loan/CustomerRegistrationPage";
+import ExistingCustomerLoan from "../../pages/Loan/ExistingCustomerLoan";
+import ExistingLoanLatest from "../../pages/Loan/ExistingLoanLatest";
 import { useAdminUsers } from "../../hooks/useAdminUsers";
-import JewelleryManagement from "../../components/JewelleryManagement";
 
 export default function AdminDashboard({
   todayRates,
@@ -21,40 +24,196 @@ export default function AdminDashboard({
   const { pendingUsers, managers, employees, loading, error, refreshUsers } =
     useAdminUsers();
 
+  const [activeMenu, setActiveMenu] = useState("goldSales");
+  const [activeSubMenu, setActiveSubMenu] = useState(null);
+  const [openSubMenus, setOpenSubMenus] = useState({});
+
   if (loading) return <div className="p-4">Loading users...</div>;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
+  const menuItems = [
+    {
+      label: "Gold Sales",
+      key: "goldSales",
+      subItems: [
+        { label: "Buying Sheet", key: "buying" },
+        { label: "Selling Sheet", key: "selling" },
+        { label: "Melting Sheet", key: "melting" },
+      ],
+    },
+    {
+      label: "Gold Finance",
+      key: "goldFinance",
+      subItems: [{ label: "Finance Sheet", key: "finance" }],
+    },
+    {
+      label: "Gold Loan",
+      key: "goldLoan",
+      subItems: [
+        { label: "New Customer Loan", key: "newCustomer" },
+        { label: "Existing Customer Loan", key: "existingCustomer" },
+        { label: "Existing Loan Latest", key: "existingLoan" },
+      ],
+    },
+    { label: "Pending Approvals", key: "pendingApprovals" },
+    { label: "All Managers", key: "managers" },
+    { label: "All Employees", key: "employees" },
+    { label: "Branch Management", key: "branches" },
+    { label: "Jewellery Management", key: "jewellery" },
+    { label: "Rate Setter", key: "rates" },
+    { label: "Opening Balance", key: "openingBalance" },
+  ];
+
+  const toggleSubMenu = (key, hasSubItems) => {
+    if (!hasSubItems) {
+      setActiveMenu(key);
+      setActiveSubMenu(null);
+      setOpenSubMenus({});
+      return;
+    }
+    setActiveMenu(key);
+    setOpenSubMenus((prev) => {
+      const newOpen = {};
+      if (!prev[key]) {
+        newOpen[key] = true;
+      }
+      return newOpen;
+    });
+    const item = menuItems.find((item) => item.key === key);
+    if (item?.subItems?.length) {
+      setActiveSubMenu(item.subItems[0].key);
+    } else {
+      setActiveSubMenu(null);
+    }
+  };
+
   return (
-    // For show the Dashboard heading and logout button
-    <DashboardLayout role="admin">
-      {/* Dashboard Header with Rates, Navigation, and Balance */}
-      <DashboardHeader
-        role="admin"
-        combinedRates={combinedRates}
-        todayRates={todayRates}
-        buyingRates={buyingRates}
-        balance={balance}
-        closingBalance={closingBalance}
-        loadingDashboardData={loadingDashboardData}
-      />
+    <div className="min-h-screen flex flex-col">
+      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 p-6">
+        {/* Left Menu */}
+        <div className="w-full lg:w-1/4 bg-[#313485] shadow-2xl text-white rounded-lg sticky top-0 flex flex-col justify-start pt-8">
+          <ul className="space-y-4 text-center overflow-visible">
+            {menuItems.map((item) => (
+              <li key={item.key} className="relative">
+                {/* Main Menu */}
+                <button
+                  className={`w-full px-3 py-2 cursor-pointer flex justify-between items-center ${
+                    activeMenu === item.key
+                      ? "bg-cyan-500 font-semibold"
+                      : "hover:bg-cyan-700 text-white"
+                  }`}
+                  onClick={() => toggleSubMenu(item.key, !!item.subItems)}
+                >
+                  {item.label}
+                  {item.subItems && (
+                    <span
+                      className={`inline-block transform transition-transform duration-300 ${
+                        openSubMenus[item.key] ? "rotate-90" : ""
+                      }`}
+                    >
+                      ▶
+                    </span>
+                  )}
+                </button>
 
-      <PendingApprovals users={pendingUsers} onActionComplete={refreshUsers} />
-      <UserList
-        users={managers}
-        title="All Managers"
-        onActionComplete={refreshUsers}
-      />
-      <UserList
-        users={employees}
-        title="All Employees"
-        onActionComplete={refreshUsers}
-      />
+                {/* Submenu below main menu */}
+                {item.subItems && openSubMenus[item.key] && (
+                  <ul className="bg-white text-black rounded-md  shadow-md mt-1 w-full z-20 relative">
+                    {item.subItems.map((sub) => (
+                      <li key={sub.key}>
+                        <button
+                          className={`w-full text-left px-3 py-2 cursor-pointer transition-colors duration-200 ${
+                            activeSubMenu === sub.key
+                              ? "bg-cyan-900 text-white font-semibold"
+                              : "hover:bg-cyan-700 hover:text-white"
+                          }`}
+                          onClick={() => {
+                            setActiveMenu(item.key);
+                            setActiveSubMenu(sub.key);
+                          }}
+                        >
+                          {sub.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      <BranchManagement onBranchesUpdated={refreshUsers} />
-      <JewelleryManagement onJewelleryUpdated={refreshUsers} />
+        {/* Right Content */}
+        <div className="flex-1 w-full lg:w-3/4 p-4 lg:p-6 overflow-visible min-h-0">
+          <DashboardLayout role="admin">
+            <DashboardHeader
+              role="admin"
+              combinedRates={combinedRates}
+              todayRates={todayRates}
+              buyingRates={buyingRates}
+              balance={balance}
+              closingBalance={closingBalance}
+              loadingDashboardData={loadingDashboardData}
+            />
 
-      <RateSetter />
-      <OpeningBalanceForm onBalanceUpdated={refreshUsers} />
-    </DashboardLayout>
+            <div className="mt-4 space-y-4">
+              {activeMenu === "pendingApprovals" && (
+                <PendingApprovals
+                  users={pendingUsers}
+                  onActionComplete={refreshUsers}
+                />
+              )}
+              {activeMenu === "managers" && (
+                <UserList
+                  users={managers}
+                  title="All Managers"
+                  onActionComplete={refreshUsers}
+                />
+              )}
+              {activeMenu === "employees" && (
+                <UserList
+                  users={employees}
+                  title="All Employees"
+                  onActionComplete={refreshUsers}
+                />
+              )}
+              {activeMenu === "branches" && (
+                <BranchManagement onBranchesUpdated={refreshUsers} />
+              )}
+              {activeMenu === "jewellery" && (
+                <JewelleryManagement onJewelleryUpdated={refreshUsers} />
+              )}
+              {activeMenu === "rates" && <RateSetter />}
+              {activeMenu === "openingBalance" && (
+                <OpeningBalanceForm onBalanceUpdated={refreshUsers} />
+              )}
+
+              {/* Gold Sales */}
+              {activeMenu === "goldSales" && activeSubMenu && (
+                <LatestSubmittedSheets role="admin" sheetType={activeSubMenu} />
+              )}
+
+              {/* Gold Finance */}
+              {activeMenu === "goldFinance" && activeSubMenu && (
+                <LatestSubmittedSheets role="admin" sheetType={activeSubMenu} />
+              )}
+
+              {/* Gold Loan */}
+              {activeMenu === "goldLoan" && activeSubMenu && (
+                <div>
+                  {activeSubMenu === "newCustomer" && (
+                    <CustomerRegistrationPage />
+                  )}
+                  {activeSubMenu === "existingCustomer" && (
+                    <ExistingCustomerLoan />
+                  )}
+                  {activeSubMenu === "existingLoan" && <ExistingLoanLatest />}
+                </div>
+              )}
+            </div>
+          </DashboardLayout>
+        </div>
+      </div>
+    </div>
   );
 }

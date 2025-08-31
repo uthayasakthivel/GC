@@ -1,240 +1,170 @@
-import { useState } from "react";
-import LatestSubmittedSheets from "./LatestSubmittedSheets";
-import SellingSheet from "../pages/sheets/SellingSheet";
-import MeltingSheet from "../pages/sheets/MeltingSheet";
-import FinanceSheet from "../pages/sheets/FinanceSheet";
-import CustomerRegistrationPage from "../pages/Loan/CustomerRegistrationPage";
-import ExistingCustomerLoan from "../pages/Loan/ExistingCustomerLoan";
-import ExistingLoanLatest from "../pages/Loan/ExistingLoanLatest";
+// import { useState } from "react";
+// import LatestSubmittedSheets from "./LatestSubmittedSheets";
+// import SellingSheet from "../pages/sheets/SellingSheet";
+// import MeltingSheet from "../pages/sheets/MeltingSheet";
+// import FinanceSheet from "../pages/sheets/FinanceSheet";
+// import CustomerRegistrationPage from "../pages/Loan/CustomerRegistrationPage";
+// import ExistingCustomerLoan from "../pages/Loan/ExistingCustomerLoan";
+// import ExistingLoanLatest from "../pages/Loan/ExistingLoanLatest";
 
-export default function GoldTabs({ role }) {
-  // Main Tabs
-  const [mainTab, setMainTab] = useState("sales");
-  // Sub Tabs
-  const [subTab, setSubTab] = useState("buying");
-  const [innerTab, setInnerTab] = useState("newCustomer");
-  return (
-    <div className="w-full">
-      <div className="flex border-b border-gray-300 mb-4">
-        <button
-          className={`px-6 py-2 ${
-            mainTab === "sales"
-              ? "border-b-2 border-amber-500 font-semibold"
-              : "text-gray-500"
-          }`}
-          onClick={() => {
-            setMainTab("sales");
-            setSubTab("buying");
-          }}
-        >
-          Gold Sales
-        </button>
-        <button
-          className={`px-6 py-2 ${
-            mainTab === "finance"
-              ? "border-b-2 border-amber-500 font-semibold"
-              : "text-gray-500"
-          }`}
-          onClick={() => {
-            setMainTab("finance");
-            setSubTab("finance-sheet");
-          }}
-        >
-          Gold Finance
-        </button>
-        <button
-          className={`px-6 py-2 ${
-            mainTab === "loan"
-              ? "border-b-2 border-amber-500 font-semibold"
-              : "text-gray-500"
-          }`}
-          onClick={() => {
-            setMainTab("loan");
-            setSubTab("newLoan"); // Default sub-tab for loan
-            setInnerTab("newCustomer"); // Default inner tab for new loan
-          }}
-        >
-          Gold Loan
-        </button>
-      </div>
+// export default function GoldTabs({ role }) {
+//   const [mainTab, setMainTab] = useState("sales");
+//   const [subTab, setSubTab] = useState("buying");
+//   const [innerTab, setInnerTab] = useState("newCustomer");
 
-      {/* Sales Section */}
-      {mainTab === "sales" && (
-        <div>
-          <div className="flex border-b border-gray-200 mb-3">
-            <button
-              className={`px-4 py-1 ${
-                subTab === "buying"
-                  ? "border-b-2 border-amber-500 font-semibold"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setSubTab("buying")}
-            >
-              Buying Sheet
-            </button>
-            {(role === "admin" || role === "manager") && (
-              <>
-                <button
-                  className={`px-4 py-1 ${
-                    subTab === "selling"
-                      ? "border-b-2 border-amber-500 font-semibold"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setSubTab("selling")}
-                >
-                  Selling Sheet
-                </button>
-                <button
-                  className={`px-4 py-1 ${
-                    subTab === "melting"
-                      ? "border-b-2 border-amber-500 font-semibold"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setSubTab("melting")}
-                >
-                  Melting Sheet
-                </button>
-              </>
-            )}
-          </div>
-          <div className="p-4 bg-white shadow rounded-lg">
-            {subTab === "buying" && (
-              <LatestSubmittedSheets role={role} sheetType="buying" />
-            )}
-            {subTab === "selling" &&
-              (role === "admin" || role === "manager") && (
-                <LatestSubmittedSheets role={role} sheetType="selling" />
-              )}
-            {subTab === "melting" &&
-              (role === "admin" || role === "manager") && (
-                <LatestSubmittedSheets role={role} sheetType="melting" />
-              )}
+//   // Define menu structure
+//   const menuItems = [
+//     {
+//       label: "Gold Sales",
+//       value: "sales",
+//       subItems: [
+//         { label: "Buying Sheet", value: "buying" },
+//         ...(role === "admin" || role === "manager"
+//           ? [
+//               { label: "Selling Sheet", value: "selling" },
+//               { label: "Melting Sheet", value: "melting" },
+//             ]
+//           : []),
+//       ],
+//     },
+//     {
+//       label: "Gold Finance",
+//       value: "finance",
+//       subItems: [{ label: "Finance Sheet", value: "finance-sheet" }],
+//     },
+//     {
+//       label: "Gold Loan",
+//       value: "loan",
+//       subItems: [
+//         { label: "New Loan", value: "newLoan" },
+//         { label: "Existing Loan", value: "existingLoan" },
+//         { label: "Pledge Details", value: "pledgeDetails" },
+//         { label: "Interest Calculator", value: "interestCalculator" },
+//       ],
+//     },
+//   ];
 
-            {!subTab && <div>Please select a sheet above.</div>}
-          </div>
-        </div>
-      )}
+//   return (
+//     <div className="flex flex-col lg:flex-row gap-6 w-full">
+//       {/* Left Menu */}
+//       <nav className="w-full lg:w-1/4 bg-white shadow rounded-lg p-4">
+//         <ul className="space-y-2">
+//           {menuItems.map((item) => (
+//             <li key={item.value}>
+//               <button
+//                 className={`w-full text-left px-3 py-2 rounded-lg ${
+//                   mainTab === item.value
+//                     ? "bg-amber-100 font-semibold"
+//                     : "hover:bg-gray-100 text-gray-700"
+//                 }`}
+//                 onClick={() => {
+//                   setMainTab(item.value);
+//                   setSubTab(item.subItems[0].value);
+//                   if (item.value === "loan") setInnerTab("newCustomer");
+//                 }}
+//               >
+//                 {item.label}
+//               </button>
 
-      {/* Finance Section */}
-      {mainTab === "finance" && (
-        <div>
-          <div className="flex border-b border-gray-200 mb-3">
-            <button
-              className={`px-4 py-1 ${
-                subTab === "finance-sheet"
-                  ? "border-b-2 border-amber-500 font-semibold"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setSubTab("finance-sheet")}
-            >
-              Finance Sheet
-            </button>
-          </div>
-          <div className="p-4 bg-white shadow rounded-lg">
-            {subTab === "finance-sheet" &&
-              (role === "admin" || role === "manager") && (
-                <LatestSubmittedSheets role={role} sheetType="finance" />
-              )}
+//               {/* Sub Menu */}
+//               {mainTab === item.value && item.subItems.length > 0 && (
+//                 <ul className="mt-2 ml-2 space-y-1">
+//                   {item.subItems.map((sub) => (
+//                     <li key={sub.value}>
+//                       <button
+//                         className={`w-full text-left px-3 py-1 rounded-lg text-sm ${
+//                           subTab === sub.value
+//                             ? "bg-amber-200 font-medium"
+//                             : "hover:bg-gray-100 text-gray-600"
+//                         }`}
+//                         onClick={() => setSubTab(sub.value)}
+//                       >
+//                         {sub.label}
+//                       </button>
+//                     </li>
+//                   ))}
+//                 </ul>
+//               )}
+//             </li>
+//           ))}
+//         </ul>
+//       </nav>
 
-            {!subTab && <div>Please select a sheet above.</div>}
-          </div>
-        </div>
-      )}
+//       {/* Right Content */}
+//       <div className="flex-1 flex flex-col gap-4">
+//         {/* Sales Section */}
+//         {mainTab === "sales" && (
+//           <div>
+//             <div className="p-4 bg-white shadow rounded-lg">
+//               {subTab === "buying" && (
+//                 <LatestSubmittedSheets role={role} sheetType="buying" />
+//               )}
+//               {subTab === "selling" && (
+//                 <LatestSubmittedSheets role={role} sheetType="selling" />
+//               )}
+//               {subTab === "melting" && (
+//                 <LatestSubmittedSheets role={role} sheetType="melting" />
+//               )}
+//             </div>
+//           </div>
+//         )}
 
-      {/* Loan Section */}
-      {mainTab === "loan" && (
-        <div>
-          {/* Main Loan Tabs */}
-          <div className="flex border-b border-gray-200 mb-3">
-            <button
-              className={`px-4 py-1 ${
-                subTab === "newLoan"
-                  ? "border-b-2 border-amber-500 font-semibold"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setSubTab("newLoan")}
-            >
-              New Loan
-            </button>
-            <button
-              className={`px-4 py-1 ${
-                subTab === "existingLoan"
-                  ? "border-b-2 border-amber-500 font-semibold"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setSubTab("existingLoan")}
-            >
-              Existing Loan
-            </button>
-            <button
-              className={`px-4 py-1 ${
-                subTab === "pledgeDetails"
-                  ? "border-b-2 border-amber-500 font-semibold"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setSubTab("pledgeDetails")}
-            >
-              Pledge Details
-            </button>
-            <button
-              className={`px-4 py-1 ${
-                subTab === "interestCalculator"
-                  ? "border-b-2 border-amber-500 font-semibold"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setSubTab("interestCalculator")}
-            >
-              Interest Calculator
-            </button>
-          </div>
+//         {/* Finance Section */}
+//         {mainTab === "finance" && (
+//           <div>
+//             <div className="p-4 bg-white shadow rounded-lg">
+//               {subTab === "finance-sheet" && (
+//                 <LatestSubmittedSheets role={role} sheetType="finance" />
+//               )}
+//             </div>
+//           </div>
+//         )}
 
-          {/* Loan Content Area */}
-          <div className="p-4 bg-white shadow rounded-lg">
-            {subTab === "newLoan" && (
-              <div>
-                {/* New Loan Inner Tabs */}
-                <div className="flex border-b border-gray-200 mb-4">
-                  <button
-                    className={`px-4 py-1 ${
-                      innerTab === "newCustomer"
-                        ? "border-b-2 border-blue-500 font-semibold"
-                        : "text-gray-500"
-                    }`}
-                    onClick={() => setInnerTab("newCustomer")}
-                  >
-                    New Customer
-                  </button>
-                  <button
-                    className={`px-4 py-1 ${
-                      innerTab === "existingCustomer"
-                        ? "border-b-2 border-blue-500 font-semibold"
-                        : "text-gray-500"
-                    }`}
-                    onClick={() => setInnerTab("existingCustomer")}
-                  >
-                    Existing Customer
-                  </button>
-                </div>
+//         {/* Loan Section */}
+//         {mainTab === "loan" && (
+//           <div>
+//             <div className="p-4 bg-white shadow rounded-lg">
+//               {subTab === "newLoan" && (
+//                 <div>
+//                   <div className="flex gap-2 border-b border-gray-200 mb-4">
+//                     <button
+//                       className={`px-3 py-1 rounded-lg ${
+//                         innerTab === "newCustomer"
+//                           ? "bg-blue-100 font-semibold"
+//                           : "hover:bg-gray-100 text-gray-600"
+//                       }`}
+//                       onClick={() => setInnerTab("newCustomer")}
+//                     >
+//                       New Customer
+//                     </button>
+//                     <button
+//                       className={`px-3 py-1 rounded-lg ${
+//                         innerTab === "existingCustomer"
+//                           ? "bg-blue-100 font-semibold"
+//                           : "hover:bg-gray-100 text-gray-600"
+//                       }`}
+//                       onClick={() => setInnerTab("existingCustomer")}
+//                     >
+//                       Existing Customer
+//                     </button>
+//                   </div>
 
-                {/* New Loan Inner Content */}
-                <div className="mt-3">
-                  {innerTab === "newCustomer" && <CustomerRegistrationPage />}
-                  {innerTab === "existingCustomer" && <ExistingCustomerLoan />}
-                </div>
-              </div>
-            )}
+//                   {innerTab === "newCustomer" && <CustomerRegistrationPage />}
+//                   {innerTab === "existingCustomer" && <ExistingCustomerLoan />}
+//                 </div>
+//               )}
 
-            {subTab === "existingLoan" && <ExistingLoanLatest />}
-            {subTab === "pledgeDetails" && (
-              <div>Loan feature coming soon...</div>
-            )}
-            {subTab === "interestCalculator" && (
-              <div>Another loan feature coming soon...</div>
-            )}
-            {!subTab && <div>Please select a tab above.</div>}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+//               {subTab === "existingLoan" && <ExistingLoanLatest />}
+//               {subTab === "pledgeDetails" && (
+//                 <div>Loan feature coming soon...</div>
+//               )}
+//               {subTab === "interestCalculator" && (
+//                 <div>Another loan feature coming soon...</div>
+//               )}
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }

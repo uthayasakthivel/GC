@@ -1,6 +1,6 @@
 // src/components/DashboardHeader.jsx
 import RatesSection from "./RatesSection";
-import NavigationTree from "./NavigationTree";
+// import NavigationTree from "./NavigationTree";
 import BalanceSection from "./BalanceSection";
 
 export default function DashboardHeader({
@@ -28,7 +28,7 @@ export default function DashboardHeader({
       {role === "admin" && (
         <BalanceSection balance={balance} closingBalance={closingBalance} />
       )}
-      <NavigationTree role={role} />
+      {/* <NavigationTree role={role} /> */}
     </>
   );
 }

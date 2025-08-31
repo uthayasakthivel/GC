@@ -24,7 +24,7 @@ export default function Dashboard({ role }) {
   };
 
   return (
-    <div className="p-6">
+    <div>
       {role === "admin" && <AdminDashboard {...dashboardProps} />}
       {role === "manager" && <ManagerDashboard {...dashboardProps} />}
       {role === "employee" && <EmployeeDashboard {...dashboardProps} />}

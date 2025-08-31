@@ -35,92 +35,95 @@ export default function LatestSubmittedSheets({ role, sheetType }) {
   const pretty = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
   return (
-    <div className="p-4 text-right">
-      <button
-        onClick={() => navigate(`/${sheetType}-sheet`)}
-        className="text-blue-600 hover:underline"
-      >
-        Create a new {pretty(sheetType)} Sheet
-      </button>
-
-      {role === "admin" && (
-        <div className="flex justify-between items-center mb-4 border-t">
-          <h2 className="text-lg font-semibold">
-            Latest Submitted {pretty(sheetType)} Sheets
-          </h2>
+    <div className="rounded-xl">
+      {/* Header + Buttons in One Line */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold text-[#313485]">
+          Latest Submitted {pretty(sheetType)} Sheets
+        </h2>
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate(`/${sheetType}-sheet`)}
+            className="bg-gradient-to-r from-[#00b8db] to-[#313485] text-white font-semibold px-6 py-2 rounded-lg shadow hover:scale-105 transition-all duration-300"
+          >
+            ➕ Create New
+          </button>
           <button
             onClick={() => navigate(`/admin/${sheetType}-sheets`)}
-            className="text-blue-600 hover:underline"
+            className="bg-gradient-to-r from-[#313485] to-[#00b8db] text-white px-4 py-2 rounded-lg font-medium shadow hover:scale-105 transition-all duration-300"
           >
             View All
           </button>
         </div>
-      )}
+      </div>
 
-      {role === "admin" ? (
-        loading ? (
-          <p>Loading...</p>
-        ) : sheets.length === 0 ? (
-          <p className="text-gray-600">No sheets submitted yet.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-2 text-left">Sheet No</th>
+      {/* Table Section */}
+      {loading ? (
+        <p className="text-gray-500 animate-pulse">Loading...</p>
+      ) : sheets.length === 0 ? (
+        <p className="text-gray-600 italic">No sheets submitted yet.</p>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-gray-200  shadow-lg ">
+          <table className="min-w-full text-sm">
+            <thead className="bg-gradient-to-r from-[#313485] to-[#00b8db] text-white">
+              <tr>
+                <th className="p-3 text-left font-semibold">Sheet No</th>
+                {sheetType !== "melting" && (
+                  <th className="p-3 text-left font-semibold">Customer</th>
+                )}
+                <th className="p-3 text-left font-semibold">Date</th>
+                {sheetType === "buying" && (
+                  <th className="p-3 text-left font-semibold">Status</th>
+                )}
+                <th className="p-3 text-left font-semibold">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {sheets.map((sheet) => (
+                <tr
+                  key={sheet._id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <td className="p-3">{sheet.sheetNumber}</td>
                   {sheetType !== "melting" && (
-                    <th className="border p-2 text-left">Customer Name</th>
+                    <td className="p-3">{sheet.customerName}</td>
                   )}
-                  <th className="border p-2 text-left">Date</th>
+                  <td className="p-3">
+                    {new Date(sheet.date).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
                   {sheetType === "buying" && (
-                    <th className="border p-2 text-left">Status</th>
+                    <td className="p-3">
+                      {sheet.sold ? (
+                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                          Sold
+                        </span>
+                      ) : (
+                        <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">
+                          Open
+                        </span>
+                      )}
+                    </td>
                   )}
-                  <th className="border p-2 text-left">Action</th>
+                  <td className="p-3">
+                    <button
+                      onClick={() =>
+                        navigate(`/admin/sheets/${sheetType}/${sheet._id}`)
+                      }
+                      className="bg-gradient-to-r from-[#313485] to-[#00b8db] hover:from-[#00b8db] hover:to-[#313485] text-white px-4 py-1 rounded-lg shadow-sm hover:scale-105 transition"
+                    >
+                      Preview
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {sheets.map((sheet) => (
-                  <tr key={sheet._id} className="hover:bg-gray-50">
-                    <td className="border p-2">{sheet.sheetNumber}</td>
-                    {sheetType !== "melting" && (
-                      <td className="border p-2">{sheet.customerName}</td>
-                    )}
-                    <td className="border p-2">
-                      {new Date(sheet.date).toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
-                    {sheetType === "buying" && (
-                      <td className="border p-2">
-                        {sheet.sold ? (
-                          <span className="text-green-600 font-semibold">
-                            Sold
-                          </span>
-                        ) : (
-                          <span className="text-gray-500">Open</span>
-                        )}
-                      </td>
-                    )}
-
-                    <td className="border p-2">
-                      <button
-                        onClick={() =>
-                          navigate(`/admin/sheets/${sheetType}/${sheet._id}`)
-                        }
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
-                      >
-                        Preview
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )
-      ) : null}
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
