@@ -6,6 +6,15 @@ html {
   overflow-x: hidden;
 }
 
+.scrollbar-hide {
+  /* Hide scrollbar for Chrome, Safari, Edge */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 * {
   box-sizing: border-box;
 }

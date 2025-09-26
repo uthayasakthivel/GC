@@ -39,6 +39,7 @@ export default function ManagerDashboard({
         { label: "New Customer Loan", key: "newCustomer" },
         { label: "Existing Customer Loan", key: "existingCustomer" },
         { label: "Existing Loan Latest", key: "existingLoan" },
+        { label: "Topup", key: "topup" },
       ],
     },
   ];

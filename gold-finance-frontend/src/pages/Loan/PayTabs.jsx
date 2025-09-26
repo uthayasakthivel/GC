@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useLoan } from "../../context/LoanContext";
+import TopupTab from "./TopupTab";
+import { useJewellery } from "../../context/JewelleryContext";
 
 export default function PayTabs({ loan }) {
   const [activeTab, setActiveTab] = useState("interest");
@@ -12,6 +14,8 @@ export default function PayTabs({ loan }) {
     setSingleLoan,
     payPrincipal,
   } = useLoan();
+
+  const { ratePerGram } = useJewellery();
 
   const [paidDate, setPaidDate] = useState(
     new Date().toISOString().split("T")[0] // ✅ Default today
@@ -84,6 +88,16 @@ export default function PayTabs({ loan }) {
           onClick={() => setActiveTab("principal")}
         >
           Pay Principal
+        </button>
+        <button
+          className={`flex-1 py-2 text-center font-semibold ${
+            activeTab === "topup"
+              ? "border-b-2 border-blue-500 text-blue-600"
+              : "text-gray-500"
+          }`}
+          onClick={() => setActiveTab("topup")}
+        >
+          Topup
         </button>
       </div>
 
@@ -213,6 +227,10 @@ export default function PayTabs({ loan }) {
               Submit Principal Payment
             </button>
           </div>
+        )}
+
+        {activeTab === "topup" && (
+          <TopupTab loan={loan} currentRatePerGram={ratePerGram} />
         )}
       </div>
     </div>

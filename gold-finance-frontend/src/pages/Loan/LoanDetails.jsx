@@ -22,6 +22,7 @@ export default function LoanDetails() {
       <CustomerDetails />
       <LoanDetailSection />
       <JewelDetails
+        jewels={singleLoan.jewels || []}
         columns={[
           { key: "ornament", label: "Ornament", input: true, type: "text" },
           {

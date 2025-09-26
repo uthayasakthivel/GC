@@ -88,131 +88,128 @@ export default function AdminDashboard({
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 p-6">
-        {/* Left Menu */}
-        <div className="w-full lg:w-1/4 bg-[#313485] shadow-2xl text-white rounded-lg sticky top-0 flex flex-col justify-start pt-8">
-          <ul className="space-y-4 text-center overflow-visible">
-            {menuItems.map((item) => (
-              <li key={item.key} className="relative">
-                {/* Main Menu */}
-                <button
-                  className={`w-full px-3 py-2 cursor-pointer flex justify-between items-center ${
-                    activeMenu === item.key
-                      ? "bg-cyan-500 font-semibold"
-                      : "hover:bg-cyan-700 text-white"
-                  }`}
-                  onClick={() => toggleSubMenu(item.key, !!item.subItems)}
-                >
-                  {item.label}
-                  {item.subItems && (
-                    <span
-                      className={`inline-block transform transition-transform duration-300 ${
-                        openSubMenus[item.key] ? "rotate-90" : ""
-                      }`}
-                    >
-                      ▶
-                    </span>
-                  )}
-                </button>
-
-                {/* Submenu below main menu */}
-                {item.subItems && openSubMenus[item.key] && (
-                  <ul className="bg-white text-black rounded-md  shadow-md mt-1 w-full z-20 relative">
-                    {item.subItems.map((sub) => (
-                      <li key={sub.key}>
-                        <button
-                          className={`w-full text-left px-3 py-2 cursor-pointer transition-colors duration-200 ${
-                            activeSubMenu === sub.key
-                              ? "bg-cyan-900 text-white font-semibold"
-                              : "hover:bg-cyan-700 hover:text-white"
-                          }`}
-                          onClick={() => {
-                            setActiveMenu(item.key);
-                            setActiveSubMenu(sub.key);
-                          }}
-                        >
-                          {sub.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+    <div className="flex min-h-screen">
+      {/* Left Menu */}
+      {/* Left Menu */}
+      <div className="w-full lg:w-1/4 bg-[#313485] shadow-2xl text-white flex flex-col pt-8">
+        <ul className="space-y-4 text-center flex-shrink-0 overflow-y-auto h-screen">
+          {menuItems.map((item) => (
+            <li key={item.key} className="relative">
+              <button
+                className={`w-full px-3 py-2 cursor-pointer flex justify-between items-center transition-colors duration-150 will-change-transform,background-color ${
+                  activeMenu === item.key
+                    ? "bg-white text-[#313485] font-semibold" // Active link = light bg, dark text
+                    : "bg-[#313485] text-white hover:bg-cyan-700" // Non-active = dark bg, white text, hover lighter
+                }`}
+                onClick={() => toggleSubMenu(item.key, !!item.subItems)}
+              >
+                {item.label}
+                {item.subItems && (
+                  <span
+                    className={`inline-block transform transition-transform duration-150 will-change-transform ${
+                      openSubMenus[item.key] ? "rotate-90" : ""
+                    }`}
+                  >
+                    ▶
+                  </span>
                 )}
-              </li>
-            ))}
-          </ul>
-        </div>
+              </button>
 
-        {/* Right Content */}
-        <div className="flex-1 w-full lg:w-3/4 p-4 lg:p-6 overflow-visible min-h-0">
-          <DashboardLayout role="admin">
-            <DashboardHeader
-              role="admin"
-              combinedRates={combinedRates}
-              todayRates={todayRates}
-              buyingRates={buyingRates}
-              balance={balance}
-              closingBalance={closingBalance}
-              loadingDashboardData={loadingDashboardData}
-            />
+              {item.subItems && openSubMenus[item.key] && (
+                <ul className="bg-white text-black rounded-md shadow-md mt-1 w-full z-20 relative">
+                  {item.subItems.map((sub) => (
+                    <li key={sub.key}>
+                      <button
+                        className={`w-full text-left px-3 py-2 cursor-pointer transition-colors duration-150 will-change-background-color ${
+                          activeSubMenu === sub.key
+                            ? "bg-green-600 text-white font-semibold" // Active sub = dark bg, white text
+                            : "bg-white text-black hover:bg-cyan-200" // Non-active sub = light bg, hover lighter
+                        }`}
+                        onClick={() => {
+                          setActiveMenu(item.key);
+                          setActiveSubMenu(sub.key);
+                        }}
+                      >
+                        {sub.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-            <div className="mt-4 space-y-4">
-              {activeMenu === "pendingApprovals" && (
-                <PendingApprovals
-                  users={pendingUsers}
-                  onActionComplete={refreshUsers}
-                />
-              )}
-              {activeMenu === "managers" && (
-                <UserList
-                  users={managers}
-                  title="All Managers"
-                  onActionComplete={refreshUsers}
-                />
-              )}
-              {activeMenu === "employees" && (
-                <UserList
-                  users={employees}
-                  title="All Employees"
-                  onActionComplete={refreshUsers}
-                />
-              )}
-              {activeMenu === "branches" && (
-                <BranchManagement onBranchesUpdated={refreshUsers} />
-              )}
-              {activeMenu === "jewellery" && (
-                <JewelleryManagement onJewelleryUpdated={refreshUsers} />
-              )}
-              {activeMenu === "rates" && <RateSetter />}
-              {activeMenu === "openingBalance" && (
-                <OpeningBalanceForm onBalanceUpdated={refreshUsers} />
-              )}
+      {/* Right Content */}
+      <div className="flex-1 h-screen overflow-y-auto p-6 bg-gray-50 scrollbar-hide">
+        <DashboardLayout role="admin">
+          <DashboardHeader
+            role="admin"
+            combinedRates={combinedRates}
+            todayRates={todayRates}
+            buyingRates={buyingRates}
+            balance={balance}
+            closingBalance={closingBalance}
+            loadingDashboardData={loadingDashboardData}
+          />
 
-              {/* Gold Sales */}
-              {activeMenu === "goldSales" && activeSubMenu && (
-                <LatestSubmittedSheets role="admin" sheetType={activeSubMenu} />
-              )}
+          <div className="mt-4 space-y-4">
+            {activeMenu === "pendingApprovals" && (
+              <PendingApprovals
+                users={pendingUsers}
+                onActionComplete={refreshUsers}
+              />
+            )}
+            {activeMenu === "managers" && (
+              <UserList
+                users={managers}
+                title="All Managers"
+                onActionComplete={refreshUsers}
+              />
+            )}
+            {activeMenu === "employees" && (
+              <UserList
+                users={employees}
+                title="All Employees"
+                onActionComplete={refreshUsers}
+              />
+            )}
+            {activeMenu === "branches" && (
+              <BranchManagement onBranchesUpdated={refreshUsers} />
+            )}
+            {activeMenu === "jewellery" && (
+              <JewelleryManagement onJewelleryUpdated={refreshUsers} />
+            )}
+            {activeMenu === "rates" && <RateSetter />}
+            {activeMenu === "openingBalance" && (
+              <OpeningBalanceForm onBalanceUpdated={refreshUsers} />
+            )}
 
-              {/* Gold Finance */}
-              {activeMenu === "goldFinance" && activeSubMenu && (
-                <LatestSubmittedSheets role="admin" sheetType={activeSubMenu} />
-              )}
+            {/* Gold Sales */}
+            {activeMenu === "goldSales" && activeSubMenu && (
+              <LatestSubmittedSheets role="admin" sheetType={activeSubMenu} />
+            )}
 
-              {/* Gold Loan */}
-              {activeMenu === "goldLoan" && activeSubMenu && (
-                <div>
-                  {activeSubMenu === "newCustomer" && (
-                    <CustomerRegistrationPage />
-                  )}
-                  {activeSubMenu === "existingCustomer" && (
-                    <ExistingCustomerLoan />
-                  )}
-                  {activeSubMenu === "existingLoan" && <ExistingLoanLatest />}
-                </div>
-              )}
-            </div>
-          </DashboardLayout>
-        </div>
+            {/* Gold Finance */}
+            {activeMenu === "goldFinance" && activeSubMenu && (
+              <LatestSubmittedSheets role="admin" sheetType={activeSubMenu} />
+            )}
+
+            {/* Gold Loan */}
+            {activeMenu === "goldLoan" && activeSubMenu && (
+              <div>
+                {activeSubMenu === "newCustomer" && (
+                  <CustomerRegistrationPage />
+                )}
+                {activeSubMenu === "existingCustomer" && (
+                  <ExistingCustomerLoan />
+                )}
+                {activeSubMenu === "existingLoan" && <ExistingLoanLatest />}
+              </div>
+            )}
+          </div>
+        </DashboardLayout>
       </div>
     </div>
   );

@@ -37,6 +37,8 @@ export const JewelleryProvider = ({ children }) => {
     fetchConfig();
   }, []);
 
+  console.log(ratePerGram, "ratepergram");
+
   // Optional: Reset jewellery state method
   const resetJewellery = () => {
     setShowJewelleryTable(false);

@@ -79,6 +79,7 @@ export default function RateSetter() {
       setError(null);
       alert("Today's rates updated");
       refetch();
+      window.location.reload(); // 👈 refresh the page
     } catch {
       setError("Failed to update today's rates");
     } finally {
@@ -93,6 +94,7 @@ export default function RateSetter() {
       setError(null);
       alert("Buying rates updated");
       refetch();
+      window.location.reload(); // 👈 refresh the page
     } catch {
       setError("Failed to update buying rates");
     } finally {
@@ -107,6 +109,7 @@ export default function RateSetter() {
       setError(null);
       alert("Loan rate updated");
       refetch();
+      window.location.reload(); // 👈 refresh the page
     } catch {
       setError("Failed to update loan rate");
     } finally {
@@ -138,6 +141,7 @@ export default function RateSetter() {
       alert("Interest rate added");
       setInterestRate({ price: "", percentage: "", factor: "" });
       fetchRates(); // Refresh list after adding
+      window.location.reload(); // 👈 refresh the page
     } catch {
       setError("Failed to add interest rate");
     } finally {
