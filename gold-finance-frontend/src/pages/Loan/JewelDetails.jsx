@@ -14,9 +14,9 @@ function getTotals(data) {
   };
 }
 
-export default function JewelDetails({ jewels = [], columns }) {
+export default function JewelDetails({ jewels = [], columns, onRelease }) {
   const totals = getTotals(jewels);
-  console.log(totals, "totals");
+
   return (
     <div className="border rounded-lg p-4 bg-white shadow">
       <h2 className="text-lg font-semibold mb-4">Jewellery Details</h2>
@@ -33,15 +33,25 @@ export default function JewelDetails({ jewels = [], columns }) {
         <tbody>
           {jewels.map((row, idx) => (
             <tr key={idx}>
-              {columns.map((col) => (
-                <td key={col.key} className="border p-2">
-                  {row[col.key]}
-                </td>
-              ))}
+              {columns.map((col) =>
+                col.key !== "release" ? (
+                  <td key={col.key} className="border p-2">
+                    {row[col.key]}
+                  </td>
+                ) : (
+                  <td key={col.key} className="border p-2">
+                    <button
+                      className="px-2 py-1 bg-blue-600 text-white rounded"
+                      onClick={() => onRelease(row)}
+                    >
+                      Release
+                    </button>
+                  </td>
+                )
+              )}
             </tr>
           ))}
 
-          {/* Totals row */}
           <tr className="bg-blue-100 font-semibold">
             <td className="border p-2">Totals</td>
             <td className="border p-2">{totals.totalUnits}</td>

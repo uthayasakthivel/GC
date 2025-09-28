@@ -71,6 +71,13 @@ const loanSchema = new mongoose.Schema(
 
     // Status
     status: { type: String, default: "loanopen" },
+    linkedToLoanId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Loan",
+      default: null,
+    },
+    partialReleaseAllowed: { type: Boolean, default: true },
+    partialReleaseStatus: { type: String, default: "" }, // e.g., "released"
   },
   { timestamps: true }
 );

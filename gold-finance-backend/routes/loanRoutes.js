@@ -11,6 +11,7 @@ import {
   getNextLoanIdApi,
   payInterest,
   payPrincipal,
+  payPartialAndSplitLoan,
 } from "../controllers/loanController.js";
 
 const router = express.Router();
@@ -49,3 +50,5 @@ router.put(
 
 router.delete("/:id", verifyToken, deleteLoan);
 export default router;
+
+router.patch("/:id/pay-partial", verifyToken, payPartialAndSplitLoan);

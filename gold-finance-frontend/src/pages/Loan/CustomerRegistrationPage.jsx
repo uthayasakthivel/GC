@@ -9,7 +9,7 @@ import { useJewelleryData } from "../../hooks/useJewelleryData";
 import { useLoanSubmit } from "../../hooks/useLoanSubmit";
 
 export default function CustomerRegistrationPage() {
-  const loanContext = useLoan();
+  const loanContext = useLoan(); //d
   const {
     customerData,
     setCustomerData,

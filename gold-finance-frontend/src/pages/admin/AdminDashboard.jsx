@@ -200,7 +200,7 @@ export default function AdminDashboard({
             {activeMenu === "goldLoan" && activeSubMenu && (
               <div>
                 {activeSubMenu === "newCustomer" && (
-                  <CustomerRegistrationPage />
+                  <CustomerRegistrationPage /> //p
                 )}
                 {activeSubMenu === "existingCustomer" && (
                   <ExistingCustomerLoan />
