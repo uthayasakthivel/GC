@@ -20,12 +20,11 @@ export default function LoanDetails() {
     setEligibleAmount,
   } = useLoan();
 
-  const [releaseRow, setReleaseRow] = useState(null);
+  const [releaseRows, setReleaseRows] = useState([]); // multi-jewel selection
   const [partPaymentAmount, setPartPaymentAmount] = useState(0);
 
   const hidePayTabs = singleLoan?.status === "loanclosed";
 
-  // Load loan on id change
   useEffect(() => {
     if (id) fetchSingleLoan(id);
   }, [id, fetchSingleLoan]);
@@ -38,18 +37,15 @@ export default function LoanDetails() {
     singleLoan?.status === "loanclosed" &&
     singleLoan.closureType === "partialRelease";
 
-  // Decide which jewels to show
   const jewelsToShow = useMemo(() => {
     if (!jewels.length) return [];
 
-    if (isPrincipalClosed) return jewels; // show all jewels
-    if (isPartialClosed) return jewels.filter((j) => j.released); // show only released jewel(s)
+    if (isPrincipalClosed) return jewels;
+    if (isPartialClosed) return jewels.filter((j) => j.released);
 
-    // New/active loan (after partial release) → show only remaining/unreleased jewels
     return jewels.filter((j) => !j.released);
   }, [jewels, isPrincipalClosed, isPartialClosed]);
 
-  // Update totals
   useEffect(() => {
     const loanAmountSum = jewelsToShow.reduce(
       (sum, j) => sum + (Number(j.partial) || Number(j.eligibleAmount) || 0),
@@ -65,19 +61,19 @@ export default function LoanDetails() {
 
   // ---------------- Handle Partial Payment ----------------
   const handlePayPartial = async () => {
-    if (!releaseRow) return;
+    if (!releaseRows.length) return;
     const totalDue =
-      parseFloat(releaseRow.partial || 0) + parseFloat(interestToPay || 0);
-    const enteredAmount = parseFloat(partPaymentAmount);
+      releaseRows.reduce((sum, j) => sum + (Number(j.partial) || 0), 0) +
+      parseFloat(interestToPay || 0);
 
-    if (Math.abs(enteredAmount - totalDue) > 0.01) {
+    if (Math.abs(partPaymentAmount - totalDue) > 0.01) {
       alert(`Please enter the exact amount: ₹${totalDue.toFixed(2)}`);
       return;
     }
 
     try {
       const payload = {
-        partialJewelOrnament: releaseRow.ornament,
+        partialJewelOrnaments: releaseRows.map((j) => j.ornament),
         paidDate: new Date().toISOString(),
       };
       const response = await axiosInstance.patch(
@@ -89,7 +85,7 @@ export default function LoanDetails() {
         const newLoanId = response.data.newLoan?._id;
         if (newLoanId) navigate(`/loan/${newLoanId}`);
         else fetchSingleLoan(singleLoan._id);
-        setReleaseRow(null);
+        setReleaseRows([]);
         setPartPaymentAmount(0);
       }
     } catch (err) {
@@ -98,15 +94,11 @@ export default function LoanDetails() {
     }
   };
 
-  // ---------------- Handle Full Principal Payment ----------------
   const handleCloseLoan = async () => {
     try {
       const response = await axiosInstance.patch(
         `/loan/${singleLoan._id}/pay-principal`,
-        {
-          paidDate: new Date().toISOString(),
-          newLoanAmount: 0, // full payment
-        }
+        { paidDate: new Date().toISOString(), newLoanAmount: 0 }
       );
       if (response.data.success) {
         alert("Loan closed by full principal payment!");
@@ -128,12 +120,11 @@ export default function LoanDetails() {
       {(isPrincipalClosed || isPartialClosed) && (
         <div className="mb-4 p-2 bg-yellow-300 text-yellow-900 font-semibold rounded text-center">
           {isPartialClosed
-            ? "Partial Released – This Loan is Closed"
+            ? "This loan was partially released. Only released jewel details are visible."
             : "Loan Closed by Principal Payment"}
         </div>
       )}
 
-      {/* Customer + Loan Details */}
       <CustomerDetails />
       <LoanDetailSection />
 
@@ -150,65 +141,49 @@ export default function LoanDetails() {
           <thead className="bg-gray-100">
             <tr>
               <th className="border p-2 text-left">Ornament</th>
-              {isPrincipalClosed ? (
-                <>
-                  <th className="border p-2 text-left">Net Weight</th>
-                  <th className="border p-2 text-left">Loan Amount</th>
-                </>
-              ) : (
-                <>
-                  <th className="border p-2 text-left">No. of Items</th>
-                  <th className="border p-2 text-left">Gross Weight</th>
-                  <th className="border p-2 text-left">Net Weight</th>
-                  <th className="border p-2 text-left">Rate/Gram</th>
-                  <th className="border p-2 text-left">Eligible Amount</th>
-                  <th className="border p-2 text-left">Partial Amount</th>
-                  {!isPartialClosed && (
-                    <th className="border p-2 text-left">Release</th>
-                  )}
-                  {!isPartialClosed && (
-                    <th className="border p-2 text-left">Released Date</th>
-                  )}
-                </>
+              <th className="border p-2 text-left">No. of Items</th>
+              <th className="border p-2 text-left">Gross Weight</th>
+              <th className="border p-2 text-left">Net Weight</th>
+              <th className="border p-2 text-left">Rate/Gram</th>
+              <th className="border p-2 text-left">Eligible Amount</th>
+              <th className="border p-2 text-left">Partial Amount</th>
+              {!(isPrincipalClosed || isPartialClosed) && (
+                <th className="border p-2 text-left">Release</th>
               )}
+              <th className="border p-2 text-left">Released Date</th>
             </tr>
           </thead>
           <tbody>
-            {jewelsToShow.map((row, idx) => (
-              <tr key={idx}>
+            {jewelsToShow.map((row) => (
+              <tr key={row.ornament}>
                 <td>{row.ornament}</td>
-                {isPrincipalClosed ? (
-                  <>
-                    <td>{row.netWeight}</td>
-                    <td>{row.partial || row.eligibleAmount}</td>
-                  </>
-                ) : (
-                  <>
-                    <td>{row.numItems}</td>
-                    <td>{row.grossWeight}</td>
-                    <td>{row.netWeight}</td>
-                    <td>{row.ratePerGram}</td>
-                    <td>{row.eligibleAmount}</td>
-                    <td>{row.partial}</td>
-                    {!isPartialClosed && (
-                      <td>
-                        <button
-                          className="px-2 py-1 bg-blue-500 text-white rounded"
-                          onClick={() => setReleaseRow(row)}
-                        >
-                          Release Partial
-                        </button>
-                      </td>
-                    )}
-                    {!isPartialClosed && (
-                      <td>
-                        {row.releasedDate
-                          ? new Date(row.releasedDate).toLocaleString()
-                          : "-"}
-                      </td>
-                    )}
-                  </>
+                <td>{row.numItems}</td>
+                <td>{row.grossWeight}</td>
+                <td>{row.netWeight}</td>
+                <td>{row.ratePerGram}</td>
+                <td>{row.eligibleAmount}</td>
+                <td>{row.partial}</td>
+                {!(isPrincipalClosed || isPartialClosed) && (
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={releaseRows.includes(row)}
+                      onChange={(e) => {
+                        if (e.target.checked)
+                          setReleaseRows((prev) => [...prev, row]);
+                        else
+                          setReleaseRows((prev) =>
+                            prev.filter((j) => j.ornament !== row.ornament)
+                          );
+                      }}
+                    />
+                  </td>
                 )}
+                <td>
+                  {row.releasedDate
+                    ? new Date(row.releasedDate).toLocaleString()
+                    : "-"}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -216,17 +191,15 @@ export default function LoanDetails() {
       </div>
 
       {/* Partial Release Section */}
-      {releaseRow && !isPrincipalClosed && !isPartialClosed && (
+      {releaseRows.length > 0 && !(isPrincipalClosed || isPartialClosed) && (
         <div className="border p-4 rounded shadow mb-4 bg-gray-50">
           <h3 className="text-lg font-bold mb-2">Partial Release</h3>
           <p>
-            <strong>Ornament:</strong> {releaseRow.ornament}
-          </p>
-          <p>
-            <strong>Eligible Amount:</strong> {releaseRow.eligibleAmount}
+            <strong>Jewels Selected:</strong>{" "}
+            {releaseRows.map((j) => j.ornament).join(", ")}
           </p>
           <div className="mt-2">
-            <label className="block font-medium mb-1">Partial Amount</label>
+            <label className="block font-medium mb-1">Total Amount</label>
             <input
               type="number"
               value={partPaymentAmount}
@@ -235,7 +208,10 @@ export default function LoanDetails() {
             />
             <p className="text-sm text-gray-600 mt-1">
               Exact Amount to Enter: ₹
-              {Number(releaseRow.partial || 0) + interestToPay}
+              {releaseRows.reduce(
+                (sum, j) => sum + (Number(j.partial) || 0),
+                0
+              ) + interestToPay}
             </p>
           </div>
           <button
@@ -247,10 +223,9 @@ export default function LoanDetails() {
         </div>
       )}
 
-      {/* Close Loan Button for Full Principal */}
       {!isPrincipalClosed &&
-        Number(partPaymentAmount) === singleLoan.loanAmount &&
-        singleLoan.status !== "loanclosed" && (
+        !isPartialClosed &&
+        Number(partPaymentAmount) === singleLoan.loanAmount && (
           <div className="mb-4">
             <button
               className="px-4 py-2 bg-red-600 text-white rounded"
@@ -261,7 +236,6 @@ export default function LoanDetails() {
           </div>
         )}
 
-      {/* PayTabs always rendered, internally hidden for principal-closed loans */}
       {!hidePayTabs && (
         <PayTabs loan={singleLoan} isPrincipalClosed={isPrincipalClosed} />
       )}

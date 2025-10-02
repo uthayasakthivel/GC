@@ -334,8 +334,6 @@ export const payPrincipal = async (req, res) => {
   }
 };
 
-// Helper to get branch code from loan's selectedBranch field
-
 // Helper to resolve branch code from loan's selectedBranch
 async function getBranchCode(loan) {
   let selectedBranch = loan.selectedBranch;
@@ -364,20 +362,26 @@ async function getBranchCode(loan) {
   throw new Error("Invalid selectedBranch in loan");
 }
 
-// ✅ Partial Payment and Split Loan
 export const payPartialAndSplitLoan = async (req, res) => {
   try {
     const { id } = req.params;
-    const { partialJewelOrnament, paidDate } = req.body;
+    const { partialJewelOrnaments, paidDate } = req.body; // array of ornaments
 
-    // Fetch old loan
+    if (
+      !Array.isArray(partialJewelOrnaments) ||
+      partialJewelOrnaments.length === 0
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No jewels selected" });
+    }
+
+    // Fetch loan
     const oldLoan = await Loan.findById(id).populate("selectedBranch");
     if (!oldLoan)
       return res
         .status(404)
         .json({ success: false, message: "Loan not found" });
-
-    console.log("Fetched OLD loan:", oldLoan);
 
     if (oldLoan.partialReleaseAllowed === false) {
       return res
@@ -387,38 +391,41 @@ export const payPartialAndSplitLoan = async (req, res) => {
 
     const releaseDate = paidDate ? new Date(paidDate) : new Date();
 
-    // Find jewel to release
-    const releasedJewel = oldLoan.jewels.find(
-      (j) => j.ornament === partialJewelOrnament
+    // Find jewels to release
+    const jewelsToRelease = oldLoan.jewels.filter((j) =>
+      partialJewelOrnaments.includes(j.ornament)
     );
-    if (!releasedJewel)
+
+    if (jewelsToRelease.length === 0) {
       return res
         .status(400)
-        .json({ success: false, message: "Jewel not found." });
+        .json({ success: false, message: "Selected jewels not found." });
+    }
 
     // Add release metadata
-    const releasedJewelWithMeta = {
-      ...(releasedJewel.toObject ? releasedJewel.toObject() : releasedJewel),
+    const releasedJewelsWithMeta = jewelsToRelease.map((j) => ({
+      ...(j.toObject ? j.toObject() : j),
       released: true,
       releasedFromLoanId: oldLoan._id,
       releasedDate: releaseDate,
-    };
+    }));
 
-    console.log("Released jewel with metadata:", releasedJewelWithMeta);
-
-    // Remaining jewels for new loan
+    // Remaining jewels
     const remainingJewels = oldLoan.jewels.filter(
-      (j) => j.ornament !== partialJewelOrnament
+      (j) => !partialJewelOrnaments.includes(j.ornament)
     );
-    console.log("Remaining jewels for NEW loan:", remainingJewels);
 
-    // Recalculate partials
+    // Recalculate partials for remaining jewels
     const totalEligible = remainingJewels.reduce(
       (sum, j) => sum + (j.eligibleAmount || 0),
       0
     );
-    const newLoanAmount =
-      (oldLoan.loanAmount || 0) - (releasedJewel.partial || 0);
+    const totalReleasedPartial = releasedJewelsWithMeta.reduce(
+      (sum, j) => sum + (j.partial || 0),
+      0
+    );
+    const newLoanAmount = (oldLoan.loanAmount || 0) - totalReleasedPartial;
+
     const recalculatedJewels = remainingJewels.map((j) => ({
       ...(j.toObject ? j.toObject() : j),
       partial:
@@ -430,57 +437,63 @@ export const payPartialAndSplitLoan = async (req, res) => {
     }));
 
     // ---------- Update OLD loan ----------
-    oldLoan.jewels = [releasedJewelWithMeta]; // only released jewel
+    oldLoan.jewels = releasedJewelsWithMeta; // only released jewels
     oldLoan.partialReleaseAllowed = false;
     oldLoan.partialReleaseStatus = "released";
     oldLoan.status = "loanclosed";
-    oldLoan.closureType = "partialRelease"; // ✅ New field
+    oldLoan.closureType = "partialRelease";
     oldLoan.lastInterestPaidDate = releaseDate;
+
     await oldLoan.save();
 
-    console.log("OLD loan after save:", await Loan.findById(oldLoan._id));
+    // ---------- Create NEW loan if jewels remain ----------
+    let newLoan = null;
+    if (recalculatedJewels.length > 0) {
+      const branchCode = await getBranchCode(oldLoan);
+      const newLoanId = await getNextLoanId(branchCode);
 
-    // ---------- Create NEW loan ----------
-    const newLoanId = await getNextLoanId(await getBranchCode(oldLoan));
+      newLoan = new Loan({
+        loanId: newLoanId,
+        customerId: oldLoan.customerId,
+        branches: oldLoan.branches,
+        selectedBranch: oldLoan.selectedBranch,
+        customerData: oldLoan.customerData,
+        address: oldLoan.address,
+        aadharNumber: oldLoan.aadharNumber,
+        jewels: recalculatedJewels,
+        ratePerGram: oldLoan.ratePerGram,
+        loanAmount: newLoanAmount,
+        eligibleAmount: totalEligible,
+        selectedInterestRate: oldLoan.selectedInterestRate,
+        loanDate: new Date().toISOString(),
+        loanPeriod: oldLoan.loanPeriod,
+        dueDate: oldLoan.dueDate,
+        noOfDays: oldLoan.noOfDays,
+        selectedFactor: oldLoan.selectedFactor,
+        totalInterest: 0,
+        paymentMethod: oldLoan.paymentMethod,
+        status: "loanopen",
+        images: oldLoan.images,
+        previewData: oldLoan.previewData,
+        lastInterestPaidDate: releaseDate,
+        linkedToLoanId: oldLoan._id,
+      });
 
-    const newLoan = new Loan({
-      loanId: newLoanId,
-      customerId: oldLoan.customerId,
-      branches: oldLoan.branches,
-      selectedBranch: oldLoan.selectedBranch,
-      customerData: oldLoan.customerData,
-      address: oldLoan.address,
-      aadharNumber: oldLoan.aadharNumber,
-      jewels: recalculatedJewels, // only remaining jewels
-      ratePerGram: oldLoan.ratePerGram,
-      loanAmount: newLoanAmount,
-      eligibleAmount: totalEligible,
-      selectedInterestRate: oldLoan.selectedInterestRate,
-      loanDate: new Date().toISOString(),
-      loanPeriod: oldLoan.loanPeriod,
-      dueDate: oldLoan.dueDate,
-      noOfDays: oldLoan.noOfDays,
-      selectedFactor: oldLoan.selectedFactor,
-      totalInterest: 0,
-      paymentMethod: oldLoan.paymentMethod,
-      status: recalculatedJewels.length === 0 ? "loanclosed" : "loanopen",
-      images: oldLoan.images,
-      previewData: oldLoan.previewData,
-      lastInterestPaidDate: releaseDate,
-      linkedToLoanId: oldLoan._id,
-    });
-
-    await newLoan.save();
-    console.log("NEW loan created:", newLoan);
+      await newLoan.save();
+    }
 
     return res.status(201).json({
       success: true,
-      message: "Partial payment processed, new loan created",
+      message: "Partial payment processed successfully",
       oldLoan,
       newLoan,
     });
   } catch (err) {
-    console.error("Error in payPartialAndSplitLoan:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("payPartialAndSplitLoan error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to process partial payment",
+      error: err.message,
+    });
   }
 };
