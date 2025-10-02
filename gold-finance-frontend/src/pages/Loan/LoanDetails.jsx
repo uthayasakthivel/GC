@@ -5,6 +5,9 @@ import CustomerDetails from "./CustomerDetails";
 import LoanDetailSection from "./LoanDetailSection";
 import { useLoan } from "../../context/LoanContext";
 import axiosInstance from "../../api/axiosInstance";
+import LoanDetailsActions from "./LoanDetailsActions";
+import { usePreviewContext } from "../../context/PreviewContext";
+import PreviewModal from "../../components/PreviewLoanModal";
 
 export default function LoanDetails() {
   const { id } = useParams();
@@ -19,6 +22,51 @@ export default function LoanDetails() {
     setLoanAmount,
     setEligibleAmount,
   } = useLoan();
+
+  const { handleGeneratePledgeCard } = usePreviewContext(); // ← Add here
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+
+  const handleGenerateExistingLoanPledge = () => {
+    if (!singleLoan || singleLoan.status === "loanclosed") return;
+
+    handleGeneratePledgeCard({
+      customerData: singleLoan.customer,
+      customerId: singleLoan.customer?._id,
+      address: singleLoan.customer?.address,
+      aadharNumber: singleLoan.customer?.aadharNumber,
+      selectedBranch: singleLoan.selectedBranch,
+      jewelleryOptions: singleLoan.jewels,
+      ratePerGram: singleLoan.ratePerGram,
+      showJewelleryTable: true,
+      configLoading: false,
+      nextLoanNumber: singleLoan.loanNumber,
+      nextLoanNumberLoading: false,
+      loanAmount: singleLoan.loanAmount,
+      allInterestRates: [],
+      selectedInterestRate: singleLoan.interestRate,
+      loanDate: singleLoan.loanDate,
+      loanPeriod: singleLoan.loanPeriod,
+      dueDate: singleLoan.dueDate,
+      noOfDays: singleLoan.noOfDays,
+      selectedFactor: singleLoan.factor,
+      totalInterest: singleLoan.totalInterest,
+      paymentMethod: singleLoan.paymentMethod,
+      paymentByOffline: singleLoan.paymentByOffline,
+      paymentByOnline: singleLoan.paymentByOnline,
+      refNumber: singleLoan.refNumber,
+      customerPhoto: singleLoan.customerPhoto,
+      jewelPhoto: singleLoan.jewelPhoto,
+      aadharPhoto: singleLoan.aadharPhoto,
+      declarationPhoto: singleLoan.declarationPhoto,
+      otherPhoto: singleLoan.otherPhoto,
+      sheetPreparedBy: singleLoan.sheetPreparedBy,
+      branches: [],
+      branchesLoading: false,
+      defaultLoanDate: new Date(),
+      defaultLoanPeriod: 6,
+    });
+    setShowPreviewModal(true);
+  };
 
   const [releaseRows, setReleaseRows] = useState([]); // multi-jewel selection
   const [partPaymentAmount, setPartPaymentAmount] = useState(0);
@@ -124,6 +172,13 @@ export default function LoanDetails() {
             : "Loan Closed by Principal Payment"}
         </div>
       )}
+
+      <div className="mb-4 flex gap-2">
+        <LoanDetailsActions
+          loan={singleLoan}
+          onShowPreview={setShowPreviewModal}
+        />
+      </div>
 
       <CustomerDetails />
       <LoanDetailSection />
@@ -238,6 +293,10 @@ export default function LoanDetails() {
 
       {!hidePayTabs && (
         <PayTabs loan={singleLoan} isPrincipalClosed={isPrincipalClosed} />
+      )}
+
+      {showPreviewModal && (
+        <PreviewModal onClose={() => setShowPreviewModal(false)} />
       )}
     </div>
   );

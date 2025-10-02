@@ -46,6 +46,7 @@ export const PreviewProvider = ({ children }) => {
       branchesLoading,
       defaultLoanDate,
       defaultLoanPeriod,
+      isExistingLoan = false,
     }) => {
       setPreviewData({
         customerData,
@@ -82,6 +83,7 @@ export const PreviewProvider = ({ children }) => {
         branchesLoading,
         defaultLoanDate,
         defaultLoanPeriod,
+        isExistingLoan,
       });
     },
     []

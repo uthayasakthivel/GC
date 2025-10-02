@@ -347,12 +347,16 @@ export default function PreviewModal({ onClose }) {
           >
             Print Official Copy
           </button>
-          <button
-            onClick={handleSubmit}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-          >
-            Submit
-          </button>
+          {/* Submit button only for new loans */}
+          {!previewData?.isExistingLoan && (
+            <button
+              onClick={handleSubmit}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+            >
+              Submit
+            </button>
+          )}
+
           <button
             onClick={onClose}
             className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition"

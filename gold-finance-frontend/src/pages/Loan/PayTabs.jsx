@@ -220,14 +220,14 @@ export default function PayTabs({ loan, isPrincipalClosed }) {
 
             <button
               className={`mt-4 px-4 py-2 text-white rounded ${
-                partPaymentPrincipal === loan.loanAmount
+                partPaymentPrincipal >= loan.loanAmount + interestToPay
                   ? "bg-red-600"
                   : "bg-green-600"
               }`}
               disabled={partPaymentPrincipal < interestToPay}
               onClick={handleSubmitPrincipalPayment}
             >
-              {partPaymentPrincipal === loan.loanAmount
+              {partPaymentPrincipal >= loan.loanAmount + interestToPay
                 ? "Close Loan"
                 : "Submit Principal Payment"}
             </button>
