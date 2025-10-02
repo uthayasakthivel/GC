@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyToken } from "../middlewares/authMiddleware.js";
+import { isAdmin, verifyToken } from "../middlewares/authMiddleware.js";
 import loanUpload from "../middlewares/loanUpload.js";
 import {
   createLoan,
@@ -12,6 +12,7 @@ import {
   payInterest,
   payPrincipal,
   payPartialAndSplitLoan,
+  deleteAllLoans,
 } from "../controllers/loanController.js";
 
 const router = express.Router();
@@ -48,7 +49,12 @@ router.put(
   updateLoan
 );
 
-router.delete("/:id", verifyToken, deleteLoan);
-export default router;
+// DELETE single loan by ID (Admin only)
+router.delete("/:id", verifyToken, isAdmin, deleteLoan);
+
+// DELETE all loans (Admin only)
+router.delete("/", verifyToken, isAdmin, deleteAllLoans);
 
 router.patch("/:id/pay-partial", verifyToken, payPartialAndSplitLoan);
+
+export default router;

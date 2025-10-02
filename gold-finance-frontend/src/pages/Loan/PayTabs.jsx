@@ -3,7 +3,8 @@ import { useLoan } from "../../context/LoanContext";
 import TopupTab from "./TopupTab";
 import { useJewellery } from "../../context/JewelleryContext";
 
-export default function PayTabs({ loan }) {
+export default function PayTabs({ loan, isPrincipalClosed }) {
+  // Hooks are always called
   const [activeTab, setActiveTab] = useState("interest");
   const {
     interestToPay,
@@ -14,17 +15,18 @@ export default function PayTabs({ loan }) {
     setSingleLoan,
     payPrincipal,
   } = useLoan();
-
   const { ratePerGram } = useJewellery();
 
   const [paidDate, setPaidDate] = useState(
-    new Date().toISOString().split("T")[0] // ✅ Default today
+    new Date().toISOString().split("T")[0]
   );
-
   const [partPaymentPrincipal, setPartPaymentPrincipal] = useState(0);
   const [partPaymentDate, setPartPaymentDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
+
+  // Hide content if fully principal-closed
+  if (isPrincipalClosed) return null;
 
   const handlePayInterest = async () => {
     if (singleLoan?._id) {
@@ -45,7 +47,6 @@ export default function PayTabs({ loan }) {
       loan.loanAmount - (partPaymentPrincipal - interestToPay);
 
     try {
-      // ✅ Call backend via useLoan context
       const updatedLoan = await payPrincipal(
         loan._id,
         partPaymentDate,
@@ -55,7 +56,6 @@ export default function PayTabs({ loan }) {
 
       if (updatedLoan) {
         alert("Principal Payment Successful!");
-        // Reset input fields
         setPartPaymentPrincipal(0);
         setPartPaymentDate(new Date().toISOString().slice(0, 10));
       }
@@ -67,7 +67,7 @@ export default function PayTabs({ loan }) {
 
   return (
     <div className="border rounded-lg shadow p-4">
-      {/* ✅ Tabs Header */}
+      {/* Tabs Header */}
       <div className="flex border-b mb-4">
         <button
           className={`flex-1 py-2 text-center font-semibold ${
@@ -101,7 +101,7 @@ export default function PayTabs({ loan }) {
         </button>
       </div>
 
-      {/* ✅ Tab Content */}
+      {/* Tab Content */}
       <div>
         {activeTab === "interest" && (
           <div>
@@ -130,7 +130,6 @@ export default function PayTabs({ loan }) {
                 : "Not paid yet"}
             </p>
 
-            {/* ✅ Date Picker */}
             <div className="mt-2">
               <label className="block font-semibold">Payment Date:</label>
               <input
@@ -220,11 +219,17 @@ export default function PayTabs({ loan }) {
             )}
 
             <button
-              className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
+              className={`mt-4 px-4 py-2 text-white rounded ${
+                partPaymentPrincipal === loan.loanAmount
+                  ? "bg-red-600"
+                  : "bg-green-600"
+              }`}
               disabled={partPaymentPrincipal < interestToPay}
               onClick={handleSubmitPrincipalPayment}
             >
-              Submit Principal Payment
+              {partPaymentPrincipal === loan.loanAmount
+                ? "Close Loan"
+                : "Submit Principal Payment"}
             </button>
           </div>
         )}

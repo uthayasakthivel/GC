@@ -10,7 +10,6 @@ const jewelSchema = new mongoose.Schema(
     eligibleAmount: { type: Number, required: true },
     partial: { type: Number, default: 0 },
 
-    // ✅ Add release metadata
     released: { type: Boolean, default: false },
     releasedFromLoanId: { type: mongoose.Schema.Types.ObjectId, ref: "Loan" },
     releasedDate: { type: Date },
@@ -46,9 +45,6 @@ const loanSchema = new mongoose.Schema(
     selectedFactor: { type: Number },
     totalInterest: { type: Number },
     paymentMethod: { type: String },
-    paymentByOffline: { type: String },
-    paymentByOnline: { type: String },
-    refNumber: { type: String },
 
     images: {
       customerPhoto: { type: String },
@@ -63,6 +59,11 @@ const loanSchema = new mongoose.Schema(
     previewData: { type: Object, default: {} },
 
     status: { type: String, default: "loanopen" },
+    closureType: {
+      type: String,
+      enum: ["principal", "partialRelease"],
+      default: undefined,
+    }, // ✅ New
     linkedToLoanId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Loan",

@@ -4,11 +4,17 @@ import { useLoan } from "../../context/LoanContext";
 const LoanDetailSection = () => {
   const { singleLoan, noOfDaysLoan, interestToPay } = useLoan();
 
-  const isOldLoan = singleLoan?.status === "loanclosed";
+  const isPrincipalClosed =
+    singleLoan?.status === "loanclosed" &&
+    singleLoan?.closureType === "principal";
+  const isPartialClosed =
+    singleLoan?.status === "loanclosed" &&
+    singleLoan?.closureType === "partialRelease";
 
   return (
     <div>
       <h2 className="text-xl font-bold mb-4 underline">Loan Details</h2>
+
       <p>
         <strong>Loan ID:</strong> {singleLoan.loanId}
       </p>
@@ -16,8 +22,8 @@ const LoanDetailSection = () => {
         <strong>Loan Amount:</strong> ₹{singleLoan.loanAmount}
       </p>
 
-      {/* Only show extra details for new/active loans */}
-      {!isOldLoan && (
+      {/* Show extra details only for active loans or principal-closed loan */}
+      {(singleLoan.status !== "loanclosed" || isPrincipalClosed) && (
         <>
           <p>
             <strong>Loan Duration:</strong> {singleLoan.loanPeriod} Months
@@ -51,6 +57,14 @@ const LoanDetailSection = () => {
             <strong>Interest Needs to Pay:</strong> ₹{interestToPay.toFixed(2)}
           </p>
         </>
+      )}
+
+      {/* For partially closed loans (old loans), hide extra details */}
+      {isPartialClosed && (
+        <p className="text-gray-600 italic">
+          This loan was partially released. Only released jewel details are
+          visible.
+        </p>
       )}
     </div>
   );

@@ -244,18 +244,28 @@ export const updateLoan = async (req, res) => {
   }
 };
 
-// Delete loan
+// Delete single loan
 export const deleteLoan = async (req, res) => {
   try {
-    const deletedLoan = await Loan.findByIdAndDelete(req.params.id);
-    if (!deletedLoan)
+    const loan = await Loan.findByIdAndDelete(req.params.id);
+    if (!loan) {
       return res
         .status(404)
         .json({ success: false, message: "Loan not found" });
-    res.json({ success: true, message: "Loan deleted" });
+    }
+    res.json({ success: true, message: "Loan deleted successfully" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Failed to delete loan" });
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Delete all loans
+export const deleteAllLoans = async (req, res) => {
+  try {
+    await Loan.deleteMany({});
+    res.json({ success: true, message: "All loans deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -294,22 +304,21 @@ export const payInterest = async (req, res) => {
 export const payPrincipal = async (req, res) => {
   try {
     const { id } = req.params;
-    const { paidDate, newLoanAmount } = req.body; // Expect payment date and updated loan amount
+    const { paidDate, newLoanAmount } = req.body;
 
     const loan = await Loan.findById(id);
 
-    if (!loan) {
+    if (!loan)
       return res
         .status(404)
         .json({ success: false, message: "Loan not found" });
-    }
 
-    // Update fields
     loan.lastInterestPaidDate = paidDate ? new Date(paidDate) : new Date();
     loan.loanAmount = newLoanAmount;
 
     if (newLoanAmount <= 0) {
       loan.status = "loanclosed";
+      loan.closureType = "principal"; // ✅ Set closure type
     }
 
     await loan.save();
@@ -425,6 +434,7 @@ export const payPartialAndSplitLoan = async (req, res) => {
     oldLoan.partialReleaseAllowed = false;
     oldLoan.partialReleaseStatus = "released";
     oldLoan.status = "loanclosed";
+    oldLoan.closureType = "partialRelease"; // ✅ New field
     oldLoan.lastInterestPaidDate = releaseDate;
     await oldLoan.save();
 
