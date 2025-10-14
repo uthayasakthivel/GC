@@ -238,6 +238,7 @@ export default function TopupTab({ loan, currentRatePerGram }) {
             <th className="p-2 border">New Rate/Gram</th>
             <th className="p-2 border">New Eligible Amt</th>
             <th className="p-2 border">New Partial</th>
+            <th className="p-2 border">topup Available</th>
           </tr>
         </thead>
         <tbody>
@@ -252,6 +253,7 @@ export default function TopupTab({ loan, currentRatePerGram }) {
                 {jewel.updatedEligibleAmount.toFixed(2)}
               </td>
               <td className="p-2 border">{jewel.updatedPartial.toFixed(2)}</td>
+              <td className="p-2 border">{topupAmount.toFixed(2)}</td>
             </tr>
           ))}
 
@@ -286,7 +288,7 @@ export default function TopupTab({ loan, currentRatePerGram }) {
         <p>New Total Eligible Amount: {newTotalEligible.toFixed(2)}</p>
         <p>Loan Taken: {Number(singleLoan?.loanAmount || 0).toFixed(2)}</p>
         <p>Interest Needs to Pay: {Number(interestToPay || 0).toFixed(2)}</p>
-        <p>Top-up Amount Available: {topupAmount.toFixed(2)}</p>
+        {/* <p>Top-up Amount Available: {topupAmount.toFixed(2)}</p> */}
         <p>
           Last Interest Paid On:{" "}
           {singleLoan?.lastInterestPaidDate

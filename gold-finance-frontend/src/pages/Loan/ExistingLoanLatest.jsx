@@ -36,7 +36,7 @@ export default function ExistingLoanTab() {
     { accessorKey: "previewData.customerId", header: "Customer ID" },
     { accessorKey: "loanId", header: "Loan ID" },
     { accessorKey: "loanAmount", header: "Loan Amount" },
-    { accessorKey: "totalInterest", header: "Interest Rate" },
+    { accessorKey: "totalInterest", header: "Interest Amount" },
     {
       accessorKey: "_id",
       header: "Actions",

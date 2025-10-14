@@ -1,5 +1,9 @@
 import { createFinanceSheet } from "../controllers/financeSheetController.js";
-import { isManager, verifyToken } from "../middlewares/authMiddleware.js";
+import {
+  isAdmin,
+  isManager,
+  verifyToken,
+} from "../middlewares/authMiddleware.js";
 import express from "express";
 import { getNextFinanceSheetNumber } from "../utils/getNextFinanceSheetNumber.js";
 
@@ -9,7 +13,7 @@ const router = express.Router();
 router.get(
   "/finance-sheet/next-number",
   verifyToken,
-  isManager,
+  isAdmin,
   async (req, res) => {
     try {
       const next = await getNextFinanceSheetNumber();
